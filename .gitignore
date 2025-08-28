@@ -1,0 +1,13 @@
+# Archivos temporales
+*.o
+*.exe
+*.layout
+*.depend
+
+# Carpetas generadas por Code::Blocks
+bin/
+obj/
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
