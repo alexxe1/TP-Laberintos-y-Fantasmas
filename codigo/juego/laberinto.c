@@ -1,11 +1,17 @@
 #include "laberinto.h"
 
-void crearLaberinto(tLaberinto* laberinto, size_t filas, size_t columnas)
+void crearLaberintoAleatorio(tLaberinto* laberinto)
 {
+    // Para hacer
+}
+
+int crearLaberintoArchivo(tLaberinto* laberinto, char* nombreArchivo)
+{
+    // Para hacer. Ahora solo cargamos uno fijo para probar. Debe ser dinámico luego.
     size_t i, j;
 
-    laberinto->filas = filas;
-    laberinto->columnas = columnas;
+    laberinto->filas = 20;
+    laberinto->columnas = 20;
 
     for (i = 0; i < laberinto->filas; i++)
     {
@@ -14,6 +20,8 @@ void crearLaberinto(tLaberinto* laberinto, size_t filas, size_t columnas)
             laberinto->casillas[i][j] = CAMINO;
         }
     }
+
+    return EXITO;
 }
 
 void destruirLaberinto(tLaberinto* laberinto)
@@ -31,17 +39,22 @@ size_t obtenerColumnasLaberinto(tLaberinto* laberinto)
     return laberinto->columnas;
 }
 
-char* obtenerCasillaLaberinto(tLaberinto* laberinto, size_t fila, size_t columna)
+char obtenerCasillaLaberinto(tLaberinto* laberinto, size_t fila, size_t columna)
 {
     if (fila > laberinto->filas || columna > laberinto->columnas)
     {
-        return NULL;
+        return CAMINO;
     }
 
-    return &(laberinto->casillas[fila][columna]);
+    return laberinto->casillas[fila][columna];
 }
 
-void generarLaberintoAleatorio(tLaberinto* laberinto)
+void modificarCasillaLaberinto(tLaberinto* laberinto, size_t fila, size_t columna, char nuevaCasilla)
 {
+    if (fila > laberinto->filas || columna > laberinto->columnas)
+    {
+        return;
+    }
 
+    laberinto->casillas[fila][columna] = nuevaCasilla;
 }

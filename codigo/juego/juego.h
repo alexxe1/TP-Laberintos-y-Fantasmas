@@ -10,9 +10,18 @@
 #include <windows.h> // Para limpiar la consola (temporal)
 #include <conio.h> // Para detectar input (temporal)
 
-void empezarJuego();
-void actualizarLaberinto(tLaberinto* laberinto);
-void dibujarLaberinto(tLaberinto* laberinto, tJugador* jugador, tVector* vecFantasmas);
-int recorrerFantasmas(tVector* vecFantasmas, size_t fila, size_t columna);
+#define ARCHIVO_LABERINTO "laberinto.txt"
+
+typedef struct
+{
+    tJugador jugador;
+    tVector fantasmas;
+} tEntidades;
+
+int empezarJuego();
+int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades);
+void actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char* juegoTerminado);
+void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades);
+int hayFantasma(tVector* vecFantasmas, size_t fila, size_t columna);
 
 #endif // JUEGO_H_INCLUDED

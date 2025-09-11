@@ -3,21 +3,18 @@
 
 #include <stdio.h>
 #include "laberinto.h"
-
-// Controles del jugador
-#define TECLA_ARRIBA(c) ((c) == 72 || (c) == 'w') // 72 es la clave de arriba
-#define TECLA_IZQUIERDA(c) ((c) == 75 || (c) == 'a') // 75 es la clave de izquierda
-#define TECLA_ABAJO(c) ((c) == 80 || (c) == 's') // 80 es la clave de abajo
-#define TECLA_DERECHA(c) ((c) == 77 || (c) == 'd') // 77 es la clave de derecha
+#include "controles.h"
 
 typedef struct
 {
-    size_t fila;
-    size_t columna;
+    size_t filaActual;
+    size_t columnaActual;
+    size_t filaInicial;
+    size_t columnaInicial;
 } tJugador;
 
 void crearJugador(tJugador* jugador, size_t fila, size_t columna);
 void dibujarJugador(tJugador* jugador, size_t fila, size_t columna);
-void moverJugador(tJugador* jugador, char direccion, const tLaberinto* laberinto);
+int moverJugador(tJugador* jugador, char direccion, const tLaberinto* laberinto);
 
 #endif // JUGADOR_H_INCLUDED

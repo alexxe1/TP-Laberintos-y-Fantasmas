@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include "../retornos.h"
 
 #define TAM_BASE 8
 

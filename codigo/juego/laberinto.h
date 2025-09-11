@@ -2,7 +2,7 @@
 #define LABERINTO_H_INCLUDED
 
 #include <stdlib.h>
-#include "../globales.h"
+#include "../retornos.h"
 
 #define MAX_FILAS 50
 #define MAX_COLUMNAS 50
@@ -23,13 +23,23 @@ typedef struct
     size_t columnas;
 } tLaberinto;
 
-void crearLaberinto(tLaberinto* laberinto, size_t filas, size_t columnas);
+typedef struct
+{
+    size_t filas;
+    size_t columnas;
+    size_t vidasIniciales;
+    size_t maxFantasmas;
+    size_t maxPremios;
+    size_t maxVidasExtras;
+} tConfiguracion;
+
+void crearLaberintoAleatorio(tLaberinto* laberinto);
+int crearLaberintoArchivo(tLaberinto* laberinto, char* nombreArchivo);
 void destruirLaberinto(tLaberinto* laberinto);
 
 size_t obtenerFilasLaberinto(tLaberinto* laberinto);
 size_t obtenerColumnasLaberinto(tLaberinto* laberinto);
-char* obtenerCasillaLaberinto(tLaberinto* laberinto, size_t fila, size_t columna);
-
-void generarLaberintoAleatorio(tLaberinto* laberinto);
+char obtenerCasillaLaberinto(tLaberinto* laberinto, size_t fila, size_t columna);
+void modificarCasillaLaberinto(tLaberinto* laberinto, size_t fila, size_t columna, char nuevaCasilla);
 
 #endif // LABERINTO_H_INCLUDED

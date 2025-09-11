@@ -2,8 +2,11 @@
 
 void crearJugador(tJugador* jugador, size_t fila, size_t columna)
 {
-    jugador->fila = fila;
-    jugador->columna = columna;
+    jugador->filaInicial = fila;
+    jugador->columnaInicial = columna;
+
+    jugador->filaActual = jugador->filaInicial;
+    jugador->columnaActual = jugador->columnaInicial;
 }
 
 void dibujarJugador(tJugador* jugador, size_t fila, size_t columna)
@@ -11,26 +14,44 @@ void dibujarJugador(tJugador* jugador, size_t fila, size_t columna)
     printf("%c", JUGADOR);
 }
 
-void moverJugador(tJugador* jugador, char direccion, const tLaberinto* laberinto)
+int moverJugador(tJugador* jugador, char direccion, const tLaberinto* laberinto)
 {
-    size_t nuevaFila = jugador->fila;
-    size_t nuevaColumna = jugador->columna;
+    size_t nuevaFila = jugador->filaActual;
+    size_t nuevaColumna = jugador->columnaActual;
 
-    // Detectar dirección y moverse
-    if (TECLA_ARRIBA(direccion) && nuevaFila > 0) // Arriba
-        nuevaFila--;
-    else if (TECLA_IZQUIERDA(direccion) && nuevaColumna > 0) // Izquierda
-        nuevaColumna--;
-    else if (TECLA_DERECHA(direccion) && nuevaColumna < laberinto->columnas - 1) // Derecha
-        nuevaColumna++;
-    else if (TECLA_ABAJO(direccion) && nuevaFila < laberinto->filas - 1) // Abajo
-        nuevaFila++;
+    switch (direccion)
+    {
+        default: // No nos movemos si no hay dirección
+            return FALSO;
+
+        case IZQUIERDA:
+            if (nuevaColumna > 0)
+                nuevaColumna--;
+            break;
+
+        case DERECHA:
+            if (nuevaColumna < laberinto->columnas - 1)
+                nuevaColumna++;
+            break;
+
+        case ARRIBA:
+            if (nuevaFila > 0)
+                nuevaFila--;
+            break;
+
+        case ABAJO:
+            if (nuevaFila < laberinto->filas - 1)
+                nuevaFila++;
+            break;
+    }
 
     // No permitir moverse si hay una pared
     if (laberinto->casillas[nuevaFila][nuevaColumna] == '#')
-        return;
+        return FALSO;
 
     // Si después de verificar todo, no hay problema, nos movemos
-    jugador->fila = nuevaFila;
-    jugador->columna = nuevaColumna;
+    jugador->filaActual = nuevaFila;
+    jugador->columnaActual = nuevaColumna;
+
+    return VERDADERO;
 }

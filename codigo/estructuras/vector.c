@@ -6,14 +6,14 @@ int crearVector(tVector* vec, size_t tamElemento)
 
     if (vec->datos == NULL)
     {
-        return 0;
+        return ERROR;
     }
 
     vec->ce = 0;
     vec->tamElemento = tamElemento;
     vec->tamMaximo = TAM_BASE;
 
-    return 1;
+    return EXITO;
 }
 
 void destruirVector(tVector* vec)
@@ -31,13 +31,13 @@ int redimensionarVector(tVector* vec, size_t nuevaCantElem)
 
     if (aux == NULL)
     {
-        return 0;
+        return ERROR;
     }
 
     vec->datos = aux;
     vec->tamMaximo = nuevaCantElem;
 
-    return 1;
+    return EXITO;
 }
 
 size_t obtenerLongitudVector(tVector* vec)
@@ -62,7 +62,7 @@ int insertarVector(tVector* vec, void* elemento)
     {
         if (!redimensionarVector(vec, vec->ce + TAM_BASE))
         {
-            return 0;
+            return ERROR;
         }
     }
 
@@ -70,7 +70,7 @@ int insertarVector(tVector* vec, void* elemento)
 
     vec->ce++;
 
-    return 1;
+    return EXITO;
 }
 
 void recorrerVector(tVector* vec, void (*funcion)(void* elemento))

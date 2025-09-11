@@ -1,7 +1,0 @@
-#ifndef GLOBALES_H_INCLUDED
-#define GLOBALES_H_INCLUDED
-
-#define ERROR 0
-#define EXITO 1
-
-#endif // GLOBALES_H_INCLUDED

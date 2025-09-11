@@ -3,5 +3,6 @@
 int main()
 {
     mostrarMenu();
-    return 0;
+
+    return EXITO;
 }

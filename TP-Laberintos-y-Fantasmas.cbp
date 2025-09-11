@@ -35,7 +35,7 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="codigo/estructuras/vector.h" />
-		<Unit filename="codigo/globales.h" />
+		<Unit filename="codigo/juego/controles.h" />
 		<Unit filename="codigo/juego/fantasma.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -56,6 +56,7 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="codigo/menu/menu.h" />
+		<Unit filename="codigo/retornos.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>

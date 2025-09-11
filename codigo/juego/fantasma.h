@@ -5,11 +5,6 @@
 #include "jugador.h"
 #include <stdlib.h>
 
-#define DERECHA 0
-#define IZQUIERDA 1
-#define ARRIBA 2
-#define ABAJO 3
-
 typedef struct
 {
     size_t filaInicial;
