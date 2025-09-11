@@ -1,7 +1,7 @@
 #ifndef JUGADOR_H_INCLUDED
 #define JUGADOR_H_INCLUDED
 
-#include <stddef.h>
+#include <stdio.h>
 #include "laberinto.h"
 
 // Controles del jugador
@@ -16,7 +16,8 @@ typedef struct
     size_t columna;
 } tJugador;
 
-void crearJugador(tJugador* jugador, size_t filaInicial, size_t columnaInicial);
-void moverJugador(tJugador* jugador, char direccion, tLaberinto* laberinto);
+void crearJugador(tJugador* jugador, size_t fila, size_t columna);
+void dibujarJugador(tJugador* jugador, size_t fila, size_t columna);
+void moverJugador(tJugador* jugador, char direccion, const tLaberinto* laberinto);
 
 #endif // JUGADOR_H_INCLUDED

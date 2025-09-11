@@ -3,6 +3,8 @@
 
 #include "laberinto.h"
 #include "jugador.h"
+#include "fantasma.h"
+#include "../estructuras/vector.h"
 
 #include <stdio.h> // Para imprimir por consola (temporal)
 #include <windows.h> // Para limpiar la consola (temporal)
@@ -10,6 +12,7 @@
 
 void empezarJuego();
 void actualizarLaberinto(tLaberinto* laberinto);
-void dibujarLaberinto(tLaberinto* laberinto, tJugador* jugador);
+void dibujarLaberinto(tLaberinto* laberinto, tJugador* jugador, tVector* vecFantasmas);
+int recorrerFantasmas(tVector* vecFantasmas, size_t fila, size_t columna);
 
 #endif // JUEGO_H_INCLUDED

@@ -31,26 +31,34 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="globales.h" />
-		<Unit filename="juego.c">
+		<Unit filename="codigo/estructuras/vector.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="juego.h" />
-		<Unit filename="jugador.c">
+		<Unit filename="codigo/estructuras/vector.h" />
+		<Unit filename="codigo/globales.h" />
+		<Unit filename="codigo/juego/fantasma.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="jugador.h" />
-		<Unit filename="laberinto.c">
+		<Unit filename="codigo/juego/fantasma.h" />
+		<Unit filename="codigo/juego/juego.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="laberinto.h" />
+		<Unit filename="codigo/juego/juego.h" />
+		<Unit filename="codigo/juego/jugador.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="codigo/juego/jugador.h" />
+		<Unit filename="codigo/juego/laberinto.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="codigo/juego/laberinto.h" />
+		<Unit filename="codigo/menu/menu.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="codigo/menu/menu.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="menu.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="menu.h" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>

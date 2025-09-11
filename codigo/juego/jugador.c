@@ -6,7 +6,12 @@ void crearJugador(tJugador* jugador, size_t fila, size_t columna)
     jugador->columna = columna;
 }
 
-void moverJugador(tJugador* jugador, char direccion, tLaberinto* laberinto)
+void dibujarJugador(tJugador* jugador, size_t fila, size_t columna)
+{
+    printf("%c", JUGADOR);
+}
+
+void moverJugador(tJugador* jugador, char direccion, const tLaberinto* laberinto)
 {
     size_t nuevaFila = jugador->fila;
     size_t nuevaColumna = jugador->columna;

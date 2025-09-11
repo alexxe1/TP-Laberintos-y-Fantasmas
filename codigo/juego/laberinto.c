@@ -40,3 +40,8 @@ char* obtenerCasillaLaberinto(tLaberinto* laberinto, size_t fila, size_t columna
 
     return &(laberinto->casillas[fila][columna]);
 }
+
+void generarLaberintoAleatorio(tLaberinto* laberinto)
+{
+
+}
