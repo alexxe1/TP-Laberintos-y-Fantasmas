@@ -1,0 +1,10 @@
+#ifndef RETORNOS_H_INCLUDED
+#define RETORNOS_H_INCLUDED
+
+#define ERROR 0
+#define EXITO 1
+
+#define VERDADERO 1
+#define FALSO 0
+
+#endif // GLOBALES_H_INCLUDED

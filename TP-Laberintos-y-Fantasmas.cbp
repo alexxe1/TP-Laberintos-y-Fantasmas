@@ -31,6 +31,32 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="codigo/estructuras/vector.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="codigo/estructuras/vector.h" />
+		<Unit filename="codigo/juego/controles.h" />
+		<Unit filename="codigo/juego/fantasma.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="codigo/juego/fantasma.h" />
+		<Unit filename="codigo/juego/juego.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="codigo/juego/juego.h" />
+		<Unit filename="codigo/juego/jugador.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="codigo/juego/jugador.h" />
+		<Unit filename="codigo/juego/laberinto.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="codigo/juego/laberinto.h" />
+		<Unit filename="codigo/menu/menu.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="codigo/menu/menu.h" />
+		<Unit filename="codigo/retornos.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
