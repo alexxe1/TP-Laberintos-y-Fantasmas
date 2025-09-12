@@ -2,8 +2,8 @@
 #define JUGADOR_H_INCLUDED
 
 #include <stdio.h>
-#include "laberinto.h"
 #include "controles.h"
+#include "laberinto.h"
 
 typedef struct
 {

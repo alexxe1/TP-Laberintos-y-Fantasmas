@@ -4,13 +4,12 @@
 #include "laberinto.h"
 #include "jugador.h"
 #include "fantasma.h"
+#include "configuracion.h"
 #include "../estructuras/vector.h"
 
 #include <stdio.h> // Para imprimir por consola (temporal)
 #include <windows.h> // Para limpiar la consola (temporal)
 #include <conio.h> // Para detectar input (temporal)
-
-#define ARCHIVO_LABERINTO "laberinto.txt"
 
 typedef struct
 {

@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include "../retornos.h"
+#include "configuracion.h"
 
 #define MAX_FILAS 50
 #define MAX_COLUMNAS 50
@@ -16,6 +17,8 @@
 #define PREMIO 'P'
 #define VIDA_EXTRA 'V'
 
+#define ARCHIVO_LABERINTO "laberinto.txt"
+
 typedef struct
 {
     char casillas[MAX_FILAS][MAX_COLUMNAS];
@@ -23,18 +26,8 @@ typedef struct
     size_t columnas;
 } tLaberinto;
 
-typedef struct
-{
-    size_t filas;
-    size_t columnas;
-    size_t vidasIniciales;
-    size_t maxFantasmas;
-    size_t maxPremios;
-    size_t maxVidasExtras;
-} tConfiguracion;
-
-void crearLaberintoAleatorio(tLaberinto* laberinto);
-int crearLaberintoArchivo(tLaberinto* laberinto, char* nombreArchivo);
+void crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion);
+int crearLaberintoArchivo(tLaberinto* laberinto);
 void destruirLaberinto(tLaberinto* laberinto);
 
 size_t obtenerFilasLaberinto(tLaberinto* laberinto);

@@ -5,9 +5,14 @@ int empezarJuego()
     unsigned char juegoTerminado = FALSO;
     tLaberinto laberinto;
     tEntidades entidades;
+    tConfiguracion configuracion;
+
+    // Cargamos el archivo de configuración
+    if (!cargarArchivoConfiguracion(&configuracion))
+        return ERROR;
 
     // Generamos un laberinto (o lo cargamos de un .txt)
-    if (!crearLaberintoArchivo(&laberinto, ARCHIVO_LABERINTO))
+    if (!crearLaberintoArchivo(&laberinto))
         return ERROR;
 
     // Inicializar el vector de fantasmas

@@ -1,14 +1,15 @@
 #include "laberinto.h"
 
-void crearLaberintoAleatorio(tLaberinto* laberinto)
+void crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion)
 {
     // Para hacer
-    // Primero se debe cargar el config.txt mediante alguna función
+    // La configuración está en tConfiguracion
 }
 
-int crearLaberintoArchivo(tLaberinto* laberinto, char* nombreArchivo)
+int crearLaberintoArchivo(tLaberinto* laberinto)
 {
     // Para hacer. Ahora solo cargamos uno fijo para probar. Debe ser dinámico luego.
+    // El nombre del archivo es una MACRO en laberinto.h
     size_t i, j;
 
     // Sacar esto

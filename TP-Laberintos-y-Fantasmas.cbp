@@ -35,6 +35,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="codigo/estructuras/vector.h" />
+		<Unit filename="codigo/juego/configuracion.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="codigo/juego/configuracion.h" />
 		<Unit filename="codigo/juego/controles.h" />
 		<Unit filename="codigo/juego/fantasma.c">
 			<Option compilerVar="CC" />
