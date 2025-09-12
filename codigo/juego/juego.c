@@ -22,7 +22,7 @@ int empezarJuego()
     {
         destruirLaberinto(&laberinto);
         destruirVector(&entidades.fantasmas);
-        puts("ERROR: No se encontro al jugador en el laberinto");
+        puts("ERROR: No se encontro una entrada en el laberinto");
         return ERROR;
     }
 
@@ -60,7 +60,7 @@ int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades)
 
             switch (casilla)
             {
-                case JUGADOR:
+                case ENTRADA:
                     if (jugadorEncontrado) // Por si hay más de un jugador en el laberinto
                         break;
 
