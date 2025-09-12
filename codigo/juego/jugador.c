@@ -21,9 +21,6 @@ int moverJugador(tJugador* jugador, char direccion, const tLaberinto* laberinto)
 
     switch (direccion)
     {
-        default: // No nos movemos si no hay dirección
-            return FALSO;
-
         case IZQUIERDA:
             if (nuevaColumna > 0)
                 nuevaColumna--;
@@ -43,6 +40,9 @@ int moverJugador(tJugador* jugador, char direccion, const tLaberinto* laberinto)
             if (nuevaFila < laberinto->filas - 1)
                 nuevaFila++;
             break;
+
+        default: // No nos movemos si no hay dirección
+            return FALSO;
     }
 
     // No permitir moverse si hay una pared

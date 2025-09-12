@@ -14,12 +14,13 @@ void dibujarFantasma(tFantasma* fantasma, size_t fila, size_t columna)
     printf("%c", FANTASMA);
 }
 
-void calcularMovimientoFantasma(tFantasma* fantasma, const tJugador* jugador)
+// Si se necesita, agregar más parametros
+void calcularMovimientoFantasma(tFantasma* fantasma, const tLaberinto* laberinto, const tJugador* jugador)
 {
     // Acá se tendría que calcular el siguiente movimiento del fantasma según la posición del jugador
 }
 
-// Las direcciones están dadas por MACROS en fantasma.h
+// Las direcciones están dadas por MACROS en controles.h
 void moverFantasma(tFantasma* fantasma, char direccion, const tLaberinto* laberinto)
 {
 

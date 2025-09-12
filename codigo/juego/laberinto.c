@@ -3,6 +3,7 @@
 void crearLaberintoAleatorio(tLaberinto* laberinto)
 {
     // Para hacer
+    // Primero se debe cargar el config.txt mediante alguna función
 }
 
 int crearLaberintoArchivo(tLaberinto* laberinto, char* nombreArchivo)
@@ -10,6 +11,7 @@ int crearLaberintoArchivo(tLaberinto* laberinto, char* nombreArchivo)
     // Para hacer. Ahora solo cargamos uno fijo para probar. Debe ser dinámico luego.
     size_t i, j;
 
+    // Sacar esto
     laberinto->filas = 20;
     laberinto->columnas = 20;
 

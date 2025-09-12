@@ -81,7 +81,7 @@ int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades)
 void actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char* juegoTerminado)
 {
     char teclaApretada;
-    char direccionJugador;
+    char direccionJugador = NO_DIRECCION;
 
     // Acá habría que hacer que espere a que el jugador toque una tecla para mover al personaje
 
