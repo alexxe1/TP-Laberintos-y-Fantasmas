@@ -2,7 +2,6 @@
 
 int cargarArchivoConfiguracion(tConfiguracion* configuracion)
 {
-    // Para hacer
     FILE* pConfig = fopen(CONFIG, "rt");
     char linea[TAM_LINEA];
     char* sep;
