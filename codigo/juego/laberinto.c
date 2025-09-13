@@ -8,22 +8,34 @@ void crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracio
 
 int crearLaberintoArchivo(tLaberinto* laberinto)
 {
-    // Para hacer. Ahora solo cargamos uno fijo para probar. Debe ser dinámico luego.
-    // El nombre del archivo es una MACRO en laberinto.h
-    size_t i, j;
+    FILE* pLab = fopen(ARCHIVO_LABERINTO, "rt");
+    char linea[TAM_LINEA];
+    char* plinea;
+    size_t cFilas = 0;
+    size_t cColumnas = 0;
 
-    // Sacar esto
-    laberinto->filas = 20;
-    laberinto->columnas = 20;
+    if(!pLab)
+        return ERROR;
 
-    for (i = 0; i < laberinto->filas; i++)
+    while(fgets(linea, sizeof(linea), pLab))
     {
-        for (j = 0; j < laberinto->columnas; j++)
+        plinea = linea;
+        cColumnas = 0;
+
+        while(*plinea != '\n' && *plinea != '\0')
         {
-            laberinto->casillas[i][j] = CAMINO;
+            laberinto->casillas[cFilas][cColumnas] = *plinea;
+            cColumnas++;
+            plinea++;
         }
+
+        cFilas++;
     }
 
+    laberinto->filas = cFilas;
+    laberinto->columnas = cColumnas;
+
+    fclose(pLab);
     return EXITO;
 }
 
