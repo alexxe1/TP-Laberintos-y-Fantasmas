@@ -6,7 +6,7 @@
 #include <string.h>
 #include "../retornos.h"
 
-#define CONFIG "config_prueba.txt"
+#define CONFIG "config.txt"
 #define TAM_LINEA 1024
 #define SEPARADOR ':'
 
