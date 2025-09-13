@@ -31,7 +31,7 @@ int empezarJuego()
         return ERROR;
     }
 
-    // Bucle principal
+    /// Bucle principal
     while (!juegoTerminado)
     {
         system("cls");

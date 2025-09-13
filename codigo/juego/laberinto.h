@@ -21,7 +21,7 @@
 
 typedef struct
 {
-    char casillas[MAX_FILAS][MAX_COLUMNAS];
+    char** casillas;
     size_t filas;
     size_t columnas;
 } tLaberinto;
