@@ -2,6 +2,7 @@
 #define LABERINTO_H_INCLUDED
 
 #include <stdlib.h>
+#include <time.h>
 #include "../retornos.h"
 #include "configuracion.h"
 
@@ -26,7 +27,7 @@ typedef struct
     size_t columnas;
 } tLaberinto;
 
-void crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion);
+int crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion);
 int crearLaberintoArchivo(tLaberinto* laberinto);
 void destruirLaberinto(tLaberinto* laberinto);
 

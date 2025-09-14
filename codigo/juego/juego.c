@@ -11,8 +11,12 @@ int empezarJuego()
     if (!cargarArchivoConfiguracion(&configuracion))
         return ERROR;
 
-    // Generamos un laberinto (o lo cargamos de un .txt)
-    if (!crearLaberintoArchivo(&laberinto))
+    // Cargamos laberinto de un .txt
+//    if (!crearLaberintoArchivo(&laberinto))
+//        return ERROR;
+
+    // Generamos un laberinto aleatorio
+    if(!crearLaberintoAleatorio(&laberinto, &configuracion))
         return ERROR;
 
     // Inicializar el vector de fantasmas

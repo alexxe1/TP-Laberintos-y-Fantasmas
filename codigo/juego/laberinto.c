@@ -1,9 +1,97 @@
 #include "laberinto.h"
 
-void crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion)
+int crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion)
 {
-    // Para hacer
-    // La configuración está en tConfiguracion
+    size_t i,j, fx, fy, px, py, vx, vy;
+    size_t filas = configuracion->filas;
+    size_t columnas = configuracion->columnas;
+
+    size_t entradaFila = 0;                         //Primera Fila
+    size_t entradaColumna = rand() % columnas;      //Cualquier Columna
+    size_t salidaFila = filas - 1;                  //Ultima Fila
+    size_t salidaColumna = rand() % columnas;       //Cualquier Columna
+
+    ///Inicializo semilla random
+    srand((unsigned)time(NULL));
+
+    ///Creo matriz laberinto
+    laberinto->casillas = malloc(filas * sizeof(char*));
+    if(!laberinto->casillas)
+        return ERROR;
+
+    for(i=0;i<filas;i++)
+    {
+        laberinto->casillas[i] = malloc(columnas * sizeof(char));
+        if(!laberinto->casillas[i])
+        {
+            for(j=0;j<i;j++)
+                free(laberinto->casillas[j]);
+            free(laberinto->casillas);
+            return ERROR;
+        }
+    }
+    laberinto->filas = filas;
+    laberinto->columnas = columnas;
+
+    ///Inicializo todo con paredes
+    for(i=0;i<filas;i++)
+        for(j=0;j<columnas;j++)
+            laberinto->casillas[i][j] = PARED;
+
+    ///Camino recto simple
+    i = entradaFila;
+    j = entradaColumna;
+
+    while(i < salidaFila)
+    {
+        laberinto->casillas[i][j] = CAMINO;
+        i++;
+    }
+    while(j != salidaColumna)
+    {
+        laberinto->casillas[i][j] = CAMINO;
+        j += (salidaColumna > j) ? 1 : -1;
+    }
+    laberinto->casillas[i][j] = CAMINO;
+
+    ///Generar fantasmas
+    for(i=0;i < configuracion->maxFantasmas;i++)
+    {
+        do
+        {
+            fx = rand() % filas;
+            fy = rand() % columnas;
+        }while(laberinto->casillas[fx][fy] != CAMINO);
+        laberinto->casillas[fx][fy] = FANTASMA;
+    }
+
+    ///Generar premios
+    for(i=0;i < configuracion->maxPremios; i++)
+    {
+        do
+        {
+            px = rand() % filas;
+            py = rand() % columnas;
+        }while(laberinto->casillas[px][py] != CAMINO);
+        laberinto->casillas[px][py] = PREMIO;
+    }
+
+    ///Generar vidas extra
+    for(i=0;i < configuracion->maxVidasExtras;i++)
+    {
+        do
+        {
+            vx = rand() % filas;
+            vy = rand() % columnas;
+        }while(laberinto->casillas[vx][vy] != CAMINO);
+        laberinto->casillas[vx][vy] = VIDA_EXTRA;
+    }
+
+    laberinto->casillas[entradaFila][entradaColumna] = ENTRADA;
+    laberinto->casillas[entradaFila+1][entradaColumna] = CAMINO;
+    laberinto->casillas[salidaFila][salidaColumna] = SALIDA;
+
+    return EXITO;
 }
 
 int crearLaberintoArchivo(tLaberinto* laberinto)
@@ -20,7 +108,8 @@ int crearLaberintoArchivo(tLaberinto* laberinto)
     if(!pLab)
         return ERROR;
 
-    while(fgets(linea, sizeof(linea), pLab))    //Cuento filas y columnas
+    ///Cuento filas y columnas
+    while(fgets(linea, sizeof(linea), pLab))
     {
         plinea = linea;
 
@@ -36,11 +125,13 @@ int crearLaberintoArchivo(tLaberinto* laberinto)
 
     fclose(pLab);
 
-    pLab = fopen(ARCHIVO_LABERINTO, "rt");      //Reinicio el archivo
+    ///Reinicio archivo
+    pLab = fopen(ARCHIVO_LABERINTO, "rt");
     if(!pLab)
         return ERROR;
 
-    laberinto->casillas = malloc(cFilas * sizeof(char*));   //Creo matriz Laberinto
+    ///Creo matriz laberinto
+    laberinto->casillas = malloc(cFilas * sizeof(char*));
     if(!laberinto->casillas)
         return ERROR;
 
@@ -59,6 +150,7 @@ int crearLaberintoArchivo(tLaberinto* laberinto)
     laberinto->filas = cFilas;
     laberinto->columnas = cColumnas;
 
+    ///Cargo laberinto
     cFilas = 0;
 
     while(fgets(linea, sizeof(linea), pLab))
