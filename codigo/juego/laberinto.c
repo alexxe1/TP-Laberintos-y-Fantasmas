@@ -6,10 +6,10 @@ int crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion
     size_t filas = configuracion->filas;
     size_t columnas = configuracion->columnas;
 
-    size_t entradaFila = 0;                         //Primera Fila
-    size_t entradaColumna = rand() % columnas;      //Cualquier Columna
-    size_t salidaFila = filas - 1;                  //Ultima Fila
-    size_t salidaColumna = rand() % columnas;       //Cualquier Columna
+    size_t entradaFila = 0;                                     //Primera Fila
+    size_t entradaColumna = 1 + rand() % (columnas - 2);        //Cualquier Columna menos primera o ultima
+    size_t salidaFila = filas - 1;                              //Ultima Fila
+    size_t salidaColumna = 1 + rand() % (columnas - 2);         //Cualquier Columna menos primera o ultima
 
     ///Creo matriz laberinto
     laberinto->casillas = malloc(filas * sizeof(char*));
@@ -35,27 +35,16 @@ int crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion
         for(j=0;j<columnas;j++)
             laberinto->casillas[i][j] = PARED;
 
-    ///Camino aleatorio
-    i = entradaFila;
-    j = entradaColumna;
+    ///Aseguro que no queden aislados Entrada y Salida
+    laberinto->casillas[entradaFila][entradaColumna] = ENTRADA;
+    laberinto->casillas[entradaFila+1][entradaColumna] = CAMINO;
 
-    while(i != salidaFila || j != salidaColumna)
-    {
-        laberinto->casillas[i][j] = CAMINO;
+    laberinto->casillas[salidaFila][salidaColumna] = SALIDA;
+    laberinto->casillas[salidaFila-1][salidaColumna] = CAMINO;
+    laberinto->casillas[salidaFila-2][salidaColumna] = CAMINO;  //(???)
 
-        if(i != salidaFila && j != salidaColumna)
-        {
-            if(rand() % 2)
-                i += (salidaFila > i) ? 1 : -1;
-            else
-                j += (salidaColumna > j) ? 1 : -1;
-        }
-        else if(i != salidaFila)
-            i += (salidaFila > i) ? 1 : -1;
-        else if(j != salidaColumna)
-        j += (salidaColumna > j) ? 1 : -1;
-    }
-    laberinto->casillas[i][j] = CAMINO;
+    ///Genero laberinto a partir de la Entrada
+    generarDFS(laberinto, entradaFila + 1, entradaColumna);
 
     ///Generar fantasmas
     for(i=0;i < configuracion->maxFantasmas;i++)
@@ -90,9 +79,6 @@ int crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion
         laberinto->casillas[vx][vy] = VIDA_EXTRA;
     }
 
-    laberinto->casillas[entradaFila][entradaColumna] = ENTRADA;
-    laberinto->casillas[entradaFila+1][entradaColumna] = CAMINO;
-    laberinto->casillas[salidaFila][salidaColumna] = SALIDA;
 
     return EXITO;
 }
@@ -210,4 +196,36 @@ void modificarCasillaLaberinto(tLaberinto* laberinto, size_t fila, size_t column
         return;
 
     laberinto->casillas[fila][columna] = nuevaCasilla;
+}
+
+void generarDFS(tLaberinto* laberinto, int x, int y)
+{
+    int dir[4][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}};
+    int i, j, aux, nx, ny;
+
+    for(i=3;i>0;i--)
+    {
+        j = rand() % (i + 1);
+
+        aux = dir[i][0];
+        dir[i][0] = dir[j][0];
+        dir[j][0] = aux;
+
+        aux = dir[i][1];
+        dir[i][1] = dir[j][1];
+        dir[j][1] = aux;
+    }
+
+    for(i=0;i<4;i++)
+    {
+        nx = x + 2 * dir[i][0];
+        ny = y + 2 * dir[i][1];
+
+        if(nx > 0 && nx < laberinto->filas - 1 && ny > 0 && ny < laberinto->columnas - 1 && laberinto->casillas[nx][ny] == PARED)
+        {
+            laberinto->casillas[x + dir[i][0]][y + dir[i][1]] = CAMINO;
+            laberinto->casillas[nx][ny] = CAMINO;
+            generarDFS(laberinto, nx, ny);
+        }
+    }
 }
