@@ -9,8 +9,6 @@ int crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion
 
     size_t entradaFila = 0;                                     //Primera Fila
     size_t entradaColumna = 1 + rand() % (columnas - 2);        //Cualquier Columna menos primera o ultima
-    size_t salidaFila = filas - 1;                              //Ultima Fila
-    size_t salidaColumna = 1 + rand() % (columnas - 2);         //Cualquier Columna menos primera o ultima
 
     ///Creo matriz laberinto
     laberinto->casillas = malloc(filas * sizeof(char*));
@@ -36,15 +34,18 @@ int crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion
         for(j=0;j<columnas;j++)
             laberinto->casillas[i][j] = PARED;
 
-    ///Aseguro que no queden aislados Entrada y Salida
+    ///Se coloca la entrada
     laberinto->casillas[entradaFila][entradaColumna] = ENTRADA;
     laberinto->casillas[entradaFila+1][entradaColumna] = CAMINO;
 
-    laberinto->casillas[salidaFila][salidaColumna] = SALIDA;
-    laberinto->casillas[salidaFila-1][salidaColumna] = CAMINO;
-
-    ///Genero laberinto a partir de la Entrada
+    ///Genero laberinto a partir de la Entrada con algoritmo Depth-First Search
     generarDFS(laberinto, entradaFila + 1, entradaColumna);
+
+    ///Genero loops y vueltas
+    agregarLoops(laberinto, PORCENTAJE_LOOPS);
+
+    ///Coloco salida garantizada con algoritmo Breadth-First Search
+    salidaBFS(laberinto, entradaFila + 1, entradaColumna);
 
     ///Generar fantasmas
     cant = 1 + rand() % configuracion->maxFantasmas;
@@ -231,4 +232,120 @@ void generarDFS(tLaberinto* laberinto, int x, int y)
             generarDFS(laberinto, nx, ny);
         }
     }
+}
+
+void agregarLoops(tLaberinto* laberinto, int probabilidad)
+{
+    size_t i, j, filas, columnas;
+    int vecinos;
+
+    filas = laberinto->filas;
+    columnas = laberinto->columnas;
+
+    for(i=1;i<filas - 1;i++)
+    {
+        for(j=1;j<columnas - 1;j++)
+        {
+            if(laberinto->casillas[i][j] == PARED)
+            {
+                vecinos = 0;
+                if(laberinto->casillas[i+1][j] == CAMINO)
+                    vecinos++;
+                if(laberinto->casillas[i-1][j] == CAMINO)
+                    vecinos++;
+                if(laberinto->casillas[i][j+1] == CAMINO)
+                    vecinos++;
+                if(laberinto->casillas[i][j-1] == CAMINO)
+                    vecinos++;
+
+                if(vecinos >= 2 && (rand() % 100) < probabilidad)
+                    laberinto->casillas[i][j] = CAMINO;
+            }
+        }
+    }
+}
+
+void salidaBFS(tLaberinto* laberinto, size_t entradaFila, size_t entradaColumna)
+{
+    int *dist, *visitado, *cola;
+    int dx[4], dy[4];
+    int salidaX, salidaY, maxDist, i, frente, fin, indiceDx, fila, col, d, nuevaX, nuevaY, nuevoInDx;
+    size_t filas, columnas;
+
+    filas = laberinto->filas;
+    columnas = laberinto->columnas;
+
+    dist = (int*)malloc(filas * columnas * sizeof(int));
+    visitado = (int*)malloc(filas * columnas * sizeof(int));
+    cola = (int*)malloc(filas * columnas * sizeof(int));
+
+    if(!dist || !visitado || !cola)
+    {
+        free(dist);
+        free(visitado);
+        free(cola);
+        return;
+    }
+
+    for(i=0;i<(int)(filas * columnas);i++)
+    {
+        dist[i] = -1;
+        visitado[i] = 0;
+    }
+
+    dx[0] = 1;
+    dx[1] = -1;
+    dx[2] = 0;
+    dx[3] = 0;
+
+    dy[0] = 0;
+    dy[1] = 0;
+    dy[2] = 1;
+    dy[3] = -1;
+
+    frente = 0;
+    fin = 0;
+
+    cola[fin++] = entradaFila * columnas + entradaColumna;
+    dist[entradaFila * columnas + entradaColumna] = 0;
+    visitado[entradaFila * columnas + entradaColumna] = 1;
+
+    maxDist = 0;
+    salidaX = entradaFila;
+    salidaY = entradaColumna;
+
+    while(frente < fin)
+    {
+        indiceDx = cola[frente++];
+        fila = indiceDx / columnas;
+        col = indiceDx % columnas;
+        d = dist[indiceDx];
+
+        if(d > maxDist)
+        {
+            maxDist = d;
+            salidaX = fila;
+            salidaY = col;
+        }
+
+        for(i=0;i<4;i++)
+        {
+            nuevaX = fila + dx[i];
+            nuevaY = col + dy[i];
+            nuevoInDx = nuevaX * columnas + nuevaY;
+
+            if(nuevaX >= 0 && nuevaX < (int)filas && nuevaY >= 0 && nuevaY < (int)columnas && laberinto->casillas[nuevaX][nuevaY] == CAMINO && !visitado[nuevoInDx])
+            {
+                cola[fin++] = nuevoInDx;
+                dist[nuevoInDx] = d + 1;
+                visitado[nuevoInDx] = 1;
+            }
+        }
+    }
+
+    laberinto->casillas[salidaX][salidaY] = SALIDA;
+
+    free(dist);
+    free(visitado);
+    free(cola);
 }
