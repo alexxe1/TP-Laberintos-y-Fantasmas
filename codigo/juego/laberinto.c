@@ -2,9 +2,10 @@
 
 int crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion)
 {
-    size_t i,j, fx, fy, px, py, vx, vy;
+    size_t i,j, fantasmaX, fantasmaY, premioX, premioY, VidaX, vidaY;
     size_t filas = configuracion->filas;
     size_t columnas = configuracion->columnas;
+    size_t cant;
 
     size_t entradaFila = 0;                                     //Primera Fila
     size_t entradaColumna = 1 + rand() % (columnas - 2);        //Cualquier Columna menos primera o ultima
@@ -41,42 +42,44 @@ int crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion
 
     laberinto->casillas[salidaFila][salidaColumna] = SALIDA;
     laberinto->casillas[salidaFila-1][salidaColumna] = CAMINO;
-    laberinto->casillas[salidaFila-2][salidaColumna] = CAMINO;  //(???)
 
     ///Genero laberinto a partir de la Entrada
     generarDFS(laberinto, entradaFila + 1, entradaColumna);
 
     ///Generar fantasmas
-    for(i=0;i < configuracion->maxFantasmas;i++)
+    cant = 1 + rand() % configuracion->maxFantasmas;
+    for(i=0;i < cant;i++)
     {
         do
         {
-            fx = rand() % filas;
-            fy = rand() % columnas;
-        }while(laberinto->casillas[fx][fy] != CAMINO);
-        laberinto->casillas[fx][fy] = FANTASMA;
+            fantasmaX = rand() % filas;
+            fantasmaY = rand() % columnas;
+        }while(laberinto->casillas[fantasmaX][fantasmaY] != CAMINO);
+        laberinto->casillas[fantasmaX][fantasmaY] = FANTASMA;
     }
 
     ///Generar premios
-    for(i=0;i < configuracion->maxPremios; i++)
+    cant = 1 + rand() % configuracion->maxPremios;
+    for(i=0;i < cant; i++)
     {
         do
         {
-            px = rand() % filas;
-            py = rand() % columnas;
-        }while(laberinto->casillas[px][py] != CAMINO);
-        laberinto->casillas[px][py] = PREMIO;
+            premioX = rand() % filas;
+            premioY = rand() % columnas;
+        }while(laberinto->casillas[premioX][premioY] != CAMINO);
+        laberinto->casillas[premioX][premioY] = PREMIO;
     }
 
     ///Generar vidas extra
-    for(i=0;i < configuracion->maxVidasExtras;i++)
+    cant = 1 + rand() % configuracion->maxVidasExtras;
+    for(i=0;i < cant;i++)
     {
         do
         {
-            vx = rand() % filas;
-            vy = rand() % columnas;
-        }while(laberinto->casillas[vx][vy] != CAMINO);
-        laberinto->casillas[vx][vy] = VIDA_EXTRA;
+            VidaX = rand() % filas;
+            vidaY = rand() % columnas;
+        }while(laberinto->casillas[VidaX][vidaY] != CAMINO);
+        laberinto->casillas[VidaX][vidaY] = VIDA_EXTRA;
     }
 
 
