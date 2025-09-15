@@ -11,9 +11,6 @@ int crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion
     size_t salidaFila = filas - 1;                  //Ultima Fila
     size_t salidaColumna = rand() % columnas;       //Cualquier Columna
 
-    ///Inicializo semilla random
-    srand((unsigned)time(NULL));
-
     ///Creo matriz laberinto
     laberinto->casillas = malloc(filas * sizeof(char*));
     if(!laberinto->casillas)
@@ -38,18 +35,24 @@ int crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion
         for(j=0;j<columnas;j++)
             laberinto->casillas[i][j] = PARED;
 
-    ///Camino recto simple
+    ///Camino aleatorio
     i = entradaFila;
     j = entradaColumna;
 
-    while(i < salidaFila)
+    while(i != salidaFila || j != salidaColumna)
     {
         laberinto->casillas[i][j] = CAMINO;
-        i++;
-    }
-    while(j != salidaColumna)
-    {
-        laberinto->casillas[i][j] = CAMINO;
+
+        if(i != salidaFila && j != salidaColumna)
+        {
+            if(rand() % 2)
+                i += (salidaFila > i) ? 1 : -1;
+            else
+                j += (salidaColumna > j) ? 1 : -1;
+        }
+        else if(i != salidaFila)
+            i += (salidaFila > i) ? 1 : -1;
+        else if(j != salidaColumna)
         j += (salidaColumna > j) ? 1 : -1;
     }
     laberinto->casillas[i][j] = CAMINO;

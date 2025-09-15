@@ -15,6 +15,9 @@ int empezarJuego()
 //    if (!crearLaberintoArchivo(&laberinto))
 //        return ERROR;
 
+    //Inicializo semilla random
+    srand((unsigned)time(NULL));
+
     // Generamos un laberinto aleatorio
     if(!crearLaberintoAleatorio(&laberinto, &configuracion))
         return ERROR;
