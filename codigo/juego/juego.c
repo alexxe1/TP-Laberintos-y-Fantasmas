@@ -93,6 +93,7 @@ void actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char
     char direccionJugador = NO_DIRECCION;
     tFantasma *fantasma;
     int cantFantasmas = obtenerLongitudVector(&entidades->fantasmas);
+    char mov;
 
     // Acá habría que hacer que espere a que el jugador toque una tecla para mover al personaje
 
@@ -121,7 +122,8 @@ void actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char
                 for(int i = 0; i < cantFantasmas; i++)
                 {
                     fantasma = (tFantasma*)obtenerElementoVector(&entidades->fantasmas,i);
-                    moverFantasma(fantasma,&entidades->jugador,laberinto);
+                    mov = calcularMovimientoFantasma(fantasma,laberinto,&entidades->jugador);
+                    moverFantasma(fantasma,mov,laberinto);
                 }
 
                 // Para hacer: Comprobar si el jugador tocó un fantasma, vida extra o premio.
