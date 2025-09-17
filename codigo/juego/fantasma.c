@@ -21,6 +21,7 @@ void calcularMovimientoFantasma(tFantasma* fantasma, const tLaberinto* laberinto
 }
 
 // Las direcciones están dadas por MACROS en controles.h
+//QUE LINDA MAMA TENES PEDRO
 void moverFantasma(tFantasma* fantasma, char direccion, const tLaberinto* laberinto)
 {
 
