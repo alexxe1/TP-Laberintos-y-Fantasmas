@@ -53,7 +53,7 @@ int crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion
     {
         do
         {
-            fantasmaX = rand() % filas;
+            fantasmaX = filas / 2 + rand() % (filas / 2);               //Evito spawn kill
             fantasmaY = rand() % columnas;
         }while(laberinto->casillas[fantasmaX][fantasmaY] != CAMINO);
         laberinto->casillas[fantasmaX][fantasmaY] = FANTASMA;
