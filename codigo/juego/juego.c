@@ -12,12 +12,12 @@ int empezarJuego()
         return ERROR;
 
     // Cargamos laberinto de un .txt
-//    if (!crearLaberintoArchivo(&laberinto))
-//        return ERROR;
+    if (!crearLaberintoArchivo(&laberinto))
+      return ERROR;
 
     // Generamos un laberinto aleatorio
-    if(!crearLaberintoAleatorio(&laberinto, &configuracion))
-        return ERROR;
+   // if(!crearLaberintoAleatorio(&laberinto, &configuracion))
+     //   return ERROR;
 
     // Inicializar el vector de fantasmas
     if (!crearVector(&entidades.fantasmas, sizeof(tFantasma)))
@@ -91,6 +91,8 @@ void actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char
 {
     char teclaApretada;
     char direccionJugador = NO_DIRECCION;
+    tFantasma *fantasma;
+    int cantFantasmas = obtenerLongitudVector(&entidades->fantasmas);
 
     // Acá habría que hacer que espere a que el jugador toque una tecla para mover al personaje
 
@@ -116,6 +118,11 @@ void actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char
             if (moverJugador(&entidades->jugador, direccionJugador, laberinto) == VERDADERO)
             {
                 // Acá hay que hacer que se muevan los fantasmas
+                for(int i = 0; i < cantFantasmas; i++)
+                {
+                    fantasma = (tFantasma*)obtenerElementoVector(&entidades->fantasmas,i);
+                    moverFantasma(fantasma,&entidades->jugador,laberinto);
+                }
 
                 // Para hacer: Comprobar si el jugador tocó un fantasma, vida extra o premio.
             }
