@@ -17,56 +17,38 @@ void dibujarFantasma(tFantasma* fantasma, size_t fila, size_t columna)
 // Si se necesita, agregar más parametros
 int calcularMovimientoFantasma(tFantasma* fantasma, const tLaberinto* laberinto, const tJugador* jugador)
 {
-    // Acá se tendría que calcular el siguiente movimiento del fantasma según la posición del jugador
+    //matriz que dice en que posicion se moveria
+    int movimiento[4][2] =
+    {
+        {-1,0},
+        {1,0},
+        {0,-1},
+        {0,1}
+    };
+    //con esto voy a ver si tiene pared o no
+    int validas[] = {0,0,0,0};
+
     int nuevaFila = fantasma->filaActual;
     int nuevaColumna = fantasma->columnaActual;
 
-    if((nuevaFila - 1) > 0 && fantasma->filaActual > jugador->filaActual)
+    //reviso cada posicion de la matriz para ver a donde se mueve y veo si tiene pared o se pasa del limite del mapa
+    //si no tiene nada malo me fijo en la posicion en la que estuvo y despues calculo si era derecha, izq etc
+    for(int i = 0; i < 4; i++)
     {
-        nuevaFila--;
-    }
-    else if((nuevaFila + 1) < laberinto->filas)
-    {
-        nuevaFila++;
-    }
+        nuevaFila = fantasma->filaActual + movimiento[i][0];
+        nuevaColumna = fantasma->columnaActual + movimiento[i][1];
 
-    if((nuevaColumna - 1) > 0 && fantasma->columnaActual > jugador->columnaActual)
-    {
-        nuevaColumna--;
-    }
-    else if((nuevaFila + 1) < laberinto->columnas)
-    {
-        nuevaColumna++;
+        if(nuevaFila >= 0 && nuevaFila <= laberinto->filas && nuevaColumna >= 0 &&
+           nuevaColumna <= laberinto->columnas && laberinto->casillas[nuevaFila][nuevaColumna] != '#')
+        {
+            validas[i] = 1;
+        }
     }
     // No permitir moverse si hay una pared
 
 
     // Si después de verificar todo, no hay problema, nos movemos
-    int distFila = abs(jugador->filaActual - nuevaFila);
-    int distCol = abs(jugador->columnaActual - nuevaColumna);
 
-    if(distFila > distCol)
-    {
-        if(nuevaFila > fantasma->filaActual)
-        {
-            return ARRIBA;
-        }
-        else
-        {
-            return ABAJO;
-        }
-    }
-    else
-    {
-        if(nuevaColumna > fantasma->columnaActual)
-        {
-            return DERECHA;
-        }else
-        {
-            return IZQUIERDA;
-        }
-
-    }
 }
 
 // Las direcciones están dadas por MACROS en controles.h
@@ -78,28 +60,28 @@ int moverFantasma(tFantasma* fantasma, char direccion, const tLaberinto* laberin
 
     switch (direccion)
     {
-        case IZQUIERDA:
-            if (nuevaColumna > 0)
-                nuevaColumna--;
-            break;
+    case IZQUIERDA:
+        if (nuevaColumna > 0)
+            nuevaColumna--;
+        break;
 
-        case DERECHA:
-            if (nuevaColumna < laberinto->columnas - 1)
-                nuevaColumna++;
-            break;
+    case DERECHA:
+        if (nuevaColumna < laberinto->columnas - 1)
+            nuevaColumna++;
+        break;
 
-        case ARRIBA:
-            if (nuevaFila > 0)
-                nuevaFila--;
-            break;
+    case ARRIBA:
+        if (nuevaFila > 0)
+            nuevaFila--;
+        break;
 
-        case ABAJO:
-            if (nuevaFila < laberinto->filas - 1)
-                nuevaFila++;
-            break;
+    case ABAJO:
+        if (nuevaFila < laberinto->filas - 1)
+            nuevaFila++;
+        break;
 
-        default: // No nos movemos si no hay dirección
-            return FALSO;
+    default: // No nos movemos si no hay dirección
+        return FALSO;
     }
 
     // No permitir moverse si hay una pared
