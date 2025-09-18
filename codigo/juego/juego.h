@@ -5,7 +5,9 @@
 #include "jugador.h"
 #include "fantasma.h"
 #include "configuracion.h"
+#include "premios_y_vidas.h"
 #include "../estructuras/vector.h"
+#include "../menu/menu.h"
 
 #include <stdio.h> // Para imprimir por consola (temporal)
 #include <windows.h> // Para limpiar la consola (temporal)
@@ -18,9 +20,10 @@ typedef struct
 } tEntidades;
 
 int empezarJuego();
-int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades);
+int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguracion * config);
 void actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char* juegoTerminado);
 void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades);
 int hayFantasma(tVector* vecFantasmas, size_t fila, size_t columna);
+
 
 #endif // JUEGO_H_INCLUDED

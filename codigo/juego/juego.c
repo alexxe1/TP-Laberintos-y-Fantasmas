@@ -27,7 +27,7 @@ int empezarJuego()
     }
 
     // Leemos el laberinto y lo interpretamos para generar todo
-    if (!procesarEntidades(&laberinto, &entidades))
+    if (!procesarEntidades(&laberinto, &entidades, &configuracion))
     {
         destruirLaberinto(&laberinto);
         destruirVector(&entidades.fantasmas);
@@ -52,7 +52,7 @@ int empezarJuego()
     return EXITO;
 }
 
-int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades)
+int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguracion * config)
 {
     size_t i, j;
     size_t filasLaberinto = obtenerFilasLaberinto(laberinto);
@@ -73,7 +73,7 @@ int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades)
                     if (jugadorEncontrado) // Por si hay más de un jugador en el laberinto
                         break;
 
-                    crearJugador(&entidades->jugador, i, j);
+                    crearJugador(&entidades->jugador, config, i, j);
                     jugadorEncontrado = VERDADERO;
                     break;
                 case FANTASMA:
@@ -118,6 +118,14 @@ void actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char
                 // Acá hay que hacer que se muevan los fantasmas
 
                 // Para hacer: Comprobar si el jugador tocó un fantasma, vida extra o premio.
+                if(chequeoPremio (&entidades->jugador, laberinto))
+                {
+                  sumarPuntaje(&entidades->jugador, laberinto);
+                  reemplazarPremio(&entidades->jugador, laberinto);
+                }
+
+
+                //
             }
         }
     }
@@ -150,6 +158,8 @@ void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades)
 
         puts("");
     }
+   puts("");
+   vidasYPuntos(&(entidades->jugador));
 }
 
 int hayFantasma(tVector* vecFantasmas, size_t fila, size_t columna)
@@ -170,3 +180,5 @@ int hayFantasma(tVector* vecFantasmas, size_t fila, size_t columna)
 
     return FALSO;
 }
+
+

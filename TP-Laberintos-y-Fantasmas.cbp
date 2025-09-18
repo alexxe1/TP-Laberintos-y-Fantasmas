@@ -56,6 +56,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="codigo/juego/laberinto.h" />
+		<Unit filename="codigo/juego/premios_y_vidas.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="codigo/juego/premios_y_vidas.h" />
 		<Unit filename="codigo/menu/menu.c">
 			<Option compilerVar="CC" />
 		</Unit>
