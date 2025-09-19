@@ -3,6 +3,7 @@
 int empezarJuego()
 {
     unsigned char juegoTerminado = FALSO;
+    short int estado;
     tLaberinto laberinto;
     tEntidades entidades;
     tConfiguracion configuracion;
@@ -12,12 +13,12 @@ int empezarJuego()
         return ERROR;
 
     // Cargamos laberinto de un .txt
-//    if (!crearLaberintoArchivo(&laberinto))
-//        return ERROR;
+    if (!crearLaberintoArchivo(&laberinto))
+        return ERROR;
 
     // Generamos un laberinto aleatorio
-    if(!crearLaberintoAleatorio(&laberinto, &configuracion))
-        return ERROR;
+//    if(!crearLaberintoAleatorio(&laberinto, &configuracion))
+//        return ERROR;
 
     // Inicializar el vector de fantasmas
     if (!crearVector(&entidades.fantasmas, sizeof(tFantasma)))
@@ -40,11 +41,14 @@ int empezarJuego()
     {
         system("cls");
 
-        actualizarJuego(&laberinto, &entidades, &juegoTerminado);
+        estado = actualizarJuego(&laberinto, &entidades, &juegoTerminado);
         dibujarJuego(&laberinto, &entidades);
 
         Sleep(100);
     }
+
+    if (estado == DERROTA)
+     submenuDerrota(&entidades.jugador);
 
     destruirLaberinto(&laberinto);
     destruirVector(&entidades.fantasmas);
@@ -79,6 +83,7 @@ int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguraci
                 case FANTASMA:
                     crearFantasma(&fantasmaAux, i, j);
                     insertarVector(&entidades->fantasmas, &fantasmaAux);
+                    modificarCasillaLaberinto(laberinto, i, j, CAMINO); // Sacamos la 'F' para que no moleste
                     break;
             }
         }
@@ -87,10 +92,11 @@ int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguraci
     return jugadorEncontrado == VERDADERO;
 }
 
-void actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char* juegoTerminado)
+short int actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char* juegoTerminado)
 {
     char teclaApretada;
     char direccionJugador = NO_DIRECCION;
+    short int estado = CONTINUA;
 
     // Acá habría que hacer que espere a que el jugador toque una tecla para mover al personaje
 
@@ -118,17 +124,42 @@ void actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char
                 // Acá hay que hacer que se muevan los fantasmas
 
                 // Para hacer: Comprobar si el jugador tocó un fantasma, vida extra o premio.
+
+                if (chequeoSalida(&entidades->jugador, laberinto))
+                {
+                  *juegoTerminado = VERDADERO;
+                   estado = VICTORIA;
+                }
+
                 if(chequeoPremio (&entidades->jugador, laberinto))
                 {
                   sumarPuntaje(&entidades->jugador, laberinto);
-                  reemplazarPremio(&entidades->jugador, laberinto);
+                  ponerCamino(&entidades->jugador, laberinto);
                 }
 
+                if (chequeoVida(&entidades->jugador, laberinto))
+                {
+                 sumarVida(&entidades->jugador);
+                 ponerCamino(&entidades->jugador, laberinto);
+                }
 
-                //
+                if(chequeoFantasma(&entidades->fantasmas, &entidades->jugador))
+                {
+                  volverYDescontar(&entidades->jugador);
+
+                  if (esFinPartida(&entidades->jugador))
+                  {
+                   *juegoTerminado = VERDADERO;
+                    estado = DERROTA;
+                  }
+
+                }
+
             }
         }
     }
+
+  return estado;
 }
 
 void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades)
@@ -171,7 +202,7 @@ int hayFantasma(tVector* vecFantasmas, size_t fila, size_t columna)
     {
         fantasma = (tFantasma*)obtenerElementoVector(vecFantasmas, i);
 
-        if (fantasma->filaActual == fila && fantasma->columnaActual == columna)
+        if (fantasma->filaActual == fila && fantasma->columnaActual == columna && !fantasma->tocado)
         {
             dibujarFantasma(fantasma, fila, columna);
             return VERDADERO; // Salimos antes porque ya se dibujó un fantasma
@@ -181,4 +212,19 @@ int hayFantasma(tVector* vecFantasmas, size_t fila, size_t columna)
     return FALSO;
 }
 
+void volverYDescontar(tJugador * jugador)
+{
+ jugador->vidas--;
+ jugador->filaActual = jugador->filaInicial;
+ jugador->columnaActual = jugador->columnaInicial;
+}
 
+unsigned short esFinPartida (tJugador * jugador)
+{
+ return (jugador->vidas <= 0 ? VERDADERO : FALSO);
+}
+
+unsigned short chequeoSalida (tJugador * jugador, tLaberinto * laberinto)
+{
+    return (laberinto->casillas[jugador->filaActual][jugador->columnaActual] == SALIDA ? VERDADERO : FALSO);
+}

@@ -16,10 +16,16 @@
 #define MIN_MID 4
 #define MAX_MID 5
 
+#define TOPE_VIDAS 99
+
 void vidasYPuntos(tJugador * jugador);
 
 unsigned short chequeoPremio (tJugador * jugador, tLaberinto * laberinto);
 void sumarPuntaje (tJugador * jugador, tLaberinto * laberinto);
-void reemplazarPremio (tJugador * jugador, tLaberinto * laberinto);
+
+void ponerCamino (tJugador * jugador, tLaberinto * laberinto);
+
+unsigned short chequeoVida (tJugador * jugador, tLaberinto * laberinto);
+void sumarVida (tJugador * jugador);
 
 #endif // PREMIOS_Y_VIDAS_H_INCLUDED

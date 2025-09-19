@@ -13,6 +13,10 @@
 #include <windows.h> // Para limpiar la consola (temporal)
 #include <conio.h> // Para detectar input (temporal)
 
+#define VICTORIA 1
+#define CONTINUA -1
+#define DERROTA 0
+
 typedef struct
 {
     tJugador jugador;
@@ -21,9 +25,12 @@ typedef struct
 
 int empezarJuego();
 int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguracion * config);
-void actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char* juegoTerminado);
+short int actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char* juegoTerminado);
 void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades);
 int hayFantasma(tVector* vecFantasmas, size_t fila, size_t columna);
 
+void volverYDescontar(tJugador * jugador);
+unsigned short esFinPartida (tJugador * jugador);
+unsigned short chequeoSalida (tJugador * jugador, tLaberinto * laberinto);
 
 #endif // JUEGO_H_INCLUDED

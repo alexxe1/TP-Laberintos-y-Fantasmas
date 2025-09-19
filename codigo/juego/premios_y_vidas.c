@@ -3,8 +3,8 @@
 void vidasYPuntos(tJugador *jugador)
 {
     puts("+------------------------------+");
-    printf("| VIDAS RESTANTES: %-10d |\n", (int)jugador->vidas);
-    printf("| PUNTAJE TOTAL: %-10d   |\n", (int)jugador->puntajeTotal);
+    printf("| VIDAS RESTANTES: %-10d  |\n", (int)jugador->vidas);
+    printf("| PUNTAJE TOTAL: %-10d    |\n", (int)jugador->puntajeTotal);
     puts("+------------------------------+");
 }
 
@@ -17,7 +17,7 @@ void sumarPuntaje (tJugador * jugador, tLaberinto * laberinto)
 {
     unsigned short opcion;
 
-    srand(time(NULL));
+    srand(time(NULL)); /// Para hacer: sacar cuando tenga los cambios de Pedro
 
     opcion = 1 + (rand() % OPCION_LIMITE);
 
@@ -30,7 +30,20 @@ void sumarPuntaje (tJugador * jugador, tLaberinto * laberinto)
 
 }
 
-void reemplazarPremio (tJugador * jugador, tLaberinto * laberinto)
+void ponerCamino (tJugador * jugador, tLaberinto * laberinto)
 {
     laberinto->casillas[jugador->filaActual][jugador->columnaActual] = CAMINO;
 }
+
+unsigned short chequeoVida (tJugador * jugador, tLaberinto * laberinto)
+{
+    return (laberinto->casillas[jugador->filaActual][jugador->columnaActual] == VIDA_EXTRA ? VERDADERO : FALSO);
+}
+
+void sumarVida (tJugador * jugador)
+{
+ if (jugador->vidas < TOPE_VIDAS)
+   jugador->vidas++;
+}
+
+
