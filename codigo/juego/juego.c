@@ -79,6 +79,7 @@ int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades)
                 case FANTASMA:
                     crearFantasma(&fantasmaAux, i, j);
                     insertarVector(&entidades->fantasmas, &fantasmaAux);
+                    modificarCasillaLaberinto(laberinto, i, j, CAMINO); // Sacamos la 'F' para que no moleste
                     break;
             }
         }
