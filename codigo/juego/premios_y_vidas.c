@@ -17,8 +17,6 @@ void sumarPuntaje (tJugador * jugador, tLaberinto * laberinto)
 {
     unsigned short opcion;
 
-    srand(time(NULL)); /// Para hacer: sacar cuando tenga los cambios de Pedro
-
     opcion = 1 + (rand() % OPCION_LIMITE);
 
     if (opcion >= MIN_LOW && opcion <= MAX_LOW)
