@@ -48,7 +48,7 @@ int empezarJuego()
     }
 
     if (estado == DERROTA)
-     submenuDerrota(&entidades.jugador);
+        submenuDerrota(&entidades.jugador);
 
     destruirLaberinto(&laberinto);
     destruirVector(&entidades.fantasmas);
@@ -73,18 +73,18 @@ int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguraci
 
             switch (casilla)
             {
-                case ENTRADA:
-                    if (jugadorEncontrado) // Por si hay más de un jugador en el laberinto
-                        break;
+            case ENTRADA:
+                if (jugadorEncontrado) // Por si hay más de un jugador en el laberinto
+                    break;
 
-                    crearJugador(&entidades->jugador, config, i, j);
-                    jugadorEncontrado = VERDADERO;
-                    break;
-                case FANTASMA:
-                    crearFantasma(&fantasmaAux, i, j);
-                    insertarVector(&entidades->fantasmas, &fantasmaAux);
-                    modificarCasillaLaberinto(laberinto, i, j, CAMINO); // Sacamos la 'F' para que no moleste
-                    break;
+                crearJugador(&entidades->jugador, config, i, j);
+                jugadorEncontrado = VERDADERO;
+                break;
+            case FANTASMA:
+                crearFantasma(&fantasmaAux, i, j);
+                insertarVector(&entidades->fantasmas, &fantasmaAux);
+                modificarCasillaLaberinto(laberinto, i, j, CAMINO); // Sacamos la 'F' para que no moleste
+                break;
             }
         }
     }
@@ -127,31 +127,31 @@ short int actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned
 
                 if (chequeoSalida(&entidades->jugador, laberinto))
                 {
-                  *juegoTerminado = VERDADERO;
-                   estado = VICTORIA;
+                    *juegoTerminado = VERDADERO;
+                    estado = VICTORIA;
                 }
 
                 if(chequeoPremio (&entidades->jugador, laberinto))
                 {
-                  sumarPuntaje(&entidades->jugador, laberinto);
-                  ponerCamino(&entidades->jugador, laberinto);
+                    sumarPuntaje(&entidades->jugador, laberinto);
+                    ponerCamino(&entidades->jugador, laberinto);
                 }
 
                 if (chequeoVida(&entidades->jugador, laberinto))
                 {
-                 sumarVida(&entidades->jugador);
-                 ponerCamino(&entidades->jugador, laberinto);
+                    sumarVida(&entidades->jugador);
+                    ponerCamino(&entidades->jugador, laberinto);
                 }
 
                 if(chequeoFantasma(&entidades->fantasmas, &entidades->jugador))
                 {
-                  volverYDescontar(&entidades->jugador);
+                    volverYDescontar(&entidades->jugador);
 
-                  if (esFinPartida(&entidades->jugador))
-                  {
-                   *juegoTerminado = VERDADERO;
-                    estado = DERROTA;
-                  }
+                    if (esFinPartida(&entidades->jugador))
+                    {
+                        *juegoTerminado = VERDADERO;
+                        estado = DERROTA;
+                    }
 
                 }
 
@@ -159,7 +159,7 @@ short int actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned
         }
     }
 
-  return estado;
+    return estado;
 }
 
 void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades)
@@ -189,8 +189,8 @@ void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades)
 
         puts("");
     }
-   puts("");
-   vidasYPuntos(&(entidades->jugador));
+    puts("");
+    vidasYPuntos(&(entidades->jugador));
 }
 
 int hayFantasma(tVector* vecFantasmas, size_t fila, size_t columna)
@@ -214,14 +214,14 @@ int hayFantasma(tVector* vecFantasmas, size_t fila, size_t columna)
 
 void volverYDescontar(tJugador * jugador)
 {
- jugador->vidas--;
- jugador->filaActual = jugador->filaInicial;
- jugador->columnaActual = jugador->columnaInicial;
+    jugador->vidas--;
+    jugador->filaActual = jugador->filaInicial;
+    jugador->columnaActual = jugador->columnaInicial;
 }
 
 unsigned short esFinPartida (tJugador * jugador)
 {
- return (jugador->vidas <= 0 ? VERDADERO : FALSO);
+    return (jugador->vidas <= 0 ? VERDADERO : FALSO);
 }
 
 unsigned short chequeoSalida (tJugador * jugador, tLaberinto * laberinto)

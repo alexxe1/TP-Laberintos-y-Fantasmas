@@ -28,7 +28,6 @@ int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguraci
 short int actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char* juegoTerminado);
 void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades);
 int hayFantasma(tVector* vecFantasmas, size_t fila, size_t columna);
-
 void volverYDescontar(tJugador * jugador);
 unsigned short esFinPartida (tJugador * jugador);
 unsigned short chequeoSalida (tJugador * jugador, tLaberinto * laberinto);
