@@ -13,15 +13,15 @@ int empezarJuego()
         return ERROR;
 
     // Cargamos laberinto de un .txt
-//    if (!crearLaberintoArchivo(&laberinto))
-//        return ERROR;
+    if (!crearLaberintoArchivo(&laberinto))
+        return ERROR;
 
     //Inicializo semilla random
     srand((unsigned)time(NULL));
 
     // Generamos un laberinto aleatorio
-    if(!crearLaberintoAleatorio(&laberinto, &configuracion))
-        return ERROR;
+//    if(!crearLaberintoAleatorio(&laberinto, &configuracion))
+//        return ERROR;
 
     // Inicializar el vector de fantasmas
     if (!crearVector(&entidades.fantasmas, sizeof(tFantasma)))
@@ -79,7 +79,7 @@ int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguraci
             case ENTRADA:
                 if (jugadorEncontrado) // Por si hay más de un jugador en el laberinto
                     break;
-
+                
                 crearJugador(&entidades->jugador, config, i, j);
                 jugadorEncontrado = VERDADERO;
                 break;

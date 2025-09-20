@@ -38,7 +38,7 @@ int crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion
     laberinto->casillas[entradaFila][entradaColumna] = ENTRADA;
     laberinto->casillas[entradaFila+1][entradaColumna] = CAMINO;
 
-    ///Genero laberinto a partir de la Entrada con algoritmo Depth-First Search
+    ///Genero laberinto a partir de la Entrada con algoritmo Prim
     generarPrim(laberinto, entradaFila + 1, entradaColumna);
 
     ///Genero loops y vueltas
