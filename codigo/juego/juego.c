@@ -8,7 +8,7 @@ int empezarJuego()
     tEntidades entidades;
     tConfiguracion configuracion;
 
-    // Cargamos el archivo de configuración
+    // Cargamos el archivo de configuraciÃ³n
     if (!cargarArchivoConfiguracion(&configuracion))
         return ERROR;
 
@@ -74,9 +74,9 @@ int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguraci
             switch (casilla)
             {
             case ENTRADA:
-                if (jugadorEncontrado) // Por si hay más de un jugador en el laberinto
+                if (jugadorEncontrado) // Por si hay mÃ¡s de un jugador en el laberinto
                     break;
-
+                
                 crearJugador(&entidades->jugador, config, i, j);
                 jugadorEncontrado = VERDADERO;
                 break;
@@ -98,7 +98,7 @@ short int actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned
     char direccionJugador = NO_DIRECCION;
     short int estado = CONTINUA;
 
-    // Acá habría que hacer que espere a que el jugador toque una tecla para mover al personaje
+    // AcÃ¡ habrÃ­a que hacer que espere a que el jugador toque una tecla para mover al personaje
 
     if (_kbhit()) // _kbhit() ya viene con 'conio.h' y se traduce en keyboard hit
     {
@@ -117,13 +117,13 @@ short int actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned
             else if (TECLA_DERECHA(teclaApretada))
                 direccionJugador = DERECHA;
 
-            // Solo si el jugador se mueve, los fantasmas también
-            // Acá en realidad habría que apilar el movimiento del jugador y el de los fantasmas y luego mover
+            // Solo si el jugador se mueve, los fantasmas tambiÃ©n
+            // AcÃ¡ en realidad habrÃ­a que apilar el movimiento del jugador y el de los fantasmas y luego mover
             if (moverJugador(&entidades->jugador, direccionJugador, laberinto) == VERDADERO)
             {
-                // Acá hay que hacer que se muevan los fantasmas
+                // AcÃ¡ hay que hacer que se muevan los fantasmas
 
-                // Para hacer: Comprobar si el jugador tocó un fantasma, vida extra o premio.
+                // Para hacer: Comprobar si el jugador tocÃ³ un fantasma, vida extra o premio.
 
                 if (chequeoSalida(&entidades->jugador, laberinto))
                 {
@@ -179,7 +179,7 @@ void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades)
                 continue;
             }
 
-            // Recorremos el vector de fantasmas para ver si alguno está en esta fila y columna para dibujarlo
+            // Recorremos el vector de fantasmas para ver si alguno estÃ¡ en esta fila y columna para dibujarlo
             if (hayFantasma(&entidades->fantasmas, i, j) == VERDADERO)
                 continue;
 
@@ -205,7 +205,7 @@ int hayFantasma(tVector* vecFantasmas, size_t fila, size_t columna)
         if (fantasma->filaActual == fila && fantasma->columnaActual == columna && !fantasma->tocado)
         {
             dibujarFantasma(fantasma, fila, columna);
-            return VERDADERO; // Salimos antes porque ya se dibujó un fantasma
+            return VERDADERO; // Salimos antes porque ya se dibujÃ³ un fantasma
         }
     }
 
