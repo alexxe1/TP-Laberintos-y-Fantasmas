@@ -5,11 +5,17 @@
 #include "jugador.h"
 #include "fantasma.h"
 #include "configuracion.h"
+#include "premios_y_vidas.h"
 #include "../estructuras/vector.h"
+#include "../menu/menu.h"
 
 #include <stdio.h> // Para imprimir por consola (temporal)
 #include <windows.h> // Para limpiar la consola (temporal)
 #include <conio.h> // Para detectar input (temporal)
+
+#define VICTORIA 1
+#define CONTINUA -1
+#define DERROTA 0
 
 typedef struct
 {
@@ -18,9 +24,12 @@ typedef struct
 } tEntidades;
 
 int empezarJuego();
-int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades);
-void actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char* juegoTerminado);
+int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguracion * config);
+short int actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char* juegoTerminado);
 void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades);
 int hayFantasma(tVector* vecFantasmas, size_t fila, size_t columna);
+void volverYDescontar(tJugador * jugador);
+unsigned short esFinPartida (tJugador * jugador);
+unsigned short chequeoSalida (tJugador * jugador, tLaberinto * laberinto);
 
 #endif // JUEGO_H_INCLUDED

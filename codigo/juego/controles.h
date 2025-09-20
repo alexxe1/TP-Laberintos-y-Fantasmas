@@ -7,6 +7,10 @@
 #define TECLA_ABAJO(c) ((c) == 80 || (c) == 's') // 80 es la clave de abajo
 #define TECLA_DERECHA(c) ((c) == 77 || (c) == 'd') // 77 es la clave de derecha
 
+#define TECLA_ENTER 13
+#define ARR 72
+#define ABA 80
+
 #define NO_DIRECCION -1
 #define DERECHA 0
 #define IZQUIERDA 1

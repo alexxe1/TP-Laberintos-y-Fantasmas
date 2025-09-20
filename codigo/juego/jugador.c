@@ -1,12 +1,14 @@
 #include "jugador.h"
 
-void crearJugador(tJugador* jugador, size_t fila, size_t columna)
+void crearJugador(tJugador* jugador, tConfiguracion * config, size_t fila, size_t columna)
 {
     jugador->filaInicial = fila;
     jugador->columnaInicial = columna;
 
     jugador->filaActual = jugador->filaInicial;
     jugador->columnaActual = jugador->columnaInicial;
+    jugador->puntajeTotal = 0;
+    jugador->vidas = config->vidasIniciales;
 }
 
 void dibujarJugador(tJugador* jugador, size_t fila, size_t columna)
