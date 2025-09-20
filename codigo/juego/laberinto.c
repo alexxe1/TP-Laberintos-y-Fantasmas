@@ -39,7 +39,7 @@ int crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion
     laberinto->casillas[entradaFila+1][entradaColumna] = CAMINO;
 
     ///Genero laberinto a partir de la Entrada con algoritmo Depth-First Search
-    generarDFS(laberinto, entradaFila + 1, entradaColumna);
+    generarPrim(laberinto, entradaFila + 1, entradaColumna);
 
     ///Genero loops y vueltas
     agregarLoops(laberinto, PORCENTAJE_LOOPS);
@@ -202,34 +202,72 @@ void modificarCasillaLaberinto(tLaberinto* laberinto, size_t fila, size_t column
     laberinto->casillas[fila][columna] = nuevaCasilla;
 }
 
-void generarDFS(tLaberinto* laberinto, int x, int y)
+void generarPrim(tLaberinto* laberinto, int entradaFila, int entradaColumna)
 {
-    int dir[4][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}};
-    int i, j, aux, nx, ny;
+    size_t filas = laberinto->filas;
+    size_t columnas = laberinto->columnas;
+    int i, nx, ny, idx, dx[4], dy[4], vecinos;
+    int cantParedes, paredLista[2*filas*columnas];
 
-    for(i=3;i>0;i--)
-    {
-        j = rand() % (i + 1);
+    // Inicializo la celda de entrada
+    laberinto->casillas[entradaFila][entradaColumna] = CAMINO;
 
-        aux = dir[i][0];
-        dir[i][0] = dir[j][0];
-        dir[j][0] = aux;
+    // Inicializo el array de desplazamiento
+    dx[0]=1; dx[1]=-1; dx[2]=0; dx[3]=0;
+    dy[0]=0; dy[1]=0; dy[2]=1; dy[3]= -1;
 
-        aux = dir[i][1];
-        dir[i][1] = dir[j][1];
-        dir[j][1] = aux;
-    }
+    // Lista de paredes (fila y columna alternadas)
+    cantParedes = 0;
 
+    // Agrego paredes adyacentes a la entrada
     for(i=0;i<4;i++)
     {
-        nx = x + 2 * dir[i][0];
-        ny = y + 2 * dir[i][1];
-
-        if(nx > 0 && nx < laberinto->filas - 1 && ny > 0 && ny < laberinto->columnas - 1 && laberinto->casillas[nx][ny] == PARED)
+        nx = entradaFila + dx[i];
+        ny = entradaColumna + dy[i];
+        if(nx>=1 && nx<(int)filas-1 && ny>=1 && ny<(int)columnas-1 && laberinto->casillas[nx][ny]==PARED)
         {
-            laberinto->casillas[x + dir[i][0]][y + dir[i][1]] = CAMINO;
-            laberinto->casillas[nx][ny] = CAMINO;
-            generarDFS(laberinto, nx, ny);
+            paredLista[cantParedes++] = nx;
+            paredLista[cantParedes++] = ny;
+        }
+    }
+
+    // Bucle principal
+    while(cantParedes>0)
+    {
+        // Elegir pared al azar
+        idx = (rand() % (cantParedes/2))*2;
+        nx = paredLista[idx];
+        ny = paredLista[idx+1];
+
+        // Saco la pared de la lista
+        paredLista[idx] = paredLista[cantParedes-2];
+        paredLista[idx+1] = paredLista[cantParedes-1];
+        cantParedes -= 2;
+
+        // Contar vecinos que ya son camino
+        vecinos = 0;
+        for(i=0;i<4;i++)
+        {
+            int ex = nx + dx[i];
+            int ey = ny + dy[i];
+            if(laberinto->casillas[ex][ey]==CAMINO) vecinos++;
+        }
+
+        if(vecinos==1)
+        {
+            laberinto->casillas[nx][ny]=CAMINO;
+
+            // Agregar paredes adyacentes
+            for(i=0;i<4;i++)
+            {
+                int ex = nx + dx[i];
+                int ey = ny + dy[i];
+                if(ex>=1 && ex<(int)filas-1 && ey>=1 && ey<(int)columnas-1 && laberinto->casillas[ex][ey]==PARED)
+                {
+                    paredLista[cantParedes++] = ex;
+                    paredLista[cantParedes++] = ey;
+                }
+            }
         }
     }
 }

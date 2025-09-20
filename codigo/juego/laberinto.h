@@ -37,7 +37,7 @@ size_t obtenerColumnasLaberinto(tLaberinto* laberinto);
 char obtenerCasillaLaberinto(tLaberinto* laberinto, size_t fila, size_t columna);
 void modificarCasillaLaberinto(tLaberinto* laberinto, size_t fila, size_t columna, char nuevaCasilla);
 
-void generarDFS(tLaberinto* laberinto, int x, int y);                               ///Algoritmo para caminos aleatorios
+void generarPrim(tLaberinto* laberinto, int x, int y);                               ///Algoritmo para caminos aleatorios
 void agregarLoops(tLaberinto* laberinto, int probabilidad);                         ///Algoritmo para loops
 void salidaBFS(tLaberinto* laberinto, size_t entradaFila, size_t entradaColumna);   ///Algoritmo para colocar salida
 
