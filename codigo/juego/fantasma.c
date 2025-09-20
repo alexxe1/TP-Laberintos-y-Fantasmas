@@ -47,10 +47,8 @@ char calcularMovimientoFantasma(tFantasma* fantasma, const tLaberinto* laberinto
         nuevaColumna = fantasma->columnaActual + movimiento[i][1];
 
         if(nuevaFila > 0 && nuevaFila < laberinto->filas && nuevaColumna > 0 &&
-                nuevaColumna < laberinto->columnas && laberinto->casillas[nuevaFila][nuevaColumna] != '#'
-                && laberinto->casillas[nuevaFila][nuevaColumna] != 'F')
+                nuevaColumna < laberinto->columnas && laberinto->casillas[nuevaFila][nuevaColumna] != '#')
         {
-            //validas[i] = 1;
             nuevaPos[i][0] = nuevaFila;
             nuevaPos[i][1] = nuevaColumna;
         }
@@ -81,11 +79,6 @@ char calcularMovimientoFantasma(tFantasma* fantasma, const tLaberinto* laberinto
     if (nuevaPos[pos][1] < fantasma->columnaActual) return IZQUIERDA;
 
     return FALSO;
-    // No permitir moverse si hay una pared
-
-
-    // Si después de verificar todo, no hay problema, nos movemos
-
 }
 
 // Las direcciones están dadas por MACROS en controles.h
