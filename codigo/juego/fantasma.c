@@ -7,6 +7,8 @@ void crearFantasma(tFantasma* fantasma, size_t fila, size_t columna)
 
     fantasma->filaActual = fantasma->filaInicial;
     fantasma->columnaActual = fantasma->columnaInicial;
+    fantasma->ultMov = -1;
+
     crearCola(&fantasma->cola);
 
 }
@@ -70,15 +72,33 @@ char calcularMovimientoFantasma(tFantasma* fantasma, const tLaberinto* laberinto
 
         }
     }
-    if (pos == -1) {
+    if (pos == -1)
+    {
 
-             return FALSO; }
+        return FALSO;
+    }
 
 
-    if (nuevaPos[pos][0] > fantasma->filaActual) return ABAJO;
-    if (nuevaPos[pos][0] < fantasma->filaActual) return ARRIBA;
-    if (nuevaPos[pos][1] > fantasma->columnaActual) return DERECHA;
-    if (nuevaPos[pos][1] < fantasma->columnaActual) return IZQUIERDA;
+    if (nuevaPos[pos][0] > fantasma->filaActual)
+    {
+        fantasma->ultMov = ABAJO;
+        return ABAJO;
+    }
+    if (nuevaPos[pos][0] < fantasma->filaActual)
+    {
+        fantasma->ultMov = ARRIBA;
+        return ARRIBA;
+    }
+    if (nuevaPos[pos][1] > fantasma->columnaActual)
+    {
+        fantasma->ultMov = DERECHA;
+        return DERECHA;
+    }
+    if (nuevaPos[pos][1] < fantasma->columnaActual)
+    {
+        fantasma->ultMov = IZQUIERDA;
+        return IZQUIERDA;
+    }
 
     return FALSO;
 }

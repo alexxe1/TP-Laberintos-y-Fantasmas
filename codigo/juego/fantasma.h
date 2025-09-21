@@ -14,6 +14,7 @@ typedef struct
     size_t filaActual;
     size_t columnaActual;
     tCola cola;
+    unsigned ultMov;
 } tFantasma;
 
 void crearFantasma(tFantasma* fantasma, size_t filaInicial, size_t columnaInicial);
