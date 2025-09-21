@@ -1,4 +1,6 @@
 #include "juego.h"
+void imprimirInt(const void* c);
+void imprimirPos(const void *p);
 
 int empezarJuego()
 {
@@ -46,12 +48,28 @@ int empezarJuego()
         Sleep(100);
     }
 
+    registroMov(&entidades.jugador,&entidades.fantasmas);
+
     destruirLaberinto(&laberinto);
     destruirVector(&entidades.fantasmas);
 
     return EXITO;
 }
+void registroMov(tJugador *jugador, tVector *fantasmas)
+{
+    unsigned cantFantasmas = obtenerLongitudVector(fantasmas);
+    tFantasma *fantasma;
+    printf("\njugador\n");
+    mostrarCola(&jugador->cola,imprimirPos);
 
+    for(int i = 0; i < cantFantasmas; i++)
+    {
+        fantasma = obtenerElementoVector(fantasmas,i);
+        printf("\nfantasma %d\n",i+1);
+        mostrarCola(&fantasma->cola,imprimirPos);
+    }
+
+}
 int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades)
 {
     size_t i, j;
@@ -93,7 +111,7 @@ int actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char*
     char direccionJugador = NO_DIRECCION;
     tFantasma *fantasma;
     int cantFantasmas = obtenerLongitudVector(&entidades->fantasmas);
-
+    tPosicion pos;
     char mov;
     int i;
 
@@ -117,17 +135,22 @@ int actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char*
                 direccionJugador = DERECHA;
 
             // Solo si el jugador se mueve, los fantasmas también
-            // Acá en realidad habría que apilar el movimiento del jugador y el de los fantasmas y luego mover
-            ponerEncola(&entidades->jugador.cola,&direccionJugador,sizeof(char));
+            // Acá en realidad habría que encolar el movimiento del jugador y el de los fantasmas y luego mover
+
             if (moverJugador(&entidades->jugador, direccionJugador, laberinto) == VERDADERO)
             {
+                pos = obtenerPosJugador(&entidades->jugador);
+                ponerEncola(&entidades->jugador.cola,&pos,sizeof(pos));
+
                 // Acá hay que hacer que se muevan los fantasmas
                 for( i = 0; i < cantFantasmas; i++)
                 {
                     fantasma = (tFantasma*)obtenerElementoVector(&entidades->fantasmas,i);
                     mov = calcularMovimientoFantasma(fantasma,laberinto,&entidades->jugador);
-                    ponerEncola(&fantasma->cola,&mov,sizeof(char));
-                    sacarDeCola(&fantasma->cola,&mov,sizeof(char));
+                    pos = obtenerPosFantasma(fantasma);
+
+                    ponerEncola(&fantasma->cola,&pos,sizeof(pos));
+
                     moverFantasma(fantasma,mov,laberinto);
                 }
 
@@ -138,6 +161,24 @@ int actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char*
     return 0;
 }
 
+tPosicion obtenerPosJugador(tJugador *jugador)
+{
+    tPosicion pos;
+
+    pos.fila = jugador->filaActual;
+    pos.columna = jugador->columnaActual;
+
+    return pos;
+}
+tPosicion obtenerPosFantasma(tFantasma *fantasma)
+{
+    tPosicion pos;
+
+    pos.fila = fantasma->filaActual;
+    pos.columna = fantasma->columnaActual;
+
+    return pos;
+}
 void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades)
 {
     size_t i, j;
@@ -186,3 +227,15 @@ int hayFantasma(tVector* vecFantasmas, size_t fila, size_t columna)
     return FALSO;
 }
 
+void imprimirInt(const void* c)
+{
+     unsigned char p = *(unsigned char*)c;
+    printf("%u ", (unsigned)p);
+}
+
+void imprimirPos(const void *p)
+{
+    tPosicion *pos = (tPosicion*)p;
+
+    printf("(%u,%u)\t",pos->fila,pos->columna);
+}

@@ -18,10 +18,19 @@ typedef struct
     tVector fantasmas;
 } tEntidades;
 
+typedef struct
+{
+    unsigned fila;
+    unsigned columna;
+}tPosicion;
+
 int empezarJuego();
 int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades);
 int actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char* juegoTerminado);
 void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades);
 int hayFantasma(tVector* vecFantasmas, size_t fila, size_t columna);
+void registroMov(tJugador *jugador, tVector *fantasmas);
+tPosicion obtenerPosJugador(tJugador *jugador);
+tPosicion obtenerPosFantasma(tFantasma *fantasma);
 
 #endif // JUEGO_H_INCLUDED

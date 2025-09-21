@@ -6,7 +6,7 @@
 #include <string.h>
 #include <stddef.h>
 
-#define TAM_COLA 100
+#define TAM_COLA 1000
 #define MIN(a,b) ((a)<(b)?(a):(b))
 typedef struct
 {
@@ -16,6 +16,7 @@ typedef struct
     unsigned tDisp;
 }tCola;
 
+typedef void (*IMP)(const void* e);
 void crearCola(tCola *p);
 void vaciarCola(tCola *p);
 int colaLlena(tCola *p, unsigned cantB);
@@ -24,5 +25,6 @@ int ponerEncola(tCola *p, const void *info, unsigned cantB);
 int sacarDeCola(tCola *p, void *info, unsigned cantB);
 int verPri(const tCola *p, void *info, unsigned tam);
 int archivoACola(tCola *p, const char *nombArch, unsigned tamElem);
+void mostrarCola(tCola *p, IMP imprimir);
 
 #endif // COLA_H_INCLUDED

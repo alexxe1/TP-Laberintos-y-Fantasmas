@@ -29,9 +29,9 @@ int ponerEncola(tCola *p, const void *info, unsigned cantB)
 {
     unsigned ini, fin;
     if(p->tDisp < (cantB + sizeof(unsigned)))
-       {
-           return 0;
-       }
+    {
+        return 0;
+    }
     p->tDisp -= cantB + sizeof(unsigned);
 
     ini =  MIN(sizeof(unsigned), TAM_COLA - p->ult);
@@ -119,7 +119,7 @@ int sacarDeCola(tCola *p, void *info, unsigned cantB)
         p->pri += tamEnCola;
     }
 
-   return 1;
+    return 1;
 }
 
 int verPri(const tCola *p, void *info, unsigned tam)
@@ -167,4 +167,56 @@ int verPri(const tCola *p, void *info, unsigned tam)
     return 1;
 }
 
+void mostrarCola(tCola *p, IMP imprimir)
+{
+    unsigned ini, fin, tamEnCola, priAux, tDispAux;
+    void *info;
+    priAux = p->pri;
+    tDispAux = p->tDisp;
+
+    while(tDispAux < TAM_COLA)
+    {
+        ini =  MIN(sizeof(unsigned), TAM_COLA - priAux);
+        fin = sizeof(unsigned) - ini;
+        tamEnCola = 0;
+
+        if(ini > 0)
+        {
+            memcpy(&tamEnCola, p->cola + priAux, ini);
+        }
+        if(fin > 0)
+        {
+            memcpy(((char*)&tamEnCola) + ini, p->cola, fin);
+            priAux = fin;
+        }
+        else
+        {
+            priAux += ini;
+        }
+        tDispAux += sizeof(unsigned) + tamEnCola;
+
+        info = malloc(tamEnCola);
+
+        ini = MIN(tamEnCola, TAM_COLA - priAux);
+        fin = tamEnCola - ini;
+
+        if(ini > 0)
+        {
+            memcpy(info, p->cola + priAux, ini);
+        }
+        if(fin > 0)
+        {
+            memcpy(((char*)info) + ini, p->cola, fin);
+            priAux = fin;
+        }
+        else
+        {
+            priAux += tamEnCola;
+        }
+
+        imprimir(info);
+    }
+    free(info);
+
+}
 
