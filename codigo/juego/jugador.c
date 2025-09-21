@@ -7,6 +7,7 @@ void crearJugador(tJugador* jugador, size_t fila, size_t columna)
 
     jugador->filaActual = jugador->filaInicial;
     jugador->columnaActual = jugador->columnaInicial;
+    crearCola(&jugador->cola);
 }
 
 void dibujarJugador(tJugador* jugador, size_t fila, size_t columna)

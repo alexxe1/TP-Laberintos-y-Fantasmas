@@ -87,13 +87,15 @@ int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades)
     return jugadorEncontrado == VERDADERO;
 }
 
-void actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char* juegoTerminado)
+int actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char* juegoTerminado)
 {
     char teclaApretada;
     char direccionJugador = NO_DIRECCION;
     tFantasma *fantasma;
     int cantFantasmas = obtenerLongitudVector(&entidades->fantasmas);
+
     char mov;
+    int i;
 
     // Acá habría que hacer que espere a que el jugador toque una tecla para mover al personaje
 
@@ -116,13 +118,16 @@ void actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char
 
             // Solo si el jugador se mueve, los fantasmas también
             // Acá en realidad habría que apilar el movimiento del jugador y el de los fantasmas y luego mover
+            ponerEncola(&entidades->jugador.cola,&direccionJugador,sizeof(char));
             if (moverJugador(&entidades->jugador, direccionJugador, laberinto) == VERDADERO)
             {
                 // Acá hay que hacer que se muevan los fantasmas
-                for(int i = 0; i < cantFantasmas; i++)
+                for( i = 0; i < cantFantasmas; i++)
                 {
                     fantasma = (tFantasma*)obtenerElementoVector(&entidades->fantasmas,i);
                     mov = calcularMovimientoFantasma(fantasma,laberinto,&entidades->jugador);
+                    ponerEncola(&fantasma->cola,&mov,sizeof(char));
+                    sacarDeCola(&fantasma->cola,&mov,sizeof(char));
                     moverFantasma(fantasma,mov,laberinto);
                 }
 
@@ -130,6 +135,7 @@ void actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char
             }
         }
     }
+    return 0;
 }
 
 void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades)
@@ -179,3 +185,4 @@ int hayFantasma(tVector* vecFantasmas, size_t fila, size_t columna)
 
     return FALSO;
 }
+

@@ -4,6 +4,7 @@
 
 #include "laberinto.h"
 #include "jugador.h"
+#include "../estructuras/cola.h"
 #include <stdlib.h>
 
 typedef struct
@@ -12,6 +13,7 @@ typedef struct
     size_t columnaInicial;
     size_t filaActual;
     size_t columnaActual;
+    tCola cola;
 } tFantasma;
 
 void crearFantasma(tFantasma* fantasma, size_t filaInicial, size_t columnaInicial);

@@ -7,6 +7,8 @@ void crearFantasma(tFantasma* fantasma, size_t fila, size_t columna)
 
     fantasma->filaActual = fantasma->filaInicial;
     fantasma->columnaActual = fantasma->columnaInicial;
+    crearCola(&fantasma->cola);
+
 }
 
 void dibujarFantasma(tFantasma* fantasma, size_t fila, size_t columna)

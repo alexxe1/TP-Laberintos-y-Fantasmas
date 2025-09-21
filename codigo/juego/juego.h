@@ -6,6 +6,7 @@
 #include "fantasma.h"
 #include "configuracion.h"
 #include "../estructuras/vector.h"
+#include "../estructuras/cola.h"
 
 #include <stdio.h> // Para imprimir por consola (temporal)
 #include <windows.h> // Para limpiar la consola (temporal)
@@ -19,7 +20,7 @@ typedef struct
 
 int empezarJuego();
 int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades);
-void actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char* juegoTerminado);
+int actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char* juegoTerminado);
 void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades);
 int hayFantasma(tVector* vecFantasmas, size_t fila, size_t columna);
 

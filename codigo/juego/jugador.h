@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "controles.h"
 #include "laberinto.h"
+#include "../estructuras/cola.h"
 
 typedef struct
 {
@@ -11,6 +12,7 @@ typedef struct
     size_t columnaActual;
     size_t filaInicial;
     size_t columnaInicial;
+    tCola cola;
 } tJugador;
 
 void crearJugador(tJugador* jugador, size_t fila, size_t columna);

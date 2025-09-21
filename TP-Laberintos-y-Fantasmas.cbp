@@ -31,6 +31,10 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="codigo/estructuras/cola.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="codigo/estructuras/cola.h" />
 		<Unit filename="codigo/estructuras/vector.c">
 			<Option compilerVar="CC" />
 		</Unit>
