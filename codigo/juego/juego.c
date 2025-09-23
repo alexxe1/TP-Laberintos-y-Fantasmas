@@ -15,15 +15,15 @@ int empezarJuego()
         return ERROR;
 
     // Cargamos laberinto de un .txt
-    if (!crearLaberintoArchivo(&laberinto))
-      return ERROR;
+//    if (!crearLaberintoArchivo(&laberinto))
+  //      return ERROR;
 
     //Inicializo semilla random
     srand((unsigned)time(NULL));
 
     // Generamos un laberinto aleatorio
-   // if(!crearLaberintoAleatorio(&laberinto, &configuracion))
-     //   return ERROR;
+     if(!crearLaberintoAleatorio(&laberinto, &configuracion))
+       return ERROR;
 
     // Inicializar el vector de fantasmas
     if (!crearVector(&entidades.fantasmas, sizeof(tFantasma)))
@@ -166,6 +166,7 @@ short int actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned
                     ponerEncola(&fantasma->cola,&pos,sizeof(pos));
 
                     moverFantasma(fantasma,mov,laberinto);
+                }
                 // Para hacer: Comprobar si el jugador tocó un fantasma, vida extra o premio.
 
                 if (chequeoSalida(&entidades->jugador, laberinto))
@@ -201,8 +202,9 @@ short int actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned
 
             }
         }
+
     }
-     return estado;
+    return estado;
 }
 
 tPosicion obtenerPosJugador(tJugador *jugador)
@@ -215,6 +217,7 @@ tPosicion obtenerPosJugador(tJugador *jugador)
     return pos;
 
 }
+
 tPosicion obtenerPosFantasma(tFantasma *fantasma)
 {
     tPosicion pos;
@@ -224,6 +227,7 @@ tPosicion obtenerPosFantasma(tFantasma *fantasma)
 
     return pos;
 }
+
 void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades)
 {
     size_t i, j;
@@ -276,7 +280,7 @@ int hayFantasma(tVector* vecFantasmas, size_t fila, size_t columna)
 
 void imprimirInt(const void* c)
 {
-     unsigned char p = *(unsigned char*)c;
+    unsigned char p = *(unsigned char*)c;
     printf("%u ", (unsigned)p);
 }
 
@@ -285,6 +289,7 @@ void imprimirPos(const void *p)
     tPosicion *pos = (tPosicion*)p;
 
     printf("(%u,%u)\t",pos->fila,pos->columna);
+}
 
 void volverYDescontar(tJugador * jugador)
 {
