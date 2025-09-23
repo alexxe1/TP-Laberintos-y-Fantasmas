@@ -13,9 +13,11 @@ typedef struct
     size_t filaInicial;
     size_t columnaInicial;
     tCola cola;
+    size_t puntajeTotal;
+    size_t vidas;
 } tJugador;
 
-void crearJugador(tJugador* jugador, size_t fila, size_t columna);
+void crearJugador(tJugador* jugador, tConfiguracion * config, size_t fila, size_t columna);
 void dibujarJugador(tJugador* jugador, size_t fila, size_t columna);
 int moverJugador(tJugador* jugador, char direccion, const tLaberinto* laberinto);
 

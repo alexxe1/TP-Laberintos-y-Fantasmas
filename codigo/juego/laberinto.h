@@ -8,6 +8,7 @@
 
 #define MAX_FILAS 50
 #define MAX_COLUMNAS 50
+#define PORCENTAJE_LOOPS 10 //Porcentaje de caminos que se convierten en loop
 
 #define PARED '#'
 #define CAMINO '.'
@@ -35,5 +36,9 @@ size_t obtenerFilasLaberinto(tLaberinto* laberinto);
 size_t obtenerColumnasLaberinto(tLaberinto* laberinto);
 char obtenerCasillaLaberinto(tLaberinto* laberinto, size_t fila, size_t columna);
 void modificarCasillaLaberinto(tLaberinto* laberinto, size_t fila, size_t columna, char nuevaCasilla);
+
+void generarPrim(tLaberinto* laberinto, int x, int y);                               ///Algoritmo para caminos aleatorios
+void agregarLoops(tLaberinto* laberinto, int probabilidad);                         ///Algoritmo para loops
+void salidaBFS(tLaberinto* laberinto, size_t entradaFila, size_t entradaColumna);   ///Algoritmo para colocar salida
 
 #endif // LABERINTO_H_INCLUDED

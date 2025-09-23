@@ -7,9 +7,12 @@ void crearFantasma(tFantasma* fantasma, size_t fila, size_t columna)
 
     fantasma->filaActual = fantasma->filaInicial;
     fantasma->columnaActual = fantasma->columnaInicial;
+
     fantasma->ultMov = -1;
 
     crearCola(&fantasma->cola);
+
+    fantasma->tocado = FALSO;
 
 }
 
@@ -18,7 +21,7 @@ void dibujarFantasma(tFantasma* fantasma, size_t fila, size_t columna)
     printf("%c", FANTASMA);
 }
 
-// Si se necesita, agregar más parametros
+// Si se necesita, agregar mÃ¡s parametros
 char calcularMovimientoFantasma(tFantasma* fantasma, const tLaberinto* laberinto, const tJugador* jugador)
 {
     //matriz que dice en que posicion se moveria
@@ -160,7 +163,7 @@ char CalculaOpuesto(const char c)
     return opuesto;
 }
 
-// Las direcciones están dadas por MACROS en controles.h
+// Las direcciones estÃ¡n dadas por MACROS en controles.h
 int moverFantasma(tFantasma* fantasma, char direccion, const tLaberinto* laberinto)
 {
 
@@ -189,7 +192,7 @@ int moverFantasma(tFantasma* fantasma, char direccion, const tLaberinto* laberin
             nuevaFila++;
         break;
 
-    default: // No nos movemos si no hay dirección
+    default: // No nos movemos si no hay direcciÃ³n
         return FALSO;
     }
 
@@ -197,9 +200,29 @@ int moverFantasma(tFantasma* fantasma, char direccion, const tLaberinto* laberin
     if (laberinto->casillas[nuevaFila][nuevaColumna] == '#')
         return FALSO;
 
-    // Si después de verificar todo, no hay problema, nos movemos
+    // Si despuÃ©s de verificar todo, no hay problema, nos movemos
     fantasma->filaActual = nuevaFila;
     fantasma->columnaActual = nuevaColumna;
 
     return VERDADERO;
+}
+
+unsigned short chequeoFantasma (tVector* vecFantasmas, tJugador * jugador)
+{
+  size_t i;
+  tFantasma* fantasma;
+  /// Podria haber problemas si dos fantasmas te tocan al mismo tiempo (Solucionable con break o bandera)
+
+    for (i = 0; i < obtenerLongitudVector(vecFantasmas); i++)
+    {
+        fantasma = (tFantasma*)obtenerElementoVector(vecFantasmas, i);
+
+        if (fantasma->filaActual == jugador->filaActual && fantasma->columnaActual == jugador->columnaActual &&
+            !fantasma->tocado)
+        {
+         fantasma->tocado = VERDADERO;
+         return VERDADERO;
+        }
+    }
+  return FALSO;
 }

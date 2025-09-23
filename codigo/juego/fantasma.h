@@ -4,7 +4,10 @@
 
 #include "laberinto.h"
 #include "jugador.h"
+
 #include "../estructuras/cola.h"
+#include "../estructuras/vector.h"
+
 #include <stdlib.h>
 
 typedef struct
@@ -15,13 +18,16 @@ typedef struct
     size_t columnaActual;
     tCola cola;
     char ultMov;
+    unsigned short tocado;
 } tFantasma;
 
 void crearFantasma(tFantasma* fantasma, size_t filaInicial, size_t columnaInicial);
 void dibujarFantasma(tFantasma* fantasma, size_t fila, size_t columna);
+
 char calcularMovimientoFantasma(tFantasma* fantasma, const tLaberinto* laberinto, const tJugador* jugador);
 int moverFantasma(tFantasma* fantasma, char direccion, const tLaberinto* laberinto);
 char CalculaOpuesto(const char c);
 char detectarMov(int mov[][2], int pos);
+unsigned short chequeoFantasma (tVector* vecFantasmas, tJugador * jugador);
 
 #endif // FANTASMA_H_INCLUDED
