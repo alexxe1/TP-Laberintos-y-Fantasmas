@@ -48,7 +48,7 @@ char calcularMovimientoFantasma(tFantasma* fantasma, const tLaberinto* laberinto
     //si no tiene nada malo me fijo en la posicion en la que estuvo y despues calculo si era derecha, izq etc
 
     opuesto = CalculaOpuesto(fantasma->ultMov);
-    //printf("\nopuesto = %d\n", opuesto);
+
     bloqueadas = 0;
 
     for(i = 0; i < 4; i++)
@@ -67,6 +67,8 @@ char calcularMovimientoFantasma(tFantasma* fantasma, const tLaberinto* laberinto
         }
     }
 
+    //busco la menor distancia entre los validos, en caso de que solo tenga una posicion libre para moverse se va a permitir
+    //moverse a la posicion opuesta para evitar bug de fantasma
     for(i = 0; i < 4; i++)
     {
         if(nuevaPos[i][0] != -1  && (detectarMov(movimiento,i) != opuesto || bloqueadas == 3))
