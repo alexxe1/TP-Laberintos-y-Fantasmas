@@ -7,6 +7,9 @@ void crearJugador(tJugador* jugador, tConfiguracion * config, size_t fila, size_
 
     jugador->filaActual = jugador->filaInicial;
     jugador->columnaActual = jugador->columnaInicial;
+
+    crearCola(&jugador->cola);
+
     jugador->puntajeTotal = 0;
     jugador->vidas = config->vidasIniciales;
 }
@@ -43,7 +46,7 @@ int moverJugador(tJugador* jugador, char direccion, const tLaberinto* laberinto)
                 nuevaFila++;
             break;
 
-        default: // No nos movemos si no hay dirección
+        default: // No nos movemos si no hay direcciÃ³n
             return FALSO;
     }
 
@@ -51,7 +54,7 @@ int moverJugador(tJugador* jugador, char direccion, const tLaberinto* laberinto)
     if (laberinto->casillas[nuevaFila][nuevaColumna] == '#')
         return FALSO;
 
-    // Si después de verificar todo, no hay problema, nos movemos
+    // Si despuÃ©s de verificar todo, no hay problema, nos movemos
     jugador->filaActual = nuevaFila;
     jugador->columnaActual = nuevaColumna;
 
