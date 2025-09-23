@@ -22,7 +22,8 @@ void dibujarFantasma(tFantasma* fantasma, size_t fila, size_t columna)
 char calcularMovimientoFantasma(tFantasma* fantasma, const tLaberinto* laberinto, const tJugador* jugador)
 {
     //matriz que dice en que posicion se moveria
-    int i, pos = -1;
+    int i,bloqueadas, pos = -1;
+    char mov,opuesto = -1;
     int distMin = MAX_DIST;
     int movimiento[4][2] =
     {
@@ -45,6 +46,11 @@ char calcularMovimientoFantasma(tFantasma* fantasma, const tLaberinto* laberinto
     int dist;
     //reviso cada posicion de la matriz para ver a donde se mueve y veo si tiene pared o se pasa del limite del mapa
     //si no tiene nada malo me fijo en la posicion en la que estuvo y despues calculo si era derecha, izq etc
+
+    opuesto = CalculaOpuesto(fantasma->ultMov);
+    //printf("\nopuesto = %d\n", opuesto);
+    bloqueadas = 0;
+
     for(i = 0; i < 4; i++)
     {
         nuevaFila = fantasma->filaActual + movimiento[i][0];
@@ -55,12 +61,15 @@ char calcularMovimientoFantasma(tFantasma* fantasma, const tLaberinto* laberinto
         {
             nuevaPos[i][0] = nuevaFila;
             nuevaPos[i][1] = nuevaColumna;
+        }else
+        {
+            bloqueadas++;
         }
     }
 
     for(i = 0; i < 4; i++)
     {
-        if(nuevaPos[i][0] != -1)
+        if(nuevaPos[i][0] != -1  && (detectarMov(movimiento,i) != opuesto || bloqueadas == 3))
         {
             dist = abs(nuevaPos[i][0] - jugador->filaActual) + abs(nuevaPos[i][1] - jugador->columnaActual);
 
@@ -81,26 +90,72 @@ char calcularMovimientoFantasma(tFantasma* fantasma, const tLaberinto* laberinto
 
     if (nuevaPos[pos][0] > fantasma->filaActual)
     {
-        fantasma->ultMov = ABAJO;
-        return ABAJO;
+        mov =  ABAJO;
     }
-    if (nuevaPos[pos][0] < fantasma->filaActual)
+    else if (nuevaPos[pos][0] < fantasma->filaActual)
     {
-        fantasma->ultMov = ARRIBA;
-        return ARRIBA;
+        mov = ARRIBA;
     }
-    if (nuevaPos[pos][1] > fantasma->columnaActual)
+    else if (nuevaPos[pos][1] > fantasma->columnaActual)
     {
-        fantasma->ultMov = DERECHA;
-        return DERECHA;
+        mov = DERECHA;
     }
-    if (nuevaPos[pos][1] < fantasma->columnaActual)
+    else if (nuevaPos[pos][1] < fantasma->columnaActual)
     {
-        fantasma->ultMov = IZQUIERDA;
-        return IZQUIERDA;
+        mov = IZQUIERDA;
     }
+    if(bloqueadas == 4)
+    {
+        mov = CalculaOpuesto(mov);
+    }
+    fantasma->ultMov = mov;
 
-    return FALSO;
+    return mov;
+}
+
+char detectarMov(int mov[][2], int pos)
+{
+    switch(pos)
+    {
+    case 0:
+        return ARRIBA;
+        break;
+    case 1:
+        return ABAJO;
+        break;
+    case 2:
+        return IZQUIERDA;
+        break;
+    case 4:
+        return DERECHA;
+        break;
+    default:
+        return FALSO;
+    }
+}
+
+char CalculaOpuesto(const char c)
+{
+    char opuesto;
+
+    switch(c) {
+    case ARRIBA:
+        opuesto = ABAJO;
+        break;
+    case ABAJO:
+        opuesto = ARRIBA;
+        break;
+    case DERECHA:
+        opuesto = IZQUIERDA;
+        break;
+    case IZQUIERDA:
+        opuesto = DERECHA;
+        break;
+    default:
+        opuesto = FALSO;
+        break;
+    }
+    return opuesto;
 }
 
 // Las direcciones están dadas por MACROS en controles.h
