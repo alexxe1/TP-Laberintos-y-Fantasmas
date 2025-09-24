@@ -64,7 +64,8 @@ char calcularMovimientoFantasma(tFantasma* fantasma, const tLaberinto* laberinto
         {
             nuevaPos[i][0] = nuevaFila;
             nuevaPos[i][1] = nuevaColumna;
-        }else
+        }
+        else
         {
             bloqueadas++;
         }
@@ -143,7 +144,8 @@ char CalculaOpuesto(const char c)
 {
     char opuesto;
 
-    switch(c) {
+    switch(c)
+    {
     case ARRIBA:
         opuesto = ABAJO;
         break;
@@ -209,20 +211,22 @@ int moverFantasma(tFantasma* fantasma, char direccion, const tLaberinto* laberin
 
 unsigned short chequeoFantasma (tVector* vecFantasmas, tJugador * jugador)
 {
-  size_t i;
-  tFantasma* fantasma;
-  /// Podria haber problemas si dos fantasmas te tocan al mismo tiempo (Solucionable con break o bandera)
+    size_t i;
+    tFantasma* fantasma;
 
     for (i = 0; i < obtenerLongitudVector(vecFantasmas); i++)
     {
         fantasma = (tFantasma*)obtenerElementoVector(vecFantasmas, i);
 
-        if (fantasma->filaActual == jugador->filaActual && fantasma->columnaActual == jugador->columnaActual &&
-            !fantasma->tocado)
+        if (!fantasma->tocado)
         {
-         fantasma->tocado = VERDADERO;
-         return VERDADERO;
+            if (fantasma->filaActual == jugador->filaActual && fantasma->columnaActual == jugador->columnaActual)
+            {
+                fantasma->tocado = VERDADERO;
+                return VERDADERO;
+            }
         }
+
     }
-  return FALSO;
+    return FALSO;
 }
