@@ -1,4 +1,5 @@
 #include "juego.h"
+
 void imprimirInt(const void* c);
 void imprimirPos(const void *p);
 
@@ -15,15 +16,15 @@ int empezarJuego()
         return ERROR;
 
     //Cargamos laberinto de un .txt
-    if (!crearLaberintoArchivo(&laberinto))
-        return ERROR;
+//    if (!crearLaberintoArchivo(&laberinto))
+//        return ERROR;
 
     //Inicializo semilla random
     srand((unsigned)time(NULL));
 
     // Generamos un laberinto aleatorio
-//     if(!crearLaberintoAleatorio(&laberinto, &configuracion))
-//       return ERROR;
+    if(!crearLaberintoAleatorio(&laberinto, &configuracion))
+        return ERROR;
 
     // Inicializar el vector de fantasmas
     if (!crearVector(&entidades.fantasmas, sizeof(tFantasma)))
@@ -178,7 +179,8 @@ short int actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned
 
                     ponerEncola(&fantasma->cola,&pos,sizeof(pos));
 
-                    moverFantasma(fantasma,mov,laberinto);
+                    if (mov != FALSO)
+                        moverFantasma(fantasma,mov,laberinto);
                 }
                 // Para hacer: Comprobar si el jugador tocó un fantasma, vida extra o premio.
 
@@ -192,13 +194,13 @@ short int actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned
                 if(chequeoPremio (&entidades->jugador, laberinto))
                 {
                     sumarPuntaje(&entidades->jugador, laberinto);
-                    modificarCasillaLaberinto(laberinto, entidades->jugador.filaActual, entidades->jugador.columnaActual, CAMINO);
+                    modificarCasillaLaberinto(laberinto, entidades->jugador.posActual.fila, entidades->jugador.posActual.columna, CAMINO);
                 }
 
                 if (chequeoVida(&entidades->jugador, laberinto))
                 {
                     sumarVida(&entidades->jugador);
-                    modificarCasillaLaberinto(laberinto, entidades->jugador.filaActual, entidades->jugador.columnaActual, CAMINO);
+                    modificarCasillaLaberinto(laberinto, entidades->jugador.posActual.fila, entidades->jugador.posActual.columna, CAMINO);
                 }
 
                 // Segundo cheque de fantasma, post movimiento de los mismos
@@ -223,27 +225,6 @@ short int actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned
     return CONTINUA;
 }
 
-tPosicion obtenerPosJugador(tJugador *jugador)
-{
-    tPosicion pos;
-
-    pos.fila = jugador->filaActual;
-    pos.columna = jugador->columnaActual;
-
-    return pos;
-
-}
-
-tPosicion obtenerPosFantasma(tFantasma *fantasma)
-{
-    tPosicion pos;
-
-    pos.fila = fantasma->filaActual;
-    pos.columna = fantasma->columnaActual;
-
-    return pos;
-}
-
 void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades)
 {
     size_t i, j;
@@ -255,7 +236,7 @@ void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades)
         for (j = 0; j < columnasLaberinto; j++)
         {
             // Primero el jugador
-            if (entidades->jugador.filaActual == i && entidades->jugador.columnaActual == j)
+            if (entidades->jugador.posActual.fila == i && entidades->jugador.posActual.columna == j)
             {
                 dibujarJugador(&entidades->jugador, i, j);
                 continue;
@@ -292,8 +273,8 @@ void imprimirPos(const void *p)
 void volverYDescontar(tJugador * jugador)
 {
     jugador->vidas--;
-    jugador->filaActual = jugador->filaInicial;
-    jugador->columnaActual = jugador->columnaInicial;
+    jugador->posActual.fila = jugador->posInicial.fila;
+    jugador->posActual.columna = jugador->posInicial.columna;
 }
 
 unsigned short esFinPartida (tJugador * jugador)
@@ -303,5 +284,5 @@ unsigned short esFinPartida (tJugador * jugador)
 
 unsigned short chequeoSalida (tJugador * jugador, tLaberinto * laberinto)
 {
-    return (laberinto->casillas[jugador->filaActual][jugador->columnaActual] == SALIDA ? VERDADERO : FALSO);
+    return (laberinto->casillas[jugador->posActual.fila][jugador->posActual.columna] == SALIDA ? VERDADERO : FALSO);
 }

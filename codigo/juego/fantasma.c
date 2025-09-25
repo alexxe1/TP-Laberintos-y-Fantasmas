@@ -2,11 +2,11 @@
 
 void crearFantasma(tFantasma* fantasma, size_t fila, size_t columna)
 {
-    fantasma->filaInicial = fila;
-    fantasma->columnaInicial = columna;
+    fantasma->posInicial.fila = fila;
+    fantasma->posInicial.columna = columna;
 
-    fantasma->filaActual = fantasma->filaInicial;
-    fantasma->columnaActual = fantasma->columnaInicial;
+    fantasma->posActual.fila = fila;
+    fantasma->posActual.columna = columna;
 
     fantasma->ultMov = -1;
 
@@ -27,7 +27,7 @@ int hayFantasma(tVector* vecFantasmas, size_t fila, size_t columna)
 
         if(!fantasma->tocado)
         {
-            if (fantasma->filaActual == fila && fantasma->columnaActual == columna)
+            if (fantasma->posActual.fila == fila && fantasma->posActual.columna == columna)
             {
                 dibujarFantasma(fantasma, fila, columna);
                 return VERDADERO; // Salimos antes porque ya se dibujó un fantasma
@@ -67,8 +67,9 @@ char calcularMovimientoFantasma(tFantasma* fantasma, const tLaberinto* laberinto
         {-1,-1}
     };
 
-    int nuevaFila = fantasma->filaActual;
-    int nuevaColumna = fantasma->columnaActual;
+    unsigned nuevaFila = fantasma->posActual.fila;
+    unsigned nuevaColumna = fantasma->posActual.columna;
+
     int dist;
     //reviso cada posicion de la matriz para ver a donde se mueve y veo si tiene pared o se pasa del limite del mapa
     //si no tiene nada malo me fijo en la posicion en la que estuvo y despues calculo si era derecha, izq etc
@@ -79,8 +80,8 @@ char calcularMovimientoFantasma(tFantasma* fantasma, const tLaberinto* laberinto
 
     for(i = 0; i < 4; i++)
     {
-        nuevaFila = fantasma->filaActual + movimiento[i][0];
-        nuevaColumna = fantasma->columnaActual + movimiento[i][1];
+        nuevaFila = fantasma->posActual.fila + movimiento[i][0];
+        nuevaColumna = fantasma->posActual.columna + movimiento[i][1];
 
         if(nuevaFila > 0 && nuevaFila < laberinto->filas && nuevaColumna > 0 &&
                 nuevaColumna < laberinto->columnas && laberinto->casillas[nuevaFila][nuevaColumna] != '#')
@@ -100,7 +101,7 @@ char calcularMovimientoFantasma(tFantasma* fantasma, const tLaberinto* laberinto
     {
         if(nuevaPos[i][0] != -1  && (detectarMov(movimiento,i) != opuesto || bloqueadas == 3))
         {
-            dist = abs(nuevaPos[i][0] - jugador->filaActual) + abs(nuevaPos[i][1] - jugador->columnaActual);
+            dist = abs(nuevaPos[i][0] - jugador->posActual.fila) + abs(nuevaPos[i][1] - jugador->posActual.columna);
 
             if(dist < distMin)
             {
@@ -117,19 +118,19 @@ char calcularMovimientoFantasma(tFantasma* fantasma, const tLaberinto* laberinto
     }
 
 
-    if (nuevaPos[pos][0] > fantasma->filaActual)
+    if (nuevaPos[pos][0] > fantasma->posActual.fila)
     {
         mov =  ABAJO;
     }
-    else if (nuevaPos[pos][0] < fantasma->filaActual)
+    else if (nuevaPos[pos][0] < fantasma->posActual.fila)
     {
         mov = ARRIBA;
     }
-    else if (nuevaPos[pos][1] > fantasma->columnaActual)
+    else if (nuevaPos[pos][1] > fantasma->posActual.columna)
     {
         mov = DERECHA;
     }
-    else if (nuevaPos[pos][1] < fantasma->columnaActual)
+    else if (nuevaPos[pos][1] < fantasma->posActual.columna)
     {
         mov = IZQUIERDA;
     }
@@ -192,8 +193,8 @@ char CalculaOpuesto(const char c)
 int moverFantasma(tFantasma* fantasma, char direccion, const tLaberinto* laberinto)
 {
 
-    size_t nuevaFila = fantasma->filaActual;
-    size_t nuevaColumna = fantasma->columnaActual;
+    size_t nuevaFila = fantasma->posActual.fila;
+    size_t nuevaColumna = fantasma->posActual.columna;
 
     switch (direccion)
     {
@@ -226,8 +227,8 @@ int moverFantasma(tFantasma* fantasma, char direccion, const tLaberinto* laberin
         return FALSO;
 
     // Si después de verificar todo, no hay problema, nos movemos
-    fantasma->filaActual = nuevaFila;
-    fantasma->columnaActual = nuevaColumna;
+    fantasma->posActual.fila = nuevaFila;
+    fantasma->posActual.columna = nuevaColumna;
 
     return VERDADERO;
 }
@@ -243,7 +244,7 @@ unsigned short chequeoFantasma (tVector* vecFantasmas, tJugador * jugador)
 
         if (!fantasma->tocado)
         {
-            if (fantasma->filaActual == jugador->filaActual && fantasma->columnaActual == jugador->columnaActual)
+            if (fantasma->posActual.fila == jugador->posActual.fila && fantasma->posActual.columna == jugador->posActual.columna)
             {
                 fantasma->tocado = VERDADERO;
                 return VERDADERO;
@@ -252,4 +253,14 @@ unsigned short chequeoFantasma (tVector* vecFantasmas, tJugador * jugador)
 
     }
     return FALSO;
+}
+
+tPosicion obtenerPosFantasma(tFantasma *fantasma)
+{
+    tPosicion pos;
+
+    pos.fila = fantasma->posActual.fila;
+    pos.columna = fantasma->posActual.columna;
+
+    return pos;
 }
