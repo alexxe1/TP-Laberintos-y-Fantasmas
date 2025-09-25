@@ -2,8 +2,8 @@
 #define JUEGO_H_INCLUDED
 
 #include "laberinto.h"
-#include "jugador.h"
 #include "fantasma.h"
+#include "jugador.h"
 #include "configuracion.h"
 #include "premios_y_vidas.h"
 #include "../estructuras/vector.h"
@@ -20,6 +20,8 @@
 #define CONTINUA -1
 #define DERROTA 0
 
+
+
 typedef struct
 {
     tJugador jugador;
@@ -33,18 +35,14 @@ typedef struct
 }tPosicion;
 
 int empezarJuego();
-
-
 void registroMov(tJugador *jugador, tVector *fantasmas);
-tPosicion obtenerPosJugador(tJugador *jugador);
-tPosicion obtenerPosFantasma(tFantasma *fantasma);
 int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguracion * config);
 short int actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char* juegoTerminado);
 void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades);
-int hayFantasma(tVector* vecFantasmas, size_t fila, size_t columna);
 void volverYDescontar(tJugador * jugador);
 unsigned short esFinPartida (tJugador * jugador);
 unsigned short chequeoSalida (tJugador * jugador, tLaberinto * laberinto);
-
+tPosicion obtenerPosFantasma(tFantasma *fantasma);
+tPosicion obtenerPosJugador(tJugador *jugador);
 
 #endif // JUEGO_H_INCLUDED

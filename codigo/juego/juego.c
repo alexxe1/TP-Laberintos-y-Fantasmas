@@ -275,28 +275,6 @@ void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades)
     vidasYPuntos(&(entidades->jugador));
 }
 
-int hayFantasma(tVector* vecFantasmas, size_t fila, size_t columna)
-{
-    size_t i;
-    tFantasma* fantasma;
-
-    for (i = 0; i < obtenerLongitudVector(vecFantasmas); i++)
-    {
-        fantasma = (tFantasma*)obtenerElementoVector(vecFantasmas, i);
-
-        if(!fantasma->tocado)
-        {
-            if (fantasma->filaActual == fila && fantasma->columnaActual == columna)
-            {
-                dibujarFantasma(fantasma, fila, columna);
-                return VERDADERO; // Salimos antes porque ya se dibujó un fantasma
-            }
-        }
-
-    }
-
-    return FALSO;
-}
 
 void imprimirInt(const void* c)
 {
