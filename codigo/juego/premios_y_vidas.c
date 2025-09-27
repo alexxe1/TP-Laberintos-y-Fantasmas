@@ -10,7 +10,7 @@ void vidasYPuntos(tJugador *jugador)
 
 unsigned short chequeoPremio (tJugador * jugador, tLaberinto * laberinto)
 {
-    return (laberinto->casillas[jugador->filaActual][jugador->columnaActual] == PREMIO ? VERDADERO : FALSO);
+    return (laberinto->casillas[jugador->posActual.fila][jugador->posActual.columna] == PREMIO ? VERDADERO : FALSO);
 }
 
 void sumarPuntaje (tJugador * jugador, tLaberinto * laberinto)
@@ -28,14 +28,9 @@ void sumarPuntaje (tJugador * jugador, tLaberinto * laberinto)
 
 }
 
-void ponerCamino (tJugador * jugador, tLaberinto * laberinto)
-{
-    laberinto->casillas[jugador->filaActual][jugador->columnaActual] = CAMINO;
-}
-
 unsigned short chequeoVida (tJugador * jugador, tLaberinto * laberinto)
 {
-    return (laberinto->casillas[jugador->filaActual][jugador->columnaActual] == VIDA_EXTRA ? VERDADERO : FALSO);
+    return (laberinto->casillas[jugador->posActual.fila][jugador->posActual.columna] == VIDA_EXTRA ? VERDADERO : FALSO);
 }
 
 void sumarVida (tJugador * jugador)

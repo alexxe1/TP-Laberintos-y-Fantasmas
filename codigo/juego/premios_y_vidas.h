@@ -20,11 +20,11 @@
 
 void vidasYPuntos(tJugador * jugador);
 
+/// Funciones para premios
 unsigned short chequeoPremio (tJugador * jugador, tLaberinto * laberinto);
 void sumarPuntaje (tJugador * jugador, tLaberinto * laberinto);
 
-void ponerCamino (tJugador * jugador, tLaberinto * laberinto);
-
+/// Funciones para vidas extra
 unsigned short chequeoVida (tJugador * jugador, tLaberinto * laberinto);
 void sumarVida (tJugador * jugador);
 

@@ -44,6 +44,7 @@
 		</Unit>
 		<Unit filename="codigo/juego/configuracion.h" />
 		<Unit filename="codigo/juego/controles.h" />
+		<Unit filename="codigo/juego/entidades.h" />
 		<Unit filename="codigo/juego/fantasma.c">
 			<Option compilerVar="CC" />
 		</Unit>
