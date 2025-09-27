@@ -167,8 +167,6 @@ short int actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned
                         return DERROTA;
 //                        estado = DERROTA;
                     }
-
-
                 }
                 // Ac� hay que hacer que se muevan los fantasmas
                 for( i = 0; i < cantFantasmas; i++)
@@ -178,9 +176,7 @@ short int actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned
                     pos = obtenerPosFantasma(fantasma);
 
                     ponerEncola(&fantasma->cola,&pos,sizeof(pos));
-
-                    if (mov != FALSO)
-                        moverFantasma(fantasma,mov,laberinto);
+                    moverFantasma(fantasma,mov,laberinto);
                 }
                 // Para hacer: Comprobar si el jugador tocó un fantasma, vida extra o premio.
 
@@ -214,8 +210,6 @@ short int actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned
                         return DERROTA;
 //
                     }
-
-
                 }
 
             }
