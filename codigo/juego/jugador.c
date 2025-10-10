@@ -1,6 +1,6 @@
 #include "jugador.h"
 
-void crearJugador(tJugador* jugador, tConfiguracion * config, size_t fila, size_t columna)
+void crearJugador(tJugador* jugador, tConfiguracion* configuracion, size_t fila, size_t columna)
 {
     jugador->posInicial.fila = fila;
     jugador->posInicial.columna = columna;
@@ -8,10 +8,10 @@ void crearJugador(tJugador* jugador, tConfiguracion * config, size_t fila, size_
     jugador->posActual.fila = fila;
     jugador->posActual.columna = columna;
 
-    crearCola(&jugador->cola);
-
     jugador->puntajeTotal = 0;
-    jugador->vidas = config->vidasIniciales;
+    jugador->vidas = configuracion->vidasIniciales > TOPE_VIDAS ? TOPE_VIDAS : configuracion->vidasIniciales;
+
+    crearCola(&jugador->colaMovimientos);
 }
 
 void dibujarJugador(tJugador* jugador, size_t fila, size_t columna)
@@ -19,7 +19,7 @@ void dibujarJugador(tJugador* jugador, size_t fila, size_t columna)
     printf("%c", JUGADOR);
 }
 
-int moverJugador(tJugador* jugador, char direccion, const tLaberinto* laberinto)
+char moverJugador(tJugador* jugador, char direccion, const tLaberinto* laberinto)
 {
     size_t nuevaFila = jugador->posActual.fila;
     size_t nuevaColumna = jugador->posActual.columna;
@@ -61,7 +61,7 @@ int moverJugador(tJugador* jugador, char direccion, const tLaberinto* laberinto)
     return VERDADERO;
 }
 
-tPosicion obtenerPosJugador(tJugador *jugador)
+tPosicion obtenerPosJugador(tJugador* jugador)
 {
     tPosicion pos;
 
@@ -69,5 +69,4 @@ tPosicion obtenerPosJugador(tJugador *jugador)
     pos.columna = jugador->posActual.columna;
 
     return pos;
-
 }

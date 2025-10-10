@@ -10,7 +10,6 @@
 #include "../estructuras/vector.h"
 #include "../estructuras/cola.h"
 
-
 #include "../menu/menu.h"
 
 #include <stdio.h> // Para imprimir por consola (temporal)
@@ -18,16 +17,17 @@
 #include <conio.h> // Para detectar input (temporal)
 
 #define VICTORIA 1
-#define CONTINUA -1
-#define DERROTA 0
+#define CONTINUA 0
+#define DERROTA -1
 
 int empezarJuego();
-void registroMov(tJugador *jugador, tVector *fantasmas);
-int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguracion * config);
-short int actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char* juegoTerminado);
+char actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char* juegoTerminado);
+void mostrarMovimientos(tJugador* jugador, tVector* fantasmas);
+int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguracion* configuracion);
 void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades);
-void volverYDescontar(tJugador * jugador);
-unsigned short esFinPartida (tJugador * jugador);
-unsigned short chequeoSalida (tJugador * jugador, tLaberinto * laberinto);
+void volverYDescontar(tJugador* jugador);
+char esFinPartida(tJugador* jugador);
+char chequeoSalida(tJugador* jugador, tLaberinto* laberinto);
+void imprimirPosicion(const void* p);
 
 #endif // JUEGO_H_INCLUDED

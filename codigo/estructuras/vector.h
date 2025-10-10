@@ -16,7 +16,7 @@ typedef struct
 } tVector;
 
 int crearVector(tVector* vec, size_t tamElemento);
-void destruirVector(tVector* vec);
+void vaciarVector(tVector* vec);
 int redimensionarVector(tVector* vec, size_t nuevoTam);
 
 size_t obtenerLongitudVector(tVector* vec);

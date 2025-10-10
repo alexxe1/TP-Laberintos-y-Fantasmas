@@ -97,7 +97,6 @@ int crearLaberintoArchivo(tLaberinto* laberinto)
     size_t i, j;
     size_t contado = 0;
 
-
     if(!pLab)
         return ERROR;
 
@@ -120,26 +119,35 @@ int crearLaberintoArchivo(tLaberinto* laberinto)
 
     ///Reinicio archivo
     pLab = fopen(ARCHIVO_LABERINTO, "rt");
+
     if(!pLab)
         return ERROR;
 
     ///Creo matriz laberinto
     laberinto->casillas = malloc(cFilas * sizeof(char*));
+
     if(!laberinto->casillas)
+    {
+        fclose(pLab);
         return ERROR;
+    }
 
     for(i=0;i<cFilas;i++)
     {
         laberinto->casillas[i] = malloc(cColumnas * sizeof(char));
+
         if(!laberinto->casillas[i])
         {
             for(j=0;j<i;j++)
                 free(laberinto->casillas[j]);
+
             free(laberinto->casillas);
 
+            fclose(pLab);
             return ERROR;
         }
     }
+
     laberinto->filas = cFilas;
     laberinto->columnas = cColumnas;
 

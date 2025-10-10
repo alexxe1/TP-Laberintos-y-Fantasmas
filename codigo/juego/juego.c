@@ -1,12 +1,9 @@
 #include "juego.h"
 
-void imprimirInt(const void* c);
-void imprimirPos(const void *p);
-
 int empezarJuego()
 {
     unsigned char juegoTerminado = FALSO;
-    short int estado;
+    char estado;
     tLaberinto laberinto;
     tEntidades entidades;
     tConfiguracion configuracion;
@@ -15,21 +12,25 @@ int empezarJuego()
     if (!cargarArchivoConfiguracion(&configuracion))
         return ERROR;
 
-    //Cargamos laberinto de un .txt
-//    if (!crearLaberintoArchivo(&laberinto))
-//        return ERROR;
+    // Cargamos laberinto de un .txt
+    // if (!crearLaberintoArchivo(&laberinto))
+    //     return ERROR;
 
-    //Inicializo semilla random
+    // Inicializo semilla random
     srand((unsigned)time(NULL));
 
     // Generamos un laberinto aleatorio
-    if(!crearLaberintoAleatorio(&laberinto, &configuracion))
+    if (!crearLaberintoAleatorio(&laberinto, &configuracion))
+    {
+        puts("ERROR: Hubo un error al crear el laberinto aleatorio");
         return ERROR;
+    }
 
     // Inicializar el vector de fantasmas
     if (!crearVector(&entidades.fantasmas, sizeof(tFantasma)))
     {
         destruirLaberinto(&laberinto);
+        puts("ERROR: No hay memoria para crear los fantasmas");
         return ERROR;
     }
 
@@ -37,12 +38,12 @@ int empezarJuego()
     if (!procesarEntidades(&laberinto, &entidades, &configuracion))
     {
         destruirLaberinto(&laberinto);
-        destruirVector(&entidades.fantasmas);
+        vaciarVector(&entidades.fantasmas);
         puts("ERROR: No se encontro una entrada en el laberinto");
         return ERROR;
     }
 
-    /// Bucle principal
+    // Bucle principal
     while (!juegoTerminado)
     {
         system("cls");
@@ -50,38 +51,147 @@ int empezarJuego()
         estado = actualizarJuego(&laberinto, &entidades, &juegoTerminado);
         dibujarJuego(&laberinto, &entidades);
 
-        Sleep(100);
+        /*
+        if (estado == VICTORIA)
+        {
+            // Esperar entrada | Mostar menú transición
+            llenarLaberinto();
+            vaciarVector();
+            procesarEntidades();
+        }
+        */
+
+        Sleep(300);
     }
 
-
-    registroMov(&entidades.jugador,&entidades.fantasmas);
+    mostrarMovimientos(&entidades.jugador, &entidades.fantasmas);
 
     if (estado == DERROTA)
         submenuDerrota(&entidades.jugador);
 
     destruirLaberinto(&laberinto);
-    destruirVector(&entidades.fantasmas);
+    vaciarVector(&entidades.fantasmas);
 
     return EXITO;
 }
-void registroMov(tJugador *jugador, tVector *fantasmas)
+
+char actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char* juegoTerminado)
 {
-    unsigned cantFantasmas = obtenerLongitudVector(fantasmas);
-    tFantasma *fantasma;
-    printf("\njugador\n");
-    mostrarCola(&jugador->cola,imprimirPos);
+    char teclaApretada;
+    char direccionJugador = NO_DIRECCION;
+    size_t cantFantasmas = obtenerLongitudVector(&entidades->fantasmas);
+    char mov;
+    int i;
+    tPosicion pos;
+    tFantasma* fantasma;
 
+    if (!_kbhit()) // Si no se apretó nada, no perdemos tiempo en calcular nada
+        return CONTINUA;
 
-    for(int i = 0; i < cantFantasmas; i++)
+    teclaApretada = _getch();
+
+    if (teclaApretada == SALIR_DEL_JUEGO) // Si se va a cerrar el juego, tampoco deberíamos calcular nada más
     {
-        fantasma = obtenerElementoVector(fantasmas,i);
-        printf("\nfantasma %d\n",i+1);
-        mostrarCola(&fantasma->cola,imprimirPos);
+        *juegoTerminado = VERDADERO;
+        return CONTINUA;
     }
 
+    // Determinamos la dirección del jugador
+    if (TECLA_ABAJO(teclaApretada))
+        direccionJugador = ABAJO;
+    else if (TECLA_ARRIBA(teclaApretada))
+        direccionJugador = ARRIBA;
+    else if (TECLA_IZQUIERDA(teclaApretada))
+        direccionJugador = IZQUIERDA;
+    else if (TECLA_DERECHA(teclaApretada))
+        direccionJugador = DERECHA;
+
+    // Si no se mueve el jugador, no hay que calcular nada
+    if (moverJugador(&entidades->jugador, direccionJugador, laberinto) == FALSO)
+        return CONTINUA;
+
+    pos = obtenerPosJugador(&entidades->jugador);
+    ponerEncola(&entidades->jugador.colaMovimientos, &pos, sizeof(pos));
+
+    // Primer chequeo de fantasmas, post movimiento jugador
+    if (chequeoFantasma(&entidades->fantasmas, &entidades->jugador))
+    {
+        volverYDescontar(&entidades->jugador);
+
+        if (esFinPartida(&entidades->jugador))
+        {
+            *juegoTerminado = VERDADERO;
+            return DERROTA;
+        }
+    }
+
+    for (i = 0; i < cantFantasmas; i++)
+    {
+        fantasma = (tFantasma*)obtenerElementoVector(&entidades->fantasmas,i);
+        mov = calcularMovimientoFantasma(fantasma,laberinto,&entidades->jugador);
+        pos = obtenerPosFantasma(fantasma);
+
+        if (fantasma->tocado == FALSO)
+        {
+            ponerEncola(&fantasma->colaMovimientos, &pos, sizeof(pos));
+            moverFantasma(fantasma, mov, laberinto);
+        }
+    }
+
+    if (chequeoSalida(&entidades->jugador, laberinto))
+    {
+        *juegoTerminado = VERDADERO; // Esto es temporal, hay que sacarlo
+        // Acá debería de generarse un laberinto aleatorio nuevo (o volver a cargar el que ya está si es un .txt)
+        return VICTORIA;
+    }
+
+    if (chequeoPremio(&entidades->jugador, laberinto))
+    {
+        sumarPuntaje(&entidades->jugador, laberinto);
+        modificarCasillaLaberinto(laberinto, entidades->jugador.posActual.fila, entidades->jugador.posActual.columna, CAMINO);
+    }
+
+    if (chequeoVida(&entidades->jugador, laberinto))
+    {
+        sumarVida(&entidades->jugador);
+        modificarCasillaLaberinto(laberinto, entidades->jugador.posActual.fila, entidades->jugador.posActual.columna, CAMINO);
+    }
+
+    // Segundo chequeo de fantasma, post movimiento de los mismos
+    if(chequeoFantasma(&entidades->fantasmas, &entidades->jugador))
+    {
+        volverYDescontar(&entidades->jugador);
+
+        if (esFinPartida(&entidades->jugador))
+        {
+            *juegoTerminado = VERDADERO;
+            return DERROTA;
+        }
+    }
+
+    return CONTINUA;
 }
 
-int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguracion * config)
+void mostrarMovimientos(tJugador* jugador, tVector* fantasmas)
+{
+    size_t cantFantasmas = obtenerLongitudVector(fantasmas);
+    tFantasma* fantasma;
+
+    puts("\nMovimientos del jugador:");
+    mostrarCola(&jugador->colaMovimientos, imprimirPosicion);
+
+    puts("\n");
+
+    for (int i = 0; i < cantFantasmas; i++)
+    {
+        fantasma = obtenerElementoVector(fantasmas,i);
+        printf("Movimientos del fantasma %d:\n", i + 1);
+        mostrarCola(&fantasma->colaMovimientos, imprimirPosicion);
+        puts("\n");
+    }
+}
+
+int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguracion* configuracion)
 {
     size_t i, j;
     size_t filasLaberinto = obtenerFilasLaberinto(laberinto);
@@ -102,9 +212,10 @@ int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguraci
                 if (jugadorEncontrado) // Por si hay más de un jugador en el laberinto
                     break;
 
-                crearJugador(&entidades->jugador, config, i, j);
+                crearJugador(&entidades->jugador, configuracion, i, j);
                 jugadorEncontrado = VERDADERO;
                 break;
+
             case FANTASMA:
                 crearFantasma(&fantasmaAux, i, j);
                 insertarVector(&entidades->fantasmas, &fantasmaAux);
@@ -117,113 +228,13 @@ int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguraci
     return jugadorEncontrado == VERDADERO;
 }
 
-
-short int actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char* juegoTerminado)
-{
-    char teclaApretada;
-    char direccionJugador = NO_DIRECCION;
-    tFantasma *fantasma;
-    int cantFantasmas = obtenerLongitudVector(&entidades->fantasmas);
-    tPosicion pos;
-    char mov;
-    int i;
-
-    // Acá habría que hacer que espere a que el jugador toque una tecla para mover al personaje
-
-    if (_kbhit()) // _kbhit() ya viene con 'conio.h' y se traduce en keyboard hit
-    {
-        teclaApretada = _getch();
-
-        if (teclaApretada == 'q')
-            *juegoTerminado = VERDADERO;
-        else
-        {
-            if (TECLA_ABAJO(teclaApretada))
-                direccionJugador = ABAJO;
-            else if (TECLA_ARRIBA(teclaApretada))
-                direccionJugador = ARRIBA;
-            else if (TECLA_IZQUIERDA(teclaApretada))
-                direccionJugador = IZQUIERDA;
-            else if (TECLA_DERECHA(teclaApretada))
-                direccionJugador = DERECHA;
-
-
-            // Solo si el jugador se mueve, los fantasmas tambi�n
-            // Ac� en realidad habr�a que encolar el movimiento del jugador y el de los fantasmas y luego mover
-
-            if (moverJugador(&entidades->jugador, direccionJugador, laberinto) == VERDADERO)
-            {
-                pos = obtenerPosJugador(&entidades->jugador);
-                ponerEncola(&entidades->jugador.cola,&pos,sizeof(pos));
-
-                // Primer chequeo de fantasmas, post movimiento jugador
-                if(chequeoFantasma(&entidades->fantasmas, &entidades->jugador))
-                {
-                    volverYDescontar(&entidades->jugador);
-
-                    if (esFinPartida(&entidades->jugador))
-                    {
-                        *juegoTerminado = VERDADERO;
-                        return DERROTA;
-//                        estado = DERROTA;
-                    }
-                }
-                // Ac� hay que hacer que se muevan los fantasmas
-                for( i = 0; i < cantFantasmas; i++)
-                {
-                    fantasma = (tFantasma*)obtenerElementoVector(&entidades->fantasmas,i);
-                    mov = calcularMovimientoFantasma(fantasma,laberinto,&entidades->jugador);
-                    pos = obtenerPosFantasma(fantasma);
-
-                    ponerEncola(&fantasma->cola,&pos,sizeof(pos));
-                    moverFantasma(fantasma,mov,laberinto);
-                }
-                // Para hacer: Comprobar si el jugador tocó un fantasma, vida extra o premio.
-
-                if (chequeoSalida(&entidades->jugador, laberinto))
-                {
-                    *juegoTerminado = VERDADERO;
-                    return VICTORIA;
-
-                }
-
-                if(chequeoPremio (&entidades->jugador, laberinto))
-                {
-                    sumarPuntaje(&entidades->jugador, laberinto);
-                    modificarCasillaLaberinto(laberinto, entidades->jugador.posActual.fila, entidades->jugador.posActual.columna, CAMINO);
-                }
-
-                if (chequeoVida(&entidades->jugador, laberinto))
-                {
-                    sumarVida(&entidades->jugador);
-                    modificarCasillaLaberinto(laberinto, entidades->jugador.posActual.fila, entidades->jugador.posActual.columna, CAMINO);
-                }
-
-                // Segundo cheque de fantasma, post movimiento de los mismos
-                if(chequeoFantasma(&entidades->fantasmas, &entidades->jugador))
-                {
-                    volverYDescontar(&entidades->jugador);
-
-                    if (esFinPartida(&entidades->jugador))
-                    {
-                        *juegoTerminado = VERDADERO;
-                        return DERROTA;
-//
-                    }
-                }
-
-            }
-        }
-
-    }
-    return CONTINUA;
-}
-
 void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades)
 {
     size_t i, j;
     size_t filasLaberinto = obtenerFilasLaberinto(laberinto);
     size_t columnasLaberinto = obtenerColumnasLaberinto(laberinto);
+    tFantasma* fantasmaEncontrado;
+    int indiceFantasmaEncontrado = -1;
 
     for (i = 0; i < filasLaberinto; i++)
     {
@@ -237,8 +248,14 @@ void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades)
             }
 
             // Recorremos el vector de fantasmas para ver si alguno está en esta fila y columna para dibujarlo
-            if (hayFantasma(&entidades->fantasmas, i, j) == VERDADERO)
+            indiceFantasmaEncontrado = buscarFantasmaEnPosicion(&entidades->fantasmas, i, j);
+
+            if (indiceFantasmaEncontrado != -1)
+            {
+                fantasmaEncontrado = (tFantasma*)obtenerElementoVector(&entidades->fantasmas, indiceFantasmaEncontrado);
+                dibujarFantasma(fantasmaEncontrado, i, j);
                 continue;
+            }
 
             // Dibujamos el resto del laberinto
             printf("%c", obtenerCasillaLaberinto(laberinto, i, j));
@@ -246,37 +263,31 @@ void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades)
 
         puts("");
     }
+
     puts("");
-    vidasYPuntos(&(entidades->jugador));
+    mostrarVidasYPuntos(&entidades->jugador);
 }
 
-
-void imprimirInt(const void* c)
+void volverYDescontar(tJugador* jugador)
 {
-    unsigned char p = *(unsigned char*)c;
-    printf("%u ", (unsigned)p);
-}
-
-void imprimirPos(const void *p)
-{
-    tPosicion *pos = (tPosicion*)p;
-
-    printf("(%u,%u)\t",pos->fila,pos->columna);
-}
-
-void volverYDescontar(tJugador * jugador)
-{
-    jugador->vidas--;
     jugador->posActual.fila = jugador->posInicial.fila;
     jugador->posActual.columna = jugador->posInicial.columna;
+    jugador->vidas--;
 }
 
-unsigned short esFinPartida (tJugador * jugador)
+char esFinPartida(tJugador* jugador)
 {
     return (jugador->vidas <= 0 ? VERDADERO : FALSO);
 }
 
-unsigned short chequeoSalida (tJugador * jugador, tLaberinto * laberinto)
+char chequeoSalida(tJugador* jugador, tLaberinto * laberinto)
 {
     return (laberinto->casillas[jugador->posActual.fila][jugador->posActual.columna] == SALIDA ? VERDADERO : FALSO);
+}
+
+void imprimirPosicion(const void *p)
+{
+    tPosicion* pos = (tPosicion*)p;
+
+    printf("(%zu, %zu)\t", pos->fila, pos->columna);
 }

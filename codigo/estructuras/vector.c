@@ -16,7 +16,7 @@ int crearVector(tVector* vec, size_t tamElemento)
     return EXITO;
 }
 
-void destruirVector(tVector* vec)
+void vaciarVector(tVector* vec)
 {
     free(vec->datos);
 

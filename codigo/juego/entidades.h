@@ -4,34 +4,34 @@
 #include "../estructuras/vector.h"
 #include "../estructuras/cola.h"
 
-/// Estructura para controlar posiciones
+// Estructura para controlar posiciones
 typedef struct
 {
-    unsigned fila;
-    unsigned columna;
+    size_t fila;
+    size_t columna;
 } tPosicion;
 
-/// Estructura correspondiente al jugador
+// Estructura correspondiente al jugador
 typedef struct
 {
-    tPosicion posActual;
     tPosicion posInicial;
-    tCola cola;
+    tPosicion posActual;
+    tCola colaMovimientos;
     size_t puntajeTotal;
     size_t vidas;
 } tJugador;
 
-/// Estructura correspondiente al fantasma
+// Estructura correspondiente al fantasma
 typedef struct
 {
-    tPosicion posActual;
     tPosicion posInicial;
-    tCola cola;
-    char ultMov;
-    unsigned short tocado;
+    tPosicion posActual;
+    tCola colaMovimientos;
+    char ultimoMovimiento;
+    char tocado;
 } tFantasma;
 
-/// Estructura para englobar todas las entidades
+// Estructura para englobar todas las entidades
 typedef struct
 {
     tJugador jugador;

@@ -8,35 +8,29 @@ void crearFantasma(tFantasma* fantasma, size_t fila, size_t columna)
     fantasma->posActual.fila = fila;
     fantasma->posActual.columna = columna;
 
-    fantasma->ultMov = -1;
-
-    crearCola(&fantasma->cola);
-
+    fantasma->ultimoMovimiento = -1;
     fantasma->tocado = FALSO;
 
+    crearCola(&fantasma->colaMovimientos);
 }
 
-int hayFantasma(tVector* vecFantasmas, size_t fila, size_t columna)
+int buscarFantasmaEnPosicion(tVector* vecFantasmas, size_t fila, size_t columna)
 {
     size_t i;
+    size_t cantFantasmas = obtenerLongitudVector(vecFantasmas);
     tFantasma* fantasma;
 
-    for (i = 0; i < obtenerLongitudVector(vecFantasmas); i++)
+    for (i = 0; i < cantFantasmas; i++)
     {
         fantasma = (tFantasma*)obtenerElementoVector(vecFantasmas, i);
 
-        if(!fantasma->tocado)
+        if(!fantasma->tocado && fantasma->posActual.fila == fila && fantasma->posActual.columna == columna)
         {
-            if (fantasma->posActual.fila == fila && fantasma->posActual.columna == columna)
-            {
-                dibujarFantasma(fantasma, fila, columna);
-                return VERDADERO; // Salimos antes porque ya se dibujó un fantasma
-            }
+            return i;
         }
-
     }
 
-    return FALSO;
+    return -1;
 }
 
 void dibujarFantasma(tFantasma* fantasma, size_t fila, size_t columna)
@@ -44,13 +38,16 @@ void dibujarFantasma(tFantasma* fantasma, size_t fila, size_t columna)
     printf("%c", FANTASMA);
 }
 
-// Si se necesita, agregar más parametros
 char calcularMovimientoFantasma(tFantasma* fantasma, const tLaberinto* laberinto, const tJugador* jugador)
 {
-    //matriz que dice en que posicion se moveria
-    int i,bloqueadas, pos = -1;
-    char mov,opuesto = -1;
+    int i, bloqueadas, pos = -1;
+    char mov, opuesto = -1;
     int distMin = MAX_DIST;
+    size_t nuevaFila = fantasma->posActual.fila;
+    size_t nuevaColumna = fantasma->posActual.columna;
+    int dist;
+
+    // Matriz que dicta las posiciones disponibles
     int movimiento[4][2] =
     {
         {-1,0},
@@ -58,7 +55,8 @@ char calcularMovimientoFantasma(tFantasma* fantasma, const tLaberinto* laberinto
         {0,-1},
         {0,1}
     };
-    //con esto voy a ver si tiene pared o no
+
+    // Con esto voy a ver si tiene pared o no
     int nuevaPos[4][2] =
     {
         {-1,-1},
@@ -67,15 +65,10 @@ char calcularMovimientoFantasma(tFantasma* fantasma, const tLaberinto* laberinto
         {-1,-1}
     };
 
-    unsigned nuevaFila = fantasma->posActual.fila;
-    unsigned nuevaColumna = fantasma->posActual.columna;
+    // Reviso cada posicion de la matriz para ver a donde se mueve y veo si tiene pared o se pasa del limite del mapa
+    // Si no tiene nada malo me fijo en la posicion en la que estuvo y despues calculo si era derecha, izquierda, etc
 
-    int dist;
-    //reviso cada posicion de la matriz para ver a donde se mueve y veo si tiene pared o se pasa del limite del mapa
-    //si no tiene nada malo me fijo en la posicion en la que estuvo y despues calculo si era derecha, izq etc
-
-    opuesto = CalculaOpuesto(fantasma->ultMov);
-
+    opuesto = calculaOpuesto(fantasma->ultimoMovimiento);
     bloqueadas = 0;
 
     for(i = 0; i < 4; i++)
@@ -83,8 +76,11 @@ char calcularMovimientoFantasma(tFantasma* fantasma, const tLaberinto* laberinto
         nuevaFila = fantasma->posActual.fila + movimiento[i][0];
         nuevaColumna = fantasma->posActual.columna + movimiento[i][1];
 
-        if(nuevaFila > 0 && nuevaFila < laberinto->filas && nuevaColumna > 0 &&
-                nuevaColumna < laberinto->columnas && laberinto->casillas[nuevaFila][nuevaColumna] != '#')
+        if(nuevaFila > 0 &&
+                nuevaFila < laberinto->filas &&
+                nuevaColumna > 0 &&
+                nuevaColumna < laberinto->columnas &&
+                laberinto->casillas[nuevaFila][nuevaColumna] != '#')
         {
             nuevaPos[i][0] = nuevaFila;
             nuevaPos[i][1] = nuevaColumna;
@@ -95,15 +91,16 @@ char calcularMovimientoFantasma(tFantasma* fantasma, const tLaberinto* laberinto
         }
     }
 
-    //busco la menor distancia entre los validos, en caso de que solo tenga una posicion libre para moverse se va a permitir
-    //moverse a la posicion opuesta para evitar bug de fantasma
-    for(i = 0; i < 4; i++)
+    // Busco la menor distancia entre los validos, en caso de que solo tenga una posicion libre
+    // para moverse se va a permitir moverse a la posicion opuesta para evitar bug de fantasma
+
+    for (i = 0; i < 4; i++)
     {
-        if(nuevaPos[i][0] != -1  && (detectarMov(movimiento,i) != opuesto || bloqueadas == 3))
+        if (nuevaPos[i][0] != -1  && (detectarMov(movimiento,i) != opuesto || bloqueadas == 3))
         {
             dist = abs(nuevaPos[i][0] - jugador->posActual.fila) + abs(nuevaPos[i][1] - jugador->posActual.columna);
 
-            if(dist < distMin)
+            if (dist < distMin)
             {
                 distMin = dist;
                 pos = i;
@@ -111,16 +108,15 @@ char calcularMovimientoFantasma(tFantasma* fantasma, const tLaberinto* laberinto
 
         }
     }
+
     if (pos == -1)
     {
-
         return FALSO;
     }
 
-
     if (nuevaPos[pos][0] > fantasma->posActual.fila)
     {
-        mov =  ABAJO;
+        mov = ABAJO;
     }
     else if (nuevaPos[pos][0] < fantasma->posActual.fila)
     {
@@ -134,65 +130,52 @@ char calcularMovimientoFantasma(tFantasma* fantasma, const tLaberinto* laberinto
     {
         mov = IZQUIERDA;
     }
-    if(bloqueadas == 4)
+    if (bloqueadas == 4)
     {
-        mov = CalculaOpuesto(mov);
+        mov = calculaOpuesto(mov);
     }
-    fantasma->ultMov = mov;
+
+    fantasma->ultimoMovimiento = mov;
 
     return mov;
 }
 
 char detectarMov(int mov[][2], int pos)
 {
-    switch(pos)
-    {
-    case 0:
+    if (pos == 0)
         return ARRIBA;
-        break;
-    case 1:
+
+    if (pos == 1)
         return ABAJO;
-        break;
-    case 2:
+
+    if (pos == 2)
         return IZQUIERDA;
-        break;
-    case 4:
+
+    if (pos == 4)
         return DERECHA;
-        break;
-    default:
-        return FALSO;
-    }
+
+    return FALSO;
 }
 
-char CalculaOpuesto(const char c)
+char calculaOpuesto(const char c)
 {
-    char opuesto;
+    if (c == ARRIBA)
+        return ABAJO;
 
-    switch(c)
-    {
-    case ARRIBA:
-        opuesto = ABAJO;
-        break;
-    case ABAJO:
-        opuesto = ARRIBA;
-        break;
-    case DERECHA:
-        opuesto = IZQUIERDA;
-        break;
-    case IZQUIERDA:
-        opuesto = DERECHA;
-        break;
-    default:
-        opuesto = FALSO;
-        break;
-    }
-    return opuesto;
+    if (c == ABAJO)
+        return ARRIBA;
+
+    if (c == DERECHA)
+        return IZQUIERDA;
+
+    if (c == IZQUIERDA)
+        return DERECHA;
+
+    return FALSO;
 }
 
-// Las direcciones están dadas por MACROS en controles.h
-int moverFantasma(tFantasma* fantasma, char direccion, const tLaberinto* laberinto)
+char moverFantasma(tFantasma* fantasma, char direccion, const tLaberinto* laberinto)
 {
-
     size_t nuevaFila = fantasma->posActual.fila;
     size_t nuevaColumna = fantasma->posActual.columna;
 
@@ -233,25 +216,23 @@ int moverFantasma(tFantasma* fantasma, char direccion, const tLaberinto* laberin
     return VERDADERO;
 }
 
-unsigned short chequeoFantasma (tVector* vecFantasmas, tJugador * jugador)
+char chequeoFantasma(tVector* vecFantasmas, tJugador* jugador)
 {
     size_t i;
+    size_t cantFantasmas = obtenerLongitudVector(vecFantasmas);
     tFantasma* fantasma;
 
-    for (i = 0; i < obtenerLongitudVector(vecFantasmas); i++)
+    for (i = 0; i < cantFantasmas; i++)
     {
         fantasma = (tFantasma*)obtenerElementoVector(vecFantasmas, i);
 
-        if (!fantasma->tocado)
+        if (!fantasma->tocado && fantasma->posActual.fila == jugador->posActual.fila && fantasma->posActual.columna == jugador->posActual.columna)
         {
-            if (fantasma->posActual.fila == jugador->posActual.fila && fantasma->posActual.columna == jugador->posActual.columna)
-            {
-                fantasma->tocado = VERDADERO;
-                return VERDADERO;
-            }
+            fantasma->tocado = VERDADERO;
+            return VERDADERO;
         }
-
     }
+
     return FALSO;
 }
 

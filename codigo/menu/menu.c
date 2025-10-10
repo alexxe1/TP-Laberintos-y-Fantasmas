@@ -7,7 +7,7 @@ void mostrarMenu()
     empezarJuego();
 }
 
-unsigned short submenuDerrota (tJugador * jugador)
+unsigned short submenuDerrota(tJugador* jugador)
 {
     unsigned short opcion = FALSO; // 0 = primera opción, 1 = segunda opción
     int tecla;

@@ -11,6 +11,10 @@
 #define ARR 72
 #define ABA 80
 
+// Atajos
+#define SALIR_DEL_JUEGO 'q'
+
+// Direcciones
 #define NO_DIRECCION -1
 #define DERECHA 0
 #define IZQUIERDA 1

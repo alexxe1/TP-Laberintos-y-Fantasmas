@@ -26,6 +26,7 @@ typedef struct
     char** casillas;
     size_t filas;
     size_t columnas;
+    int nivel;
 } tLaberinto;
 
 int crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion);

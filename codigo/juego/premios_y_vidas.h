@@ -6,26 +6,26 @@
 #include "laberinto.h"
 #include "jugador.h"
 
-#define PUNTAJE_LOW 150
-#define PUNTAJE_MID 300
-#define PUNTAJE_HIGH 700
+#define PUNTAJE_BAJO 150
+#define PUNTAJE_MEDIO 300
+#define PUNTAJE_ALTO 700
 
 #define OPCION_LIMITE 7
-#define MIN_LOW 1
-#define MAX_LOW 3
-#define MIN_MID 4
-#define MAX_MID 5
+#define MIN_BAJO 1
+#define MAX_BAJO 3
+#define MIN_MEDIO 4
+#define MAX_MEDIO 5
 
 #define TOPE_VIDAS 99
 
-void vidasYPuntos(tJugador * jugador);
+void mostrarVidasYPuntos(tJugador* jugador);
 
-/// Funciones para premios
-unsigned short chequeoPremio (tJugador * jugador, tLaberinto * laberinto);
-void sumarPuntaje (tJugador * jugador, tLaberinto * laberinto);
+// Funciones para premios
+char chequeoPremio(tJugador* jugador, tLaberinto* laberinto);
+void sumarPuntaje(tJugador* jugador, tLaberinto* laberinto);
 
-/// Funciones para vidas extra
-unsigned short chequeoVida (tJugador * jugador, tLaberinto * laberinto);
-void sumarVida (tJugador * jugador);
+// Funciones para vidas extra
+char chequeoVida(tJugador* jugador, tLaberinto* laberinto);
+void sumarVida(tJugador* jugador);
 
 #endif // PREMIOS_Y_VIDAS_H_INCLUDED
