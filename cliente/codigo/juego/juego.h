@@ -29,5 +29,6 @@ void volverYDescontar(tJugador* jugador);
 char esFinPartida(tJugador* jugador);
 char chequeoSalida(tJugador* jugador, tLaberinto* laberinto);
 void imprimirPosicion(const void* p);
+char procesarMovimientos(tEntidades* entidades, tLaberinto* laberinto, unsigned char* juegoTerminado);
 
 #endif // JUEGO_H_INCLUDED
