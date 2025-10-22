@@ -23,11 +23,12 @@
 int empezarJuego();
 char actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char* juegoTerminado);
 void mostrarMovimientos(tJugador* jugador, tVector* fantasmas);
-int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguracion* configuracion);
+int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguracion* configuracion, const char* nombJug, unsigned iteracion);
 void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades);
 void volverYDescontar(tJugador* jugador);
 char esFinPartida(tJugador* jugador);
 char chequeoSalida(tJugador* jugador, tLaberinto* laberinto);
 void imprimirPosicion(const void* p);
+char continuarJugando (tLaberinto * laberinto, tConfiguracion * configuracion, tEntidades * entidades, unsigned nivel);
 
 #endif // JUEGO_H_INCLUDED

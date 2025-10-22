@@ -1,6 +1,6 @@
 #include "laberinto.h"
 
-int crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion)
+int crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion, unsigned nivel)
 {
     size_t i,j, fantasmaX, fantasmaY, premioX, premioY, VidaX, vidaY;
     size_t filas = configuracion->filas;
@@ -83,6 +83,7 @@ int crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion
         laberinto->casillas[VidaX][vidaY] = VIDA_EXTRA;
     }
 
+    laberinto->nivel = nivel;
 
     return EXITO;
 }
