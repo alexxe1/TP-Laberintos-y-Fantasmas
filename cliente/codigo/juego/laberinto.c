@@ -48,7 +48,10 @@ int crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion
     salidaBFS(laberinto, entradaFila + 1, entradaColumna);
 
     ///Generar fantasmas
-    cant = 1 + rand() % configuracion->maxFantasmas;
+    cant = 0;
+    if(configuracion->maxFantasmas > 0)
+        cant = 1 + rand() % configuracion->maxFantasmas;
+
     for(i=0;i < cant;i++)
     {
         do
@@ -60,7 +63,9 @@ int crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion
     }
 
     ///Generar premios
-    cant = 1 + rand() % configuracion->maxPremios;
+    cant = 0;
+    if(configuracion->maxPremios > 0)
+        cant = 1 + rand() % configuracion->maxPremios;
     for(i=0;i < cant; i++)
     {
         do
@@ -72,7 +77,9 @@ int crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion
     }
 
     ///Generar vidas extra
-    cant = 1 + rand() % configuracion->maxVidasExtras;
+    cant = 0;
+    if(configuracion->maxVidasExtras > 0)
+        cant = 1 + rand() % configuracion->maxVidasExtras;
     for(i=0;i < cant;i++)
     {
         do
