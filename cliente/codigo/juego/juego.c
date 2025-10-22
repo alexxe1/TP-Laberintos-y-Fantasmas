@@ -9,7 +9,6 @@ int empezarJuego()
     tLaberinto laberinto;
     tEntidades entidades;
     tConfiguracion configuracion;
-    char r;
 
     // Cargamos el archivo de configuración
     if (!cargarArchivoConfiguracion(&configuracion))
@@ -70,19 +69,15 @@ int empezarJuego()
 
         if (estado == VICTORIA)
         {
-            r = submenuTransicion(&entidades.jugador, laberinto.nivel);
-            if (r == VERDADERO)
-            {
-              system("pause");
-              juegoTerminado = VERDADERO;
-            }
-
+            estado = submenuTransicion(&entidades.jugador, laberinto.nivel);
+            if (estado == VERDADERO)
+                juegoTerminado = VERDADERO;
             else
             {
                 destruirLaberinto(&laberinto);
                 vaciarVector(&entidades.fantasmas);
                 iteracion++;
-
+                /*
                 if (!crearLaberintoAleatorio(&laberinto, &configuracion, iteracion))
                 {
                     puts("ERROR: Hubo un error al crear el laberinto aleatorio");
@@ -102,17 +97,16 @@ int empezarJuego()
                     vaciarVector(&entidades.fantasmas);
                     puts("ERROR: No se encontro una entrada en el laberinto");
                     return ERROR;
-                }
-                /* if(!continuarJugando(&laberinto, &configuracion, &entidades, iteracion))
-                   return ERROR;*/
+                }*/
+              if(!continuarJugando(&laberinto, &configuracion, &entidades, iteracion))
+                   return ERROR;
             }
         }
         Sleep(300);
     }
 
     mostrarMovimientos(&entidades.jugador, &entidades.fantasmas);
-
-    submenuDerrota(&entidades.jugador);
+    submenuDerrota(&entidades.jugador, laberinto.nivel);
 
     destruirLaberinto(&laberinto);
     vaciarVector(&entidades.fantasmas);
@@ -347,23 +341,29 @@ void imprimirPosicion(const void *p)
 }
 
 
-/*
+
 char continuarJugando (tLaberinto * laberinto, tConfiguracion * configuracion, tEntidades * entidades, unsigned nivel)
 {
-   if (!crearLaberintoAleatorio(laberinto, configuracion, nivel))
+    if (!crearLaberintoAleatorio(laberinto, configuracion, nivel))
     {
         puts("ERROR: Hubo un error al crear el laberinto aleatorio");
         return ERROR;
     }
 
-   if (!procesarEntidades(laberinto, entidades, configuracion, NULL, nivel))
+    if (!crearVector(&entidades->fantasmas, sizeof(tFantasma)))
+    {
+        destruirLaberinto(laberinto);
+        puts("ERROR: No hay memoria para crear los fantasmas");
+        return ERROR;
+    }
+    if (!procesarEntidades(laberinto, entidades, configuracion, NULL, nivel))
     {
         destruirLaberinto(laberinto);
         vaciarVector(&entidades->fantasmas);
         puts("ERROR: No se encontro una entrada en el laberinto");
         return ERROR;
     }
-*/
-//return EXITO;
-//}
+
+    return EXITO;
+}
 

@@ -7,7 +7,7 @@
 #define PATH_REGLAS "../../reglas.txt"
 
 int mostrarMenuPrincipal();
-char submenuDerrota (tJugador * jugador);
+void submenuDerrota (tJugador * jugador, unsigned nivel);
 char generarArchivoReglas(const char * pathArch);
 char verReglas(const char * pathArch);
 char submenuTransicion (tJugador * jugador, unsigned nivel);
