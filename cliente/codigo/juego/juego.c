@@ -118,7 +118,7 @@ char actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char
     {
         volverYDescontar(&entidades->jugador);
 
-        if (esFinPartida(&entidades->jugador))
+        if (jugadorSinVidas(&entidades->jugador))
         {
             *juegoTerminado = VERDADERO;
             return DERROTA;
@@ -138,7 +138,7 @@ char actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char
         }
     }
 
-    if (chequeoSalida(&entidades->jugador, laberinto))
+    if (jugadorEnSalida(&entidades->jugador, laberinto))
     {
         *juegoTerminado = VERDADERO; // Esto es temporal, hay que sacarlo
         // Acá debería de generarse un laberinto aleatorio nuevo (o volver a cargar el que ya está si es un .txt)
@@ -147,7 +147,7 @@ char actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char
 
     if (chequeoPremio(&entidades->jugador, laberinto))
     {
-        sumarPuntaje(&entidades->jugador, laberinto);
+        sumarPuntaje(&entidades->jugador);
         modificarCasillaLaberinto(laberinto, entidades->jugador.posActual.fila, entidades->jugador.posActual.columna, CAMINO);
     }
 
@@ -162,7 +162,7 @@ char actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char
     {
         volverYDescontar(&entidades->jugador);
 
-        if (esFinPartida(&entidades->jugador))
+        if (jugadorSinVidas(&entidades->jugador))
         {
             *juegoTerminado = VERDADERO;
             return DERROTA;
@@ -266,23 +266,6 @@ void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades)
 
     puts("");
     mostrarVidasYPuntos(&entidades->jugador);
-}
-
-void volverYDescontar(tJugador* jugador)
-{
-    jugador->posActual.fila = jugador->posInicial.fila;
-    jugador->posActual.columna = jugador->posInicial.columna;
-    jugador->vidas--;
-}
-
-char esFinPartida(tJugador* jugador)
-{
-    return (jugador->vidas <= 0 ? VERDADERO : FALSO);
-}
-
-char chequeoSalida(tJugador* jugador, tLaberinto * laberinto)
-{
-    return (laberinto->casillas[jugador->posActual.fila][jugador->posActual.columna] == SALIDA ? VERDADERO : FALSO);
 }
 
 void imprimirPosicion(const void *p)

@@ -12,4 +12,8 @@ void dibujarJugador(tJugador* jugador, size_t fila, size_t columna);
 char moverJugador(tJugador* jugador, char direccion, const tLaberinto* laberinto);
 tPosicion obtenerPosJugador(tJugador* jugador);
 
+void volverYDescontar(tJugador* jugador);
+char jugadorSinVidas(tJugador* jugador);
+char jugadorEnSalida(tJugador* jugador, tLaberinto* laberinto);
+
 #endif // JUGADOR_H_INCLUDED
