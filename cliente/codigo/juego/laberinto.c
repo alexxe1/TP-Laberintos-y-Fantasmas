@@ -83,6 +83,7 @@ int crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion
         laberinto->casillas[VidaX][vidaY] = VIDA_EXTRA;
     }
 
+    guardarLaberintoArchivo(laberinto);
 
     return EXITO;
 }
@@ -394,4 +395,24 @@ void salidaBFS(tLaberinto* laberinto, size_t entradaFila, size_t entradaColumna)
     free(dist);
     free(visitado);
     free(cola);
+}
+
+int guardarLaberintoArchivo(tLaberinto* laberinto)
+{
+    FILE* pf = fopen("LaberintoGuardado.txt", "wt");
+    int i,j;
+
+    if(!pf)
+        return ERROR;
+
+    for(i=0;i<laberinto->filas;i++)
+    {
+        for(j=0;j<laberinto->columnas;j++)
+            fprintf(pf, "%c", laberinto->casillas[i][j]);
+        fprintf(pf, "\n");
+    }
+
+    fclose(pf);
+
+    return EXITO;
 }
