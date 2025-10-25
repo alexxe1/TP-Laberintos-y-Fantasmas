@@ -64,7 +64,7 @@ int empezarJuego()
         Sleep(300);
     }
 
-    mostrarMovimientos(&entidades.jugador, &entidades.fantasmas);
+    mostrarMovimientos(&entidades.jugador);
 
     if (estado == DERROTA)
         submenuDerrota(&entidades.jugador);
@@ -145,6 +145,7 @@ char actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char
         }
     }
 
+
     return CONTINUA;
 }
 
@@ -167,7 +168,7 @@ char procesarMovimientos(tEntidades* entidades, tLaberinto* laberinto, unsigned 
             {
                 return CONTINUA;
             }
-
+            ponerEncola(&entidades->jugador.colaMovimientos,&entidades->jugador.posActual,sizeof(tPosicion));
             if (chequeoFantasma(&entidades->fantasmas, &entidades->jugador))
             {
                 volverYDescontar(&entidades->jugador);
@@ -205,22 +206,15 @@ char procesarMovimientos(tEntidades* entidades, tLaberinto* laberinto, unsigned 
     return CONTINUA;
 }
 
-void mostrarMovimientos(tJugador* jugador, tVector* fantasmas)
+void mostrarMovimientos(tJugador* jugador)
 {
-    size_t cantFantasmas = obtenerLongitudVector(fantasmas);
-    tFantasma* fantasma;
+    tPosicion pos;
 
-    puts("\nMovimientos del jugador:");
-    mostrarCola(&jugador->colaMovimientos, imprimirPosicion);
-
-    puts("\n");
-
-    for (int i = 0; i < cantFantasmas; i++)
+    printf("\nHISTORIAL DE MOVIMIENTOS REALIZADOS...\n");
+    while(!colaVacia(&jugador->colaMovimientos))
     {
-        fantasma = obtenerElementoVector(fantasmas,i);
-        printf("Movimientos del fantasma %d:\n", i + 1);
-        mostrarCola(&fantasma->colaMovimientos, imprimirPosicion);
-        puts("\n");
+        sacarDeCola(&jugador->colaMovimientos,&pos, sizeof(tPosicion));
+        printf("(%lu,%lu)", (unsigned long)pos.fila, (unsigned long)pos.columna);
     }
 }
 

@@ -22,7 +22,7 @@
 
 int empezarJuego();
 char actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char* juegoTerminado);
-void mostrarMovimientos(tJugador* jugador, tVector* fantasmas);
+void mostrarMovimientos(tJugador* jugador);
 int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguracion* configuracion);
 void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades);
 void volverYDescontar(tJugador* jugador);
