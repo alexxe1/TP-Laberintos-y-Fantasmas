@@ -3,134 +3,134 @@
 int cargarArchivoConfiguracion(tConfiguracion* configuracion)
 {
     FILE* pConfig = fopen(CONFIG, "rt");
-    char linea[TAM_LINEA];
-    char* separador;
-    unsigned long tmp;
     int maxFantasmas, maxPremios, maxVidasExtra;
+    int resultado;
 
     if (!pConfig)
         return ERROR;
 
-    fgets(linea, sizeof(linea), pConfig);
-    separador = strchr(linea, SEPARADOR);
+    // Leer las filas
+    resultado = leerValor(pConfig, &configuracion->filas, SEPARADOR, ERROR_FILAS);
 
-    if(!separador)
+    if (resultado != EXITO)
     {
         fclose(pConfig);
-        return ERROR_ARCH;
+        return resultado;
     }
 
-    // Leer las filas
-    sscanf(separador + 1, "%lu", &tmp);
-    configuracion->filas = (size_t)tmp;
-
-    if(configuracion->filas > MAX_FILAS || configuracion->filas < MIN_FILAS)
+    if(configuracion->filas < MIN_FILAS || configuracion->filas > MAX_FILAS)
     {
         fclose(pConfig);
         return ERROR_FILAS;
     }
 
-    fgets(linea, sizeof(linea), pConfig);
-    separador = strchr(linea, SEPARADOR);
+    // Leer las columnas
+    resultado = leerValor(pConfig, &configuracion->columnas, SEPARADOR, ERROR_COLUMNAS);
 
-    if(!separador)
+    if (resultado != EXITO)
     {
         fclose(pConfig);
-        return ERROR_ARCH;
+        return resultado;
     }
 
-    // Leer las columnas
-    sscanf(separador + 1, "%lu", &tmp);
-    configuracion->columnas = (size_t)tmp;
-
-    if(configuracion->columnas > MAX_COLUM ||configuracion->columnas < MIN_COLUM)
+    if (configuracion->columnas < MIN_COLUMNAS || configuracion->columnas > MAX_COLUMNAS)
     {
         fclose(pConfig);
         return ERROR_COLUMNAS;
     }
 
-    // Calculo maximo de entidades acorde al tamaño del laberinto
-    maxFantasmas = (configuracion->filas * configuracion->columnas / 25);
-    maxPremios = (configuracion->filas * configuracion->columnas / 20);
-    maxVidasExtra = (configuracion->filas * configuracion->columnas / 25);
-
-    fgets(linea, sizeof(linea), pConfig);
-    separador = strchr(linea, SEPARADOR);
-
-    if(!separador)
-    {
-        fclose(pConfig);
-        return ERROR_ARCH;
-    }
+    // Calcular los límites máximos
+    maxFantasmas = (configuracion->filas * configuracion->columnas / DIV_MAX_FANTASMAS);
+    maxPremios = (configuracion->filas * configuracion->columnas / DIV_MAX_PREMIOS);
+    maxVidasExtra = (configuracion->filas * configuracion->columnas / DIV_MAX_VIDAS_EXTRAS);
 
     // Leer las vidas iniciales
-    sscanf(separador + 1, "%lu", &tmp);
-    configuracion->vidasIniciales = (size_t)tmp;
+    resultado = leerValor(pConfig, &configuracion->vidasIniciales, SEPARADOR, ERROR_VIDAS_INICIALES);
 
-    if(configuracion->vidasIniciales <= 0 || configuracion->vidasIniciales > MAX_VIDAS_INI)
+    if (resultado != EXITO)
     {
         fclose(pConfig);
-        return ERROR_VIDAS_INI;
+        return resultado;
     }
 
-    fgets(linea, sizeof(linea), pConfig);
-    separador = strchr(linea, SEPARADOR);
-
-    if(!separador)
+    if (configuracion->vidasIniciales == 0 || configuracion->vidasIniciales > MAX_VIDAS_INICIALES)
     {
         fclose(pConfig);
-        return ERROR_ARCH;
+        return ERROR_VIDAS_INICIALES;
     }
 
-    // Leer los máximos fantasmas permitidos
-    sscanf(separador + 1, "%lu", &tmp);
-    configuracion->maxFantasmas = (size_t)tmp;
+    // Leer máxima cantidad de fantasmas
+    resultado = leerValor(pConfig, &configuracion->maxFantasmas, SEPARADOR, ERROR_FANTASMAS);
 
-    if(configuracion->maxFantasmas < 0 || configuracion->maxFantasmas > maxFantasmas)
+    if (resultado != EXITO)
     {
         fclose(pConfig);
-        return ERROR_FANT;
+        return resultado;
     }
 
-    fgets(linea, sizeof(linea), pConfig);
-    separador = strchr(linea, SEPARADOR);
-
-    if(!separador)
+    if (configuracion->maxFantasmas > (size_t)maxFantasmas)
     {
         fclose(pConfig);
-        return ERROR_ARCH;
+        return ERROR_FANTASMAS;
     }
 
-    // Leer los máximos premios permitidos
-    sscanf(separador + 1, "%lu", &tmp);
-    configuracion->maxPremios = (size_t)tmp;
+    // Leer máximo de premios
+    resultado = leerValor(pConfig, &configuracion->maxPremios, SEPARADOR, ERROR_PREMIOS);
 
-    if(configuracion->maxPremios < 0 || configuracion->maxPremios > maxPremios)
+    if (resultado != EXITO)
+    {
+        fclose(pConfig);
+        return resultado;
+    }
+
+    if (configuracion->maxPremios > (size_t)maxPremios)
     {
         fclose(pConfig);
         return ERROR_PREMIOS;
     }
 
-    fgets(linea, sizeof(linea), pConfig);
-    separador = strchr(linea, SEPARADOR);
+    // Leer máximo de vidas extras
+    resultado = leerValor(pConfig, &configuracion->maxVidasExtras, SEPARADOR, ERROR_VIDAS_EXTRAS);
 
-    if(!separador)
+    if (resultado != EXITO)
     {
         fclose(pConfig);
-        return ERROR_ARCH;
+        return resultado;
     }
 
-    // Leer las máximas vidas extras permitidas
-    sscanf(separador + 1, "%lu", &tmp);
-    configuracion->maxVidasExtras = (size_t)tmp;
-
-    if(configuracion->maxVidasExtras < 0 || configuracion->maxVidasExtras > maxVidasExtra)
+    if (configuracion->maxVidasExtras > (size_t)maxVidasExtra)
     {
         fclose(pConfig);
-        return ERROR_VIDAS_EXT;
+        return ERROR_VIDAS_EXTRAS;
     }
 
     fclose(pConfig);
+
+    return EXITO;
+}
+
+int leerValor(FILE* archivo, size_t* destino, char separador, int codigoError)
+{
+    char linea[TAM_LINEA];
+    char* sep;
+    unsigned long temp;
+
+    if (fgets(linea, sizeof(linea), archivo) == NULL)
+    {
+        return ERROR_ARCHIVO;
+    }
+
+    // Eliminar salto de línea
+    linea[strcspn(linea, "\r\n")] = '\0';
+
+    sep = strchr(linea, separador);
+
+    if (sep == NULL || sscanf(sep + 1, "%lu", &temp) != 1)
+    {
+        return ERROR_ARCHIVO;
+    }
+
+    *destino = (size_t)temp;
 
     return EXITO;
 }

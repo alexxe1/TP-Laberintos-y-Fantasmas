@@ -11,7 +11,7 @@ int empezarJuego()
 
     // Cargamos el archivo de configuración
     resultado = cargarArchivoConfiguracion(&configuracion);
-    if(resultado == ERROR_ARCH)
+    if(resultado == ERROR_ARCHIVO)
     {
         puts("ERROR: No se pudo procesar el archivo 'Config.txt' Verifique la sintaxis.\n");
         return ERROR;
@@ -23,27 +23,27 @@ int empezarJuego()
     }
     if(resultado == ERROR_COLUMNAS)
     {
-        printf("ERROR: Cantidad de Columnas invalida. MAX: %d -- MIN: %d\n", MAX_COLUM, MIN_COLUM);
+        printf("ERROR: Cantidad de Columnas invalida. MAX: %d -- MIN: %d\n", MAX_COLUMNAS, MIN_COLUMNAS);
         return ERROR;
     }
-    if(resultado == ERROR_VIDAS_INI)
+    if(resultado == ERROR_VIDAS_INICIALES)
     {
-        printf("ERROR: Cantidad de Vidas iniciales invalida. MAX: %d -- MIN: 1\n", MAX_VIDAS_INI);
+        printf("ERROR: Cantidad de Vidas iniciales invalida. MAX: %d -- MIN: 1\n", MAX_VIDAS_INICIALES);
         return ERROR;
     }
-    if(resultado == ERROR_FANT)
+    if(resultado == ERROR_FANTASMAS)
     {
-        printf("ERROR: Numero de Fantasmas invalido. MAX: %d -- MIN: 0\n", (int)(configuracion.filas * configuracion.columnas / 25));
+        printf("ERROR: Numero de Fantasmas invalido. MAX: %d -- MIN: 0\n", (int)(configuracion.filas * configuracion.columnas / DIV_MAX_FANTASMAS));
         return ERROR;
     }
     if(resultado == ERROR_PREMIOS)
     {
-        printf("ERROR: Numero de Premios invalido. MAX: %d -- MIN: 0\n", (int)(configuracion.filas * configuracion.columnas / 20));
+        printf("ERROR: Numero de Premios invalido. MAX: %d -- MIN: 0\n", (int)(configuracion.filas * configuracion.columnas / DIV_MAX_PREMIOS));
         return ERROR;
     }
-    if(resultado == ERROR_VIDAS_EXT)
+    if(resultado == ERROR_VIDAS_EXTRAS)
     {
-        printf("ERROR: Numero de Vidas Extra invalido. MAX: %d -- MIN: 0\n", (int)(configuracion.filas * configuracion.columnas / 25));
+        printf("ERROR: Numero de Vidas Extra invalido. MAX: %d -- MIN: 0\n", (int)(configuracion.filas * configuracion.columnas / DIV_MAX_VIDAS_EXTRAS));
         return ERROR;
     }
 
