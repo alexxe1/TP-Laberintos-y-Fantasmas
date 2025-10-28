@@ -4,13 +4,48 @@ int empezarJuego()
 {
     unsigned char juegoTerminado = FALSO;
     char estado;
+    int resultado;
     tLaberinto laberinto;
     tEntidades entidades;
     tConfiguracion configuracion;
 
     // Cargamos el archivo de configuración
-    if (!cargarArchivoConfiguracion(&configuracion))
+    resultado = cargarArchivoConfiguracion(&configuracion);
+    if(resultado == ERROR_ARCHIVO)
+    {
+        puts("ERROR: No se pudo procesar el archivo 'Config.txt' Verifique la sintaxis.\n");
         return ERROR;
+    }
+    if(resultado == ERROR_FILAS)
+    {
+        printf("ERROR: Cantidad de Filas invalida. MAX: %d -- MIN: %d\n", MAX_FILAS, MIN_FILAS);
+        return ERROR;
+    }
+    if(resultado == ERROR_COLUMNAS)
+    {
+        printf("ERROR: Cantidad de Columnas invalida. MAX: %d -- MIN: %d\n", MAX_COLUMNAS, MIN_COLUMNAS);
+        return ERROR;
+    }
+    if(resultado == ERROR_VIDAS_INICIALES)
+    {
+        printf("ERROR: Cantidad de Vidas iniciales invalida. MAX: %d -- MIN: 1\n", MAX_VIDAS_INICIALES);
+        return ERROR;
+    }
+    if(resultado == ERROR_FANTASMAS)
+    {
+        printf("ERROR: Numero de Fantasmas invalido. MAX: %d -- MIN: 0\n", (int)(configuracion.filas * configuracion.columnas / DIV_MAX_FANTASMAS));
+        return ERROR;
+    }
+    if(resultado == ERROR_PREMIOS)
+    {
+        printf("ERROR: Numero de Premios invalido. MAX: %d -- MIN: 0\n", (int)(configuracion.filas * configuracion.columnas / DIV_MAX_PREMIOS));
+        return ERROR;
+    }
+    if(resultado == ERROR_VIDAS_EXTRAS)
+    {
+        printf("ERROR: Numero de Vidas Extra invalido. MAX: %d -- MIN: 0\n", (int)(configuracion.filas * configuracion.columnas / DIV_MAX_VIDAS_EXTRAS));
+        return ERROR;
+    }
 
     // Cargamos laberinto de un .txt
     // if (!crearLaberintoArchivo(&laberinto))
@@ -114,7 +149,7 @@ char actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char
     //Le mando la cola ya cargada con el movimiento del jugador ya que aca es donde se sabe para que lado se mueve
     procesarMovimientos(entidades, laberinto, juegoTerminado);
 
-    if (chequeoSalida(&entidades->jugador, laberinto))
+    if (jugadorEnSalida(&entidades->jugador, laberinto))
     {
         *juegoTerminado = VERDADERO; // Esto es temporal, hay que sacarlo
         // Acá debería de generarse un laberinto aleatorio nuevo (o volver a cargar el que ya está si es un .txt)
@@ -123,7 +158,7 @@ char actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char
 
     if (chequeoPremio(&entidades->jugador, laberinto))
     {
-        sumarPuntaje(&entidades->jugador, laberinto);
+        sumarPuntaje(&entidades->jugador);
         modificarCasillaLaberinto(laberinto, entidades->jugador.posActual.fila, entidades->jugador.posActual.columna, CAMINO);
     }
 
@@ -138,7 +173,7 @@ char actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char
     {
         volverYDescontar(&entidades->jugador);
 
-        if (esFinPartida(&entidades->jugador))
+        if (jugadorSinVidas(&entidades->jugador))
         {
             *juegoTerminado = VERDADERO;
             return DERROTA;
@@ -296,23 +331,6 @@ void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades)
 
     puts("");
     mostrarVidasYPuntos(&entidades->jugador);
-}
-
-void volverYDescontar(tJugador* jugador)
-{
-    jugador->posActual.fila = jugador->posInicial.fila;
-    jugador->posActual.columna = jugador->posInicial.columna;
-    jugador->vidas--;
-}
-
-char esFinPartida(tJugador* jugador)
-{
-    return (jugador->vidas <= 0 ? VERDADERO : FALSO);
-}
-
-char chequeoSalida(tJugador* jugador, tLaberinto * laberinto)
-{
-    return (laberinto->casillas[jugador->posActual.fila][jugador->posActual.columna] == SALIDA ? VERDADERO : FALSO);
 }
 
 void imprimirPosicion(const void *p)

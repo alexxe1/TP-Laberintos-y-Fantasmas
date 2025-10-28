@@ -70,3 +70,22 @@ tPosicion obtenerPosJugador(tJugador* jugador)
 
     return pos;
 }
+
+void volverYDescontar(tJugador* jugador)
+{
+    jugador->posActual.fila = jugador->posInicial.fila;
+    jugador->posActual.columna = jugador->posInicial.columna;
+    jugador->vidas--;
+}
+
+char jugadorSinVidas(tJugador* jugador)
+{
+    return (jugador->vidas <= 0 ? VERDADERO : FALSO);
+}
+
+char jugadorEnSalida(tJugador* jugador, tLaberinto* laberinto)
+{
+    char casilla = obtenerCasillaLaberinto(laberinto, jugador->posActual.fila, jugador->posActual.columna);
+
+    return casilla == SALIDA ? VERDADERO : FALSO;
+}

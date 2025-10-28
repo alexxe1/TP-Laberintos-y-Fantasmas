@@ -22,7 +22,7 @@ void mostrarVidasYPuntos(tJugador* jugador);
 
 // Funciones para premios
 char chequeoPremio(tJugador* jugador, tLaberinto* laberinto);
-void sumarPuntaje(tJugador* jugador, tLaberinto* laberinto);
+void sumarPuntaje(tJugador* jugador);
 
 // Funciones para vidas extra
 char chequeoVida(tJugador* jugador, tLaberinto* laberinto);
