@@ -208,7 +208,7 @@ char procesarMovimientos(tEntidades* entidades, tLaberinto* laberinto, unsigned 
             {
                 volverYDescontar(&entidades->jugador);
 
-                if (esFinPartida(&entidades->jugador))
+                if (jugadorSinVidas(&entidades->jugador))
                 {
                     *juegoTerminado = VERDADERO;
                     return DERROTA;
