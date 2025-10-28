@@ -99,7 +99,7 @@ int empezarJuego()
         Sleep(300);
     }
 
-    mostrarMovimientos(&entidades.jugador, &entidades.fantasmas);
+    mostrarMovimientos(&entidades.jugador);
 
     if (estado == DERROTA)
         submenuDerrota(&entidades.jugador);
@@ -114,11 +114,10 @@ char actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char
 {
     char teclaApretada;
     char direccionJugador = NO_DIRECCION;
-    size_t cantFantasmas = obtenerLongitudVector(&entidades->fantasmas);
-    char mov;
-    int i;
-    tPosicion pos;
-    tFantasma* fantasma;
+    tMov movimiento;
+    tCola cola;
+
+    crearCola(&cola);
 
     if (!_kbhit()) // Si no se apretó nada, no perdemos tiempo en calcular nada
         return CONTINUA;
@@ -141,37 +140,14 @@ char actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char
     else if (TECLA_DERECHA(teclaApretada))
         direccionJugador = DERECHA;
 
-    // Si no se mueve el jugador, no hay que calcular nada
-    if (moverJugador(&entidades->jugador, direccionJugador, laberinto) == FALSO)
-        return CONTINUA;
+    movimiento.tipo = JUGADOR;
+    movimiento.id = 0;
+    movimiento.mov = direccionJugador;
 
-    pos = obtenerPosJugador(&entidades->jugador);
-    ponerEncola(&entidades->jugador.colaMovimientos, &pos, sizeof(pos));
+    ponerEncola(&entidades->colaMov, &movimiento, sizeof(tMov));
 
-    // Primer chequeo de fantasmas, post movimiento jugador
-    if (chequeoFantasma(&entidades->fantasmas, &entidades->jugador))
-    {
-        volverYDescontar(&entidades->jugador);
-
-        if (jugadorSinVidas(&entidades->jugador))
-        {
-            *juegoTerminado = VERDADERO;
-            return DERROTA;
-        }
-    }
-
-    for (i = 0; i < cantFantasmas; i++)
-    {
-        fantasma = (tFantasma*)obtenerElementoVector(&entidades->fantasmas,i);
-        mov = calcularMovimientoFantasma(fantasma,laberinto,&entidades->jugador);
-        pos = obtenerPosFantasma(fantasma);
-
-        if (fantasma->tocado == FALSO)
-        {
-            ponerEncola(&fantasma->colaMovimientos, &pos, sizeof(pos));
-            moverFantasma(fantasma, mov, laberinto);
-        }
-    }
+    //Le mando la cola ya cargada con el movimiento del jugador ya que aca es donde se sabe para que lado se mueve
+    procesarMovimientos(entidades, laberinto, juegoTerminado);
 
     if (jugadorEnSalida(&entidades->jugador, laberinto))
     {
@@ -204,25 +180,76 @@ char actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char
         }
     }
 
+
     return CONTINUA;
 }
 
-void mostrarMovimientos(tJugador* jugador, tVector* fantasmas)
+char procesarMovimientos(tEntidades* entidades, tLaberinto* laberinto, unsigned char* juegoTerminado)
 {
-    size_t cantFantasmas = obtenerLongitudVector(fantasmas);
-    tFantasma* fantasma;
+    int i;
+    char mov;
+    tMov evento;
+    tFantasma *fantasma;
 
-    puts("\nMovimientos del jugador:");
-    mostrarCola(&jugador->colaMovimientos, imprimirPosicion);
+    size_t cantFantasmas = obtenerLongitudVector(&entidades->fantasmas);
 
-    puts("\n");
-
-    for (int i = 0; i < cantFantasmas; i++)
+    while(sacarDeCola(&entidades->colaMov, &evento, sizeof(tMov)))
     {
-        fantasma = obtenerElementoVector(fantasmas,i);
-        printf("Movimientos del fantasma %d:\n", i + 1);
-        mostrarCola(&fantasma->colaMovimientos, imprimirPosicion);
-        puts("\n");
+        //me fijo si es el movimiento del jugador, si es asi entonces lo muevo y calculo los movimientos que deben hacer los fantasmas
+        //para alcanzarlo
+        if(evento.tipo == JUGADOR)
+        {
+            if(moverJugador(&entidades->jugador, evento.mov, laberinto) == FALSO)
+            {
+                return CONTINUA;
+            }
+            ponerEncola(&entidades->jugador.colaMovimientos,&entidades->jugador.posActual,sizeof(tPosicion));
+            if (chequeoFantasma(&entidades->fantasmas, &entidades->jugador))
+            {
+                volverYDescontar(&entidades->jugador);
+
+                if (esFinPartida(&entidades->jugador))
+                {
+                    *juegoTerminado = VERDADERO;
+                    return DERROTA;
+                }
+            }
+
+            //calculo el movimiento de los fantasmas y le asigno su identificador y el movimiento que realiza a la cola
+            for (i = 0; i < cantFantasmas; i++)
+            {
+
+                fantasma = (tFantasma*)obtenerElementoVector(&entidades->fantasmas,i);
+                mov = calcularMovimientoFantasma(fantasma,laberinto,&entidades->jugador);
+
+                evento.id = i;
+                evento.tipo = FANTASMA;
+                evento.mov = mov;
+
+                if (fantasma->tocado == FALSO)
+                {
+                    ponerEncola(&entidades->colaMov, &evento, sizeof(tMov));
+                }
+            }
+        //si es un fantasma entonces el id nos da la posicion que tiene en el vector y movemos a ese fantasma
+        }else if(evento.tipo == FANTASMA)
+        {
+            fantasma = (tFantasma*)obtenerElementoVector(&entidades->fantasmas, evento.id);
+            moverFantasma(fantasma,evento.mov,laberinto);
+        }
+    }
+    return CONTINUA;
+}
+
+void mostrarMovimientos(tJugador* jugador)
+{
+    tPosicion pos;
+
+    printf("\nHISTORIAL DE MOVIMIENTOS REALIZADOS...\n");
+    while(!colaVacia(&jugador->colaMovimientos))
+    {
+        sacarDeCola(&jugador->colaMovimientos,&pos, sizeof(tPosicion));
+        printf("(%lu,%lu)", (unsigned long)pos.fila, (unsigned long)pos.columna);
     }
 }
 
@@ -234,6 +261,8 @@ int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguraci
     char casilla;
     int jugadorEncontrado = FALSO;
     tFantasma fantasmaAux;
+
+    crearCola(&entidades->colaMov);
 
     for (i = 0; i < filasLaberinto; i++)
     {
@@ -262,6 +291,7 @@ int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguraci
 
     return jugadorEncontrado == VERDADERO;
 }
+
 
 void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades)
 {
@@ -307,5 +337,5 @@ void imprimirPosicion(const void *p)
 {
     tPosicion* pos = (tPosicion*)p;
 
-    printf("(%zu, %zu)\t", pos->fila, pos->columna);
+    printf("(%lu, %lu)\t", (unsigned long)pos->fila, (unsigned long)pos->columna);
 }

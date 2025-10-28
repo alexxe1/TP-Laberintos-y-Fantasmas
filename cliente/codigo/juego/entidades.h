@@ -36,6 +36,15 @@ typedef struct
 {
     tJugador jugador;
     tVector fantasmas;
+    tCola colaMov;
+
 } tEntidades;
 
+//Estructura para las colas
+typedef struct
+{
+    char tipo;
+    unsigned id;
+    char mov;
+}tMov;
 #endif // STRUCTS_H_INCLUDED
