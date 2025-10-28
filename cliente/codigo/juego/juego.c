@@ -4,13 +4,48 @@ int empezarJuego()
 {
     unsigned char juegoTerminado = FALSO;
     char estado;
+    int resultado;
     tLaberinto laberinto;
     tEntidades entidades;
     tConfiguracion configuracion;
 
     // Cargamos el archivo de configuración
-    if (!cargarArchivoConfiguracion(&configuracion))
+    resultado = cargarArchivoConfiguracion(&configuracion);
+    if(resultado == ERROR_ARCHIVO)
+    {
+        puts("ERROR: No se pudo procesar el archivo 'Config.txt' Verifique la sintaxis.\n");
         return ERROR;
+    }
+    if(resultado == ERROR_FILAS)
+    {
+        printf("ERROR: Cantidad de Filas invalida. MAX: %d -- MIN: %d\n", MAX_FILAS, MIN_FILAS);
+        return ERROR;
+    }
+    if(resultado == ERROR_COLUMNAS)
+    {
+        printf("ERROR: Cantidad de Columnas invalida. MAX: %d -- MIN: %d\n", MAX_COLUMNAS, MIN_COLUMNAS);
+        return ERROR;
+    }
+    if(resultado == ERROR_VIDAS_INICIALES)
+    {
+        printf("ERROR: Cantidad de Vidas iniciales invalida. MAX: %d -- MIN: 1\n", MAX_VIDAS_INICIALES);
+        return ERROR;
+    }
+    if(resultado == ERROR_FANTASMAS)
+    {
+        printf("ERROR: Numero de Fantasmas invalido. MAX: %d -- MIN: 0\n", (int)(configuracion.filas * configuracion.columnas / DIV_MAX_FANTASMAS));
+        return ERROR;
+    }
+    if(resultado == ERROR_PREMIOS)
+    {
+        printf("ERROR: Numero de Premios invalido. MAX: %d -- MIN: 0\n", (int)(configuracion.filas * configuracion.columnas / DIV_MAX_PREMIOS));
+        return ERROR;
+    }
+    if(resultado == ERROR_VIDAS_EXTRAS)
+    {
+        printf("ERROR: Numero de Vidas Extra invalido. MAX: %d -- MIN: 0\n", (int)(configuracion.filas * configuracion.columnas / DIV_MAX_VIDAS_EXTRAS));
+        return ERROR;
+    }
 
     // Cargamos laberinto de un .txt
     // if (!crearLaberintoArchivo(&laberinto))
