@@ -119,7 +119,7 @@ int empezarJuego()
         Sleep(300);
     }
 
-    mostrarMovimientos(&entidades.jugador, &entidades.fantasmas);
+    mostrarMovimientos(&entidades.jugador);//, &entidades.fantasmas);
     getch();
     submenuDerrota(&entidades.jugador, laberinto.nivel);
     destruirLaberinto(&laberinto);
