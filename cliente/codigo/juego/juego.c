@@ -77,27 +77,6 @@ int empezarJuego()
                 destruirLaberinto(&laberinto);
                 vaciarVector(&entidades.fantasmas);
                 iteracion++;
-                /*
-                if (!crearLaberintoAleatorio(&laberinto, &configuracion, iteracion))
-                {
-                    puts("ERROR: Hubo un error al crear el laberinto aleatorio");
-                    return ERROR;
-                }
-
-                if (!crearVector(&entidades.fantasmas, sizeof(tFantasma)))
-                {
-                    destruirLaberinto(&laberinto);
-                    puts("ERROR: No hay memoria para crear los fantasmas");
-                    return ERROR;
-                }
-
-                if (!procesarEntidades(&laberinto, &entidades, &configuracion, NULL, iteracion))
-                {
-                    destruirLaberinto(&laberinto);
-                    vaciarVector(&entidades.fantasmas);
-                    puts("ERROR: No se encontro una entrada en el laberinto");
-                    return ERROR;
-                }*/
               if(!continuarJugando(&laberinto, &configuracion, &entidades, iteracion))
                    return ERROR;
             }
@@ -106,6 +85,7 @@ int empezarJuego()
     }
 
     mostrarMovimientos(&entidades.jugador, &entidades.fantasmas);
+    getch();
     submenuDerrota(&entidades.jugador, laberinto.nivel);
 
     destruirLaberinto(&laberinto);
