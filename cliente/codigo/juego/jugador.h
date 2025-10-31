@@ -18,4 +18,8 @@ char esNombreValido (const char * nombre);
 char esLetra (int car);
 char esNumero(int car);
 char esEspacio(int car);
+void volverYDescontar(tJugador* jugador);
+char jugadorSinVidas(tJugador* jugador);
+char jugadorEnSalida(tJugador* jugador, tLaberinto* laberinto);
+
 #endif // JUGADOR_H_INCLUDED

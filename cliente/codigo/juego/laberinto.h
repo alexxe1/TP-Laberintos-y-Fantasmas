@@ -8,7 +8,7 @@
 
 #define MAX_FILAS 50
 #define MAX_COLUMNAS 50
-#define PORCENTAJE_LOOPS 10 //Porcentaje de caminos que se convierten en loop
+#define PORCENTAJE_LOOPS 20 //Porcentaje de caminos que se convierten en loop
 
 #define PARED '#'
 #define CAMINO '.'
@@ -31,6 +31,8 @@ typedef struct
 
 int crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion, unsigned nivel);
 int crearLaberintoArchivo(tLaberinto* laberinto);
+int guardarLaberintoArchivo(tLaberinto* laberinto);
+
 void destruirLaberinto(tLaberinto* laberinto);
 
 size_t obtenerFilasLaberinto(tLaberinto* laberinto);
