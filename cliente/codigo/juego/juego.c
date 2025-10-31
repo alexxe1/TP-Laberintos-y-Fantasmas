@@ -4,12 +4,14 @@ int empezarJuego()
 {
     unsigned char juegoTerminado = FALSO;
     char estado;
+    unsigned iteracion = VERDADERO;
+    char nombreJug[MAX_NOM];
     int resultado;
     tLaberinto laberinto;
     tEntidades entidades;
     tConfiguracion configuracion;
 
-    // Cargamos el archivo de configuración
+
     resultado = cargarArchivoConfiguracion(&configuracion);
     if(resultado == ERROR_ARCHIVO)
     {
@@ -55,7 +57,7 @@ int empezarJuego()
     srand((unsigned)time(NULL));
 
     // Generamos un laberinto aleatorio
-    if (!crearLaberintoAleatorio(&laberinto, &configuracion))
+    if (!crearLaberintoAleatorio(&laberinto, &configuracion, iteracion))
     {
         puts("ERROR: Hubo un error al crear el laberinto aleatorio");
         return ERROR;
@@ -69,8 +71,22 @@ int empezarJuego()
         return ERROR;
     }
 
+    do
+    {
+        system("cls");
+        puts("INGRESE EL NOMBRE DE JUGADOR: ");
+        ingresarNombre(nombreJug, MAX_NOM);
+        if (!esNombreValido(nombreJug))
+        {
+            puts("NOMBRE INVALIDO! USE LETRAS, NUMEROS o ESPACIOS");
+            system("pause");
+        }
+
+    }
+    while(!esNombreValido(nombreJug));
+
     // Leemos el laberinto y lo interpretamos para generar todo
-    if (!procesarEntidades(&laberinto, &entidades, &configuracion))
+    if (!procesarEntidades(&laberinto, &entidades, &configuracion, nombreJug, FALSO))
     {
         destruirLaberinto(&laberinto);
         vaciarVector(&entidades.fantasmas);
@@ -86,24 +102,26 @@ int empezarJuego()
         estado = actualizarJuego(&laberinto, &entidades, &juegoTerminado);
         dibujarJuego(&laberinto, &entidades);
 
-        /*
         if (estado == VICTORIA)
         {
-            // Esperar entrada | Mostar menú transición
-            llenarLaberinto();
-            vaciarVector();
-            procesarEntidades();
+            estado = submenuTransicion(&entidades.jugador, laberinto.nivel);
+            if (estado == VERDADERO)
+                juegoTerminado = VERDADERO;
+            else
+            {
+                destruirLaberinto(&laberinto);
+                vaciarVector(&entidades.fantasmas);
+                iteracion++;
+              if(!continuarJugando(&laberinto, &configuracion, &entidades, iteracion))
+                   return ERROR;
+            }
         }
-        */
-
         Sleep(300);
     }
 
-    mostrarMovimientos(&entidades.jugador);
-
-    if (estado == DERROTA)
-        submenuDerrota(&entidades.jugador);
-
+    mostrarMovimientos(&entidades.jugador, &entidades.fantasmas);
+    getch();
+    submenuDerrota(&entidades.jugador, laberinto.nivel);
     destruirLaberinto(&laberinto);
     vaciarVector(&entidades.fantasmas);
 
@@ -151,7 +169,7 @@ char actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char
 
     if (jugadorEnSalida(&entidades->jugador, laberinto))
     {
-        *juegoTerminado = VERDADERO; // Esto es temporal, hay que sacarlo
+
         // Acá debería de generarse un laberinto aleatorio nuevo (o volver a cargar el que ya está si es un .txt)
         return VICTORIA;
     }
@@ -253,7 +271,7 @@ void mostrarMovimientos(tJugador* jugador)
     }
 }
 
-int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguracion* configuracion)
+int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguracion* configuracion, const char* nombJug, unsigned iteracion)
 {
     size_t i, j;
     size_t filasLaberinto = obtenerFilasLaberinto(laberinto);
@@ -276,7 +294,16 @@ int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguraci
                 if (jugadorEncontrado) // Por si hay más de un jugador en el laberinto
                     break;
 
-                crearJugador(&entidades->jugador, configuracion, i, j);
+                if (iteracion <= 1)
+                {
+                    crearJugador(&entidades->jugador, nombJug, configuracion, i, j);
+                }
+                else
+                {
+                    acomodarJugador(&entidades->jugador, i,j);
+                }
+
+
                 jugadorEncontrado = VERDADERO;
                 break;
 
@@ -336,6 +363,33 @@ void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades)
 void imprimirPosicion(const void *p)
 {
     tPosicion* pos = (tPosicion*)p;
-
-    printf("(%lu, %lu)\t", (unsigned long)pos->fila, (unsigned long)pos->columna);
+    printf("(%u, %u)\t", (unsigned)pos->fila, (unsigned)pos->columna);
 }
+
+
+
+char continuarJugando (tLaberinto * laberinto, tConfiguracion * configuracion, tEntidades * entidades, unsigned nivel)
+{
+    if (!crearLaberintoAleatorio(laberinto, configuracion, nivel))
+    {
+        puts("ERROR: Hubo un error al crear el laberinto aleatorio");
+        return ERROR;
+    }
+
+    if (!crearVector(&entidades->fantasmas, sizeof(tFantasma)))
+    {
+        destruirLaberinto(laberinto);
+        puts("ERROR: No hay memoria para crear los fantasmas");
+        return ERROR;
+    }
+    if (!procesarEntidades(laberinto, entidades, configuracion, NULL, nivel))
+    {
+        destruirLaberinto(laberinto);
+        vaciarVector(&entidades->fantasmas);
+        puts("ERROR: No se encontro una entrada en el laberinto");
+        return ERROR;
+    }
+
+    return EXITO;
+}
+
