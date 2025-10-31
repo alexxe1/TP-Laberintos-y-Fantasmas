@@ -2,7 +2,9 @@
 #define MENU_H_INCLUDED
 
 #include "../juego/juego.h"
+#include "../juego/cliente_red.h"
 #include "../juego/controles.h"
+#include "../estructuras/lista.h"
 
 #define PATH_REGLAS "../../reglas.txt"
 
@@ -11,6 +13,6 @@ void submenuDerrota (tJugador * jugador, unsigned nivel);
 char generarArchivoReglas(const char * pathArch);
 char verReglas(const char * pathArch);
 char submenuTransicion (tJugador * jugador, unsigned nivel);
-
+char verRankings();
 
 #endif // MENU_H_INCLUDED

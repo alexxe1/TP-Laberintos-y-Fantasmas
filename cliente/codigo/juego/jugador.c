@@ -17,11 +17,11 @@ void crearJugador(tJugador* jugador, const char * nombJug, tConfiguracion* confi
 
 void acomodarJugador (tJugador* jugador, size_t fila, size_t columna)
 {
-   jugador->posInicial.fila = fila;
-   jugador->posInicial.columna = columna;
+    jugador->posInicial.fila = fila;
+    jugador->posInicial.columna = columna;
 
-   jugador->posActual.fila = fila;
-   jugador->posActual.columna = columna;
+    jugador->posActual.fila = fila;
+    jugador->posActual.columna = columna;
 }
 
 
@@ -84,64 +84,64 @@ tPosicion obtenerPosJugador(tJugador* jugador)
 
 void ingresarNombre (char * cadena, unsigned longitud)
 {
- fflush(stdin);
- fgets(cadena, longitud, stdin);
- while (*cadena != '\n')
-    cadena++;
+    fflush(stdin);
+    fgets(cadena, longitud, stdin);
+    while (*cadena != '\n')
+        cadena++;
 
- *cadena = '\0';
+    *cadena = '\0';
 }
 
 char esNombreValido (const char * nombre)
 {
- if (!nombre || *nombre == '\0')
-    return ERROR;
+    if (!nombre || *nombre == '\0')
+        return ERROR;
 
- while (*nombre)
- {
-  if (!esLetra(*nombre) && !esNumero(*nombre) && !esEspacio(*nombre))
-     return ERROR;
+    while (*nombre)
+    {
+        if (!esLetra(*nombre) && !esNumero(*nombre) && !esEspacio(*nombre))
+            return ERROR;
 
-  nombre++;
- }
+        nombre++;
+    }
 
- return EXITO;
+    return EXITO;
 }
 
 char esLetra (int car)
 {
- return ( (car >= 'A' && car <= 'Z') || (car >= 'a' && car <= 'z') ? EXITO : ERROR);
+    return ( (car >= 'A' && car <= 'Z') || (car >= 'a' && car <= 'z') ? EXITO : ERROR);
 }
 
 char esNumero (int car)
 {
- return ( (car) >= '0' && car <= '9' ? EXITO : ERROR);
+    return ( (car) >= '0' && car <= '9' ? EXITO : ERROR);
 }
 
 char esEspacio (int car)
 {
- return (car == ' ' ? EXITO : ERROR);
+    return (car == ' ' ? EXITO : ERROR);
 }
 
 
 void volverYDescontar(tJugador* jugador)
 {
- jugador->posActual.fila = jugador->posInicial.fila;
- jugador->posActual.columna = jugador->posInicial.columna;
- jugador->vidas--;
+    jugador->posActual.fila = jugador->posInicial.fila;
+    jugador->posActual.columna = jugador->posInicial.columna;
+    jugador->vidas--;
 }
 
 char jugadorSinVidas(tJugador* jugador)
 {
- return (jugador->vidas <= 0 ? VERDADERO : FALSO);
+    return (jugador->vidas <= 0 ? VERDADERO : FALSO);
 }
 
 
 char jugadorEnSalida(tJugador* jugador, tLaberinto* laberinto)
 {
- char casilla = obtenerCasillaLaberinto(laberinto, jugador->posActual. fila, jugador->posActual.columna) ;
+    char casilla = obtenerCasillaLaberinto(laberinto, jugador->posActual. fila, jugador->posActual.columna) ;
 
- return casilla == SALIDA ? VERDADERO : FALSO;
+    return casilla == SALIDA ? VERDADERO : FALSO;
 
 }
 

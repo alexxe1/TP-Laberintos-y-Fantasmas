@@ -7,6 +7,7 @@
 #include "jugador.h"
 #include "configuracion.h"
 #include "premios_y_vidas.h"
+#include "cliente_red.h"
 #include "../estructuras/vector.h"
 #include "../estructuras/cola.h"
 
@@ -22,7 +23,7 @@
 
 int empezarJuego();
 char actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char* juegoTerminado);
-void mostrarMovimientos(tJugador* jugador);//, tVector* fantasmas);
+size_t mostrarMovimientos(tJugador* jugador);
 int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguracion* configuracion, const char* nombJug, unsigned iteracion);
 void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades);
 char chequeoSalida(tJugador* jugador, tLaberinto* laberinto);

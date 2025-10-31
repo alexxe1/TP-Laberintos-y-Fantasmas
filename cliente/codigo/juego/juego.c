@@ -7,12 +7,13 @@ int empezarJuego()
     unsigned iteracion = VERDADERO;
     char nombreJug[MAX_NOM];
     int resultado;
+    size_t cantMovimientos;
     tLaberinto laberinto;
     tEntidades entidades;
     tConfiguracion configuracion;
 
-
     resultado = cargarArchivoConfiguracion(&configuracion);
+
     if(resultado == ERROR_ARCHIVO)
     {
         puts("ERROR: No se pudo procesar el archivo 'Config.txt' Verifique la sintaxis.\n");
@@ -81,9 +82,15 @@ int empezarJuego()
             puts("NOMBRE INVALIDO! USE LETRAS, NUMEROS o ESPACIOS");
             system("pause");
         }
-
     }
     while(!esNombreValido(nombreJug));
+
+    // Acá se debería verificar si hay conexión al servidor
+    // Si no hay conexión, se informa que su puntaje no se va a guardar en los servidores
+    if (hayConexionServidor() == FALSO)
+    {
+        // Mostrar por pantalla la advertencia y esperar a que el usuario toque una tecla para empezar
+    }
 
     // Leemos el laberinto y lo interpretamos para generar todo
     if (!procesarEntidades(&laberinto, &entidades, &configuracion, nombreJug, FALSO))
@@ -105,23 +112,44 @@ int empezarJuego()
         if (estado == VICTORIA)
         {
             estado = submenuTransicion(&entidades.jugador, laberinto.nivel);
+
+            // Le preguntamos al jugador si quiere irse al menú principal
             if (estado == VERDADERO)
+            {
                 juegoTerminado = VERDADERO;
-            else
+            }
+            else // O si quiere seguir
             {
                 destruirLaberinto(&laberinto);
                 vaciarVector(&entidades.fantasmas);
                 iteracion++;
-              if(!continuarJugando(&laberinto, &configuracion, &entidades, iteracion))
-                   return ERROR;
+
+                if(!continuarJugando(&laberinto, &configuracion, &entidades, iteracion))
+                    return ERROR;
             }
         }
         Sleep(300);
     }
 
-    mostrarMovimientos(&entidades.jugador);//, &entidades.fantasmas);
+    // Mostramos y guardamos los movimientos del jugador y cuantos fueron
+    cantMovimientos = mostrarMovimientos(&entidades.jugador);
     getch();
+
+    // Mostramos el resumen de la partida
     submenuDerrota(&entidades.jugador, laberinto.nivel);
+
+    // Intentamos mandar los datos de la partida al servidor para que los guarde
+    // Si hay un error, se lo mostramos al jugador
+    if (mandarDatosPartidaServidor(entidades.jugador.nombre, entidades.jugador.puntajeTotal, cantMovimientos) == ERROR)
+    {
+        // Acá le explicamos que hubo un error al comunicarse con el servidor
+        // Se le podría ofrecer volver a intentar mandar los datos
+    }
+    else
+    {
+        // Acá mostramos un mensaje que diga que se mandaron los datos correctamente
+    }
+
     destruirLaberinto(&laberinto);
     vaciarVector(&entidades.fantasmas);
 
@@ -169,8 +197,6 @@ char actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char
 
     if (jugadorEnSalida(&entidades->jugador, laberinto))
     {
-
-        // Acá debería de generarse un laberinto aleatorio nuevo (o volver a cargar el que ya está si es un .txt)
         return VICTORIA;
     }
 
@@ -249,8 +275,9 @@ char procesarMovimientos(tEntidades* entidades, tLaberinto* laberinto, unsigned 
                     ponerEncola(&entidades->colaMov, &evento, sizeof(tMov));
                 }
             }
-        //si es un fantasma entonces el id nos da la posicion que tiene en el vector y movemos a ese fantasma
-        }else if(evento.tipo == FANTASMA)
+            //si es un fantasma entonces el id nos da la posicion que tiene en el vector y movemos a ese fantasma
+        }
+        else if(evento.tipo == FANTASMA)
         {
             fantasma = (tFantasma*)obtenerElementoVector(&entidades->fantasmas, evento.id);
             moverFantasma(fantasma,evento.mov,laberinto);
@@ -259,16 +286,20 @@ char procesarMovimientos(tEntidades* entidades, tLaberinto* laberinto, unsigned 
     return CONTINUA;
 }
 
-void mostrarMovimientos(tJugador* jugador)
+size_t mostrarMovimientos(tJugador* jugador)
 {
     tPosicion pos;
+    int contador = 0;
 
     printf("\nHISTORIAL DE MOVIMIENTOS REALIZADOS...\n");
     while(!colaVacia(&jugador->colaMovimientos))
     {
         sacarDeCola(&jugador->colaMovimientos,&pos, sizeof(tPosicion));
+        contador++;
         printf("(%lu,%lu)", (unsigned long)pos.fila, (unsigned long)pos.columna);
     }
+
+    return contador;
 }
 
 int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguracion* configuracion, const char* nombJug, unsigned iteracion)
@@ -319,7 +350,6 @@ int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguraci
     return jugadorEncontrado == VERDADERO;
 }
 
-
 void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades)
 {
     size_t i, j;
@@ -365,8 +395,6 @@ void imprimirPosicion(const void *p)
     tPosicion* pos = (tPosicion*)p;
     printf("(%u, %u)\t", (unsigned)pos->fila, (unsigned)pos->columna);
 }
-
-
 
 char continuarJugando (tLaberinto * laberinto, tConfiguracion * configuracion, tEntidades * entidades, unsigned nivel)
 {

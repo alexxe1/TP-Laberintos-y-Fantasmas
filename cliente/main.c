@@ -19,6 +19,7 @@ int main()
             empezarJuego();
             break;
         case 1:
+            verRankings();
             break;
         case 2:
             puts("");
