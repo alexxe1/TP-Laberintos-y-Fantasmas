@@ -36,55 +36,39 @@ SOCKET create_server_socket()
     return s;
 }
 
-void process_request(const char *request, char *response)
-{
-    char operation[16], text[BUFFER_SIZE];
-    sscanf(request, "%15s %[^\n]", operation, text);
-
-    if (strcmp(operation, "MAYUS") == 0)
-    {
-        to_upper(text);
-        snprintf(response, BUFFER_SIZE, "%s", text);
-    }
-    else if (strcmp(operation, "MINUS") == 0)
-    {
-        to_lower(text);
-        snprintf(response, BUFFER_SIZE, "%s", text);
-    }
-    else if (strcmp(operation, "INV") == 0)
-    {
-        reverse(text);
-        snprintf(response, BUFFER_SIZE, "%s", text);
-    }
-    else
-    {
-        snprintf(response, BUFFER_SIZE, "Operacion no valida");
-    }
-}
-
 void procesarEntrada(const char *peticion, char *respuesta, tArbol *a, tCmp cmp)
 {
-    char operacion[16], nombre[21];
+    char operacion[16], nombre[16];
     int puntaje, movs;
+    tJugador jugador;
 
     operacion[0] = nombre[0] = '\0';
     puntaje = movs = 0;
 
-    sscanf(peticion, "%15s %20s %d %d", operacion, nombre, &puntaje, &movs);
+    sscanf(peticion, "%15s %15s %d %d", operacion, nombre, &puntaje, &movs);
+
+    strcpy(jugador.nombre, nombre);
 
     if(strcmpi(operacion, "RANKING") == 0)
     {
-        generarRanking(NOMBRE_ARCH_USUARIOS, NOMBRE_ARCH_PARTIDAS, respuesta);
+        //busco en el achivo usuario el nombre, con ese nombre busco el id, despues de que tengo el id voy al archivo de partidas
+        // y inserto ordenado mientras acumulo los puntos de partida cuando se repita el id
+        /////generarRanking(NOMBRE_ARCH_USUARIOS, NOMBRE_ARCH_PARTIDAS, respuesta);
 
     }
     else if(strcmpi(operacion, "REGISTRAR") == 0)
     {
         if(nombre[0] != '\0')
         {
-            if(!buscarNodoNoClave(a,nombre,sizeof(nombre), cmp))
+            if(!buscarNodoNoClave(a,&jugador,sizeof(tJugador), cmp))
             {
+                //agregamos con "a+b" al final del archivo usuario el nombre con su id generado
                 agregarAArchivo(NOMBRE_ARCH_USUARIOS, nombre);
-                cargarDesdeArchOrdenadoArbol(a, sizeof(tIdxJugador), NOMBRE_ARCH_USUARIOS, cmp);
+                //creamos indice
+                //balancear arbol
+                crearArchIdx(a, NOMBRE_ARCH_USUARIOS, NOMBRE_ARCH_INDICE, sizeof(tJugador),sizeof(tIdxJugador),crearIdx, cmpIdx);
+                cargarDesdeArchOrdenadoArbol(a,sizeof(tIdxJugador), NOMBRE_ARCH_INDICE, cmp);
+
                 strcpy(respuesta, "USUARIO REGISTRADO CON EXITO");
             }
             else
@@ -100,12 +84,20 @@ void procesarEntrada(const char *peticion, char *respuesta, tArbol *a, tCmp cmp)
         }
 
     }
-    else if(strcmp(operacion, "GUARDAR"))
+    else if(strcmp(operacion, "GUARDAR") == 0)
     {
         if(nombre[0] != '\0')
         {
-            guardarPartida(NOMBRE_ARCH_PARTIDAS, nombre, puntaje, movs);
-            strcpy(respuesta, "PARTIDA GUARDADA...");
+            //abrimos el archivo de partida con "a+b" nos fijamos el ultimo id de partida, le sumamos uno y lo guardamos al final del archivo
+            if(guardarPartida(NOMBRE_ARCH_PARTIDAS, nombre, puntaje, movs,a) != NO_ENCONTRADO)
+            {
+                strcpy(respuesta, "PARTIDA GUARDADA...");
+
+            }
+            else
+            {
+                strcpy(respuesta, "USUARIO NO REGISTRADO");
+            }
         }
         else
 
@@ -124,11 +116,19 @@ void procesarEntrada(const char *peticion, char *respuesta, tArbol *a, tCmp cmp)
 void run_server()
 {
     tArbol arbol;
-    tJugador jugador;
+
+    int result;
 
     crearArbol(&arbol);
-
-    crearArchIdx(&arbol, NOMBRE_ARCH_USUARIOS, NOMBRE_ARCH_INDICE, sizeof(tJugador), sizeof(jugador.nombre),crearIdx);
+    //creamos indice y despues generamos el arbol balanceado, si no se pudo generar el indice porque todavia no jugo nadie y no se creo
+    //el archivo usuario entonces no generamos el arbol
+    result = crearArchIdx(&arbol, NOMBRE_ARCH_USUARIOS, NOMBRE_ARCH_INDICE, sizeof(tJugador),sizeof(tIdxJugador), crearIdx, cmpIdx);
+    if(result)
+    {
+        cargarDesdeArchOrdenadoArbol(&arbol,sizeof(tIdxJugador), NOMBRE_ARCH_INDICE, cmpIdx);
+    }
+    printf("\nARBOLLL");
+    mostrarEnOrden(&arbol, (const void*)imprimirIdxJugador);
 
     if (init_winsock() != 0)
     {
@@ -168,7 +168,7 @@ void run_server()
     {
         buffer[bytes_received] = '\0';
         printf("Recibido: %s\n", buffer);
-        procesarEntrada(buffer, response);
+        procesarEntrada(buffer, response, &arbol, cmpIdx);
         send(client_socket, response, strlen(response), 0);
         printf("Enviado:  %s\n", response);
     }
@@ -179,4 +179,113 @@ void run_server()
     WSACleanup();
 }
 
-void crearIdx(tArbol *a, )
+int crearIdx(tArbol *a, void *reg, int desp, tCmp cmp)
+{
+    tJugador *j = (tJugador*)reg;
+    tIdxJugador jIdx;
+
+    jIdx.id = j->id;
+    jIdx.desp = desp;
+    strcpy(jIdx.nombre, j->nombre);
+
+    if(insertarEnArbolR(a, &jIdx, sizeof(tIdxJugador), cmp) == FALLO_MALLOC)
+    {
+        return FALLO_MALLOC;
+    }
+
+    return TODO_OK;
+}
+
+int cmpIdx(const void *a, const void *b)
+{
+    tJugador *x = (tJugador*)a;
+    tJugador *y = (tJugador*)b;
+
+    return strcmp(x->nombre, y->nombre);
+}
+
+int agregarAArchivo(const char *nombreArchUsuario, char *nombre)
+{
+    tJugador jugador;
+    FILE *arch = fopen(nombreArchUsuario, "a+b");
+    if(!arch)
+        return ERR_ARCH;
+
+    fseek(arch, 0, SEEK_END); // Ir al final
+    long tam = ftell(arch);   // Obtener tamaño total del archivo
+
+    if(tam == 0)
+    {
+        // El archivo está vacío → primer jugador
+        jugador.id = 1;
+    }
+    else
+    {
+        // El archivo tiene datos → leer el último jugador
+        fseek(arch, -(long)sizeof(tJugador), SEEK_END);
+        fread(&jugador, sizeof(tJugador), 1, arch);
+        jugador.id = jugador.id + 1;
+    }
+
+    strcpy(jugador.nombre, nombre);
+
+    // Ir al final para agregar el nuevo registro
+    fseek(arch, 0, SEEK_END);
+    fwrite(&jugador, sizeof(tJugador), 1, arch);
+
+    fclose(arch);
+    return TODO_OK;
+}
+
+
+int guardarPartida(const char *nombreArchPartida, char *nombre, int puntaje, int movs, tArbol *a)
+{
+    tPartida partida;
+    tIdxJugador indice;
+
+    int tamArch;
+    FILE *arch = fopen(nombreArchPartida, "a+b");
+    if(!arch)
+    {
+        return ERR_ARCH;
+    }
+
+    strcpy(indice.nombre, nombre);
+
+    if(!buscarNodoNoClave(a, &indice, sizeof(tIdxJugador), cmpIdx))
+    {
+        fclose(arch);
+
+        return NO_ENCONTRADO;
+    }
+
+    fseek(arch,0,SEEK_END);
+
+    tamArch = ftell(arch);
+
+    if(tamArch == 0)
+    {
+        partida.idPartida = 1;
+        partida.cantMovs = movs;
+        partida.puntuacion = puntaje;
+        partida.idJugador = indice.id;
+    }
+    else
+    {
+        fseek(arch,-(long)sizeof(tPartida),SEEK_END);
+        fread(&partida, sizeof(tPartida),1, arch);
+
+        partida.idPartida = partida.idPartida + 1;
+        partida.cantMovs = movs;
+        partida.idJugador = indice.id;
+        partida.puntuacion = puntaje;
+    }
+
+    fseek(arch, 0, SEEK_END);
+    fwrite(&partida, sizeof(tPartida),1, arch);
+
+    fclose(arch);
+    return TODO_OK;
+
+}
+

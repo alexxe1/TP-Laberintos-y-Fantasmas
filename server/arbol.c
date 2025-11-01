@@ -563,7 +563,7 @@ int esAVL(tArbol *a)
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-int crearArchIdx(tArbol *a, const char *nombreArch,const char *nombreArchIdx, unsigned tamInfo, unsigned tamClave, tCrIdx crearIdx, tCmp cmp)
+int crearArchIdx(tArbol *a, const char *nombreArch,const char *nombreArchIdx, unsigned tamInfo, unsigned tamIdx, tCrIdx crearIdx, tCmp cmp)
 {
     int nroReg = 0;
     void *reg;
@@ -588,12 +588,16 @@ int crearArchIdx(tArbol *a, const char *nombreArch,const char *nombreArchIdx, un
         return FALLO_MALLOC;
     }
 
-    while(fread(reg, tamInfo, 1, archBin))
+    fread(reg, tamInfo, 1, archBin);
+    while(!feof(archBin))
     {
-        crearIdx(a, reg,tamClave, nroReg++, cmp);
+        crearIdx(a, reg, nroReg++, cmp);
+        fread(reg, tamInfo, 1, archBin);
     }
 
-    cargarArchDesdeArbolBin(a, archIdx, sizeof(tIdx));
+    cargarArchDesdeArbolBin(a, archIdx, tamIdx);
+
+    vaciarArbol(a);
 
     free(reg);
     fclose(archBin);

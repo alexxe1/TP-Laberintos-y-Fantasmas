@@ -36,7 +36,7 @@ tIdx;
 typedef int(*tCmp) (const void*, const void*);
 typedef void(*tPrnt) (const void*);
 typedef int(*COND)(const void *);
-typedef int(*tCrIdx)(tArbol *a, void *reg, unsigned tamIdx, int nroReg, tCmp cmp);
+typedef int(*tCrIdx)(tArbol *a, void *reg, int nroReg, tCmp cmp);
 
 void crearArbol (tArbol * a);
 unsigned short insertarEnArbolR (tArbol * a, const void * elemento, unsigned esize, tCmp cmp);
@@ -73,6 +73,7 @@ int esAVL(tArbol *a);
 tNodoArbol **buscarMenor(tArbol *a);
 tNodoArbol **buscarMayor(tArbol *a);
 tNodoArbol **buscarNodoArbol (tArbol * a,void * elemento, unsigned esize, tCmp cmp);
+tNodoArbol **buscarNodoNoClave(tArbol *a, void *info, unsigned tamInfo, tCmp cmp);
 void *claveMayorMia(tArbol *a, tCmp cmp);
 void *claveMenorMia(tArbol *a, tCmp cmp);
 const tArbol *menorNodoNoClaveArbolBinBusq(const tArbol *p, const tArbol *menor, tCmp cmp);
