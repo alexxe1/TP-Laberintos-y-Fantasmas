@@ -160,7 +160,7 @@ char mandarDatosPartidaServidor(SOCKET* socket, char* nombreJugador, size_t punt
 
     sprintf(peticion, "GUARDAR %s %lu %lu", nombreJugador, (unsigned long)puntajeTotal, (unsigned long)cantMovimientos);
 
-    if(send(*socket, peticion, sizeof(peticion), 0) == SOCKET_ERROR)
+    if(send(*socket, peticion, strlen(peticion), 0) == SOCKET_ERROR)
         return ERROR;
 
     bytesRecibidos = recv(*socket, &rta, sizeof(char), 0);
