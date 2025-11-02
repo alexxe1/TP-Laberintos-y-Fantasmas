@@ -152,7 +152,7 @@ char darAltaJugadorServidor(SOCKET* socket, char* nombreJugador)
     if(bytesRecibidos <= 0)
         return ERROR;
 
-    return rta;
+    return rta == 1 ? EXITO : ERROR;
 }
 
 // Devuelve EXITO o ERROR según se pudo o no mandar datos de la partida al servidor
@@ -182,5 +182,5 @@ char mandarDatosPartidaServidor(SOCKET* socket, char* nombreJugador, size_t punt
     if(bytesRecibidos <= 0)
         return ERROR;
 
-    return rta;
+    return rta == 1 ? EXITO : ERROR;
 }
