@@ -1,6 +1,7 @@
 #include "servidor.h"
 #include "arbol.h"
 #include "lista.h"
+#include "cola.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -40,7 +41,7 @@ SOCKET create_server_socket()
 int procesarEntrada(const char *peticion, char* respuesta, tArbol *a, tCmp cmp, SOCKET cliente)
 {
     char operacion[16], nombre[16];
-    int puntaje, movs, cantRank;
+    unsigned long puntaje, movs, cantRank;
     tJugador jugador;
     tRanking rank;
     tLista rankL;
@@ -48,7 +49,7 @@ int procesarEntrada(const char *peticion, char* respuesta, tArbol *a, tCmp cmp, 
     operacion[0] = nombre[0] = '\0';
     puntaje = movs = 0;
 
-    sscanf(peticion, "%15s %15s %d %d", operacion, nombre, &puntaje, &movs);
+    sscanf(peticion, "%15s %15s %lu %lu", operacion, nombre, &puntaje, &movs);
 
     strcpy(jugador.nombre, nombre);
 
@@ -74,6 +75,7 @@ int procesarEntrada(const char *peticion, char* respuesta, tArbol *a, tCmp cmp, 
     {
         if(nombre[0] != '\0')
         {
+            *respuesta = 1;
             if(!buscarNodoNoClave(a,&jugador,sizeof(tJugador), cmp))
             {
                 //agregamos con "a+b" al final del archivo usuario el nombre con su id generado
@@ -82,14 +84,9 @@ int procesarEntrada(const char *peticion, char* respuesta, tArbol *a, tCmp cmp, 
                 //balancear arbol
                 crearArchIdx(a, NOMBRE_ARCH_USUARIOS, NOMBRE_ARCH_INDICE, sizeof(tJugador),sizeof(tIdxJugador),crearIdx, cmpIdx);
                 cargarDesdeArchOrdenadoArbol(a,sizeof(tIdxJugador), NOMBRE_ARCH_INDICE, cmp);
-                *respuesta = 1;
                 //strcpy(respuesta, "USUARIO REGISTRADO CON EXITO");
             }
-            /*else
-            {
-                strcpy(respuesta, "USUARIO YA EXISTENTE");
 
-            }*/
         }
         else
         {
@@ -133,20 +130,29 @@ int procesarEntrada(const char *peticion, char* respuesta, tArbol *a, tCmp cmp, 
 
 void run_server()
 {
+    char buffer[BUFFER_SIZE];
+    char response = '\0';
+    int bytes_received;
+
+    struct sockaddr_in client_addr;
+    int client_addr_size;
+    int err;
+    char peticion[BUFFER_SIZE];
+
+    tCola cola;
     tArbol arbol;
 
     int result;
 
     crearArbol(&arbol);
+    crearCola(&cola);
     //creamos indice y despues generamos el arbol balanceado, si no se pudo generar el indice porque todavia no jugo nadie y no se creo
     //el archivo usuario entonces no generamos el arbol
-    result = crearArchIdx(&arbol, NOMBRE_ARCH_USUARIOS, NOMBRE_ARCH_INDICE, sizeof(tJugador),sizeof(tIdxJugador), crearIdx, cmpIdx);
-    if(result)
+    result = crearArchIdx(&arbol, NOMBRE_ARCH_USUARIOS, NOMBRE_ARCH_INDICE, sizeof(tJugador),sizeof(tIdxJugador), crearIdx, cmpIdxId);
+    if(result == TODO_OK)
     {
-        cargarDesdeArchOrdenadoArbol(&arbol,sizeof(tIdxJugador), NOMBRE_ARCH_INDICE, cmpIdx);
+        cargarDesdeArchOrdenadoArbol(&arbol,sizeof(tIdxJugador), NOMBRE_ARCH_INDICE, cmpIdxId);
     }
-
-    mostrarEnOrden(&arbol, (const void*)imprimirIdxJugador);
 
     if (init_winsock() != 0)
     {
@@ -164,8 +170,7 @@ void run_server()
 
     printf("Servidor escuchando en puerto %d...\n", PORT);
 
-    struct sockaddr_in client_addr;
-    int client_addr_size = sizeof(client_addr);
+    client_addr_size = sizeof(client_addr);
 
     SOCKET client_socket = accept(server_socket, (struct sockaddr *)&client_addr, &client_addr_size);
     if (client_socket == INVALID_SOCKET)
@@ -178,22 +183,64 @@ void run_server()
 
     printf("Cliente conectado.\n");
 
-    char buffer[BUFFER_SIZE];
-    char response = 0;
-    int bytes_received;
-
-    while ((bytes_received = recv(client_socket, buffer, BUFFER_SIZE - 1, 0)) > 0)
+    while (1)
     {
-        buffer[bytes_received] = '\0';
-        printf("Recibido: %s\n", buffer);
-
-        if(procesarEntrada(buffer, &response, &arbol, cmpIdx, client_socket) != RANK)
+        // Intentar recibir un mensaje
+        bytes_received = recv(client_socket, buffer, BUFFER_SIZE - 1, 0);
+        if (bytes_received > 0)
         {
-            send(client_socket, &response, 1, 0);
+            buffer[bytes_received] = '\0';
+            printf("[RX] Recibido: %s\n", buffer);
+
+            // Encolamos el mensaje recibido
+            ponerEnCola(&cola, buffer, BUFFER_SIZE);
+        }
+        else if (bytes_received == 0)
+        {
+            // El cliente ha cerrado la conexi�n de forma ordenada
+            printf("Cliente desconectado (recv == 0). Saliendo del bucle.\n");
+            break;
+        }
+        else /* bytes_received == SOCKET_ERROR */
+        {
+            err = WSAGetLastError();        // Ver que es esto
+            if (err == WSAEWOULDBLOCK)
+            {
+                // No hay datos en modo no-bloqueante.
+                // Simplemente seguimos el bucle y procesamos la cola.
+            }
+            else
+            {
+                // Error serio, salimos
+                printf("Error en recv(): %d. Saliendo.\n", err);
+                break;
+            }
         }
 
-        printf("Enviado:  %c\n", response);
+        // Procesar mensajes pendientes en la cola
+        while (!colaVacia(&cola))
+        {
+            // Desencolar la peticion
+            sacarDeCola(&cola, peticion, BUFFER_SIZE);
+
+            // Procesar la peticion
+            printf("[PROC] Procesando: %s\n", peticion);
+            if(procesarEntrada(peticion, &response, &arbol, cmpId, client_socket) != RANK)
+            {
+                send(client_socket, &response, sizeof(response), 0);
+                printf("[TX] Enviado: %d\n", response);
+            }
+
+            // Enviar la respuesta al cliente (si es necesario)
+
+        }
+
+        // Evita usar de manera intenciva la CPU
+        Sleep(100);
     }
+
+    vaciarCola(&cola);
+    vaciarArbol(&arbol);
 
     printf("Conexion cerrada.\n");
     closesocket(client_socket);
@@ -224,6 +271,14 @@ int cmpIdx(const void *a, const void *b)
     tJugador *y = (tJugador*)b;
 
     return strcmp(x->nombre, y->nombre);
+}
+
+int cmpIdxId(const void *a, const void *b)
+{
+    tIdxJugador *x = (tIdxJugador*)a;
+    tIdxJugador *y = (tIdxJugador*)b;
+
+    return x->id - y->id;
 }
 
 int agregarAArchivo(const char *nombreArchUsuario, char *nombre)
@@ -334,17 +389,21 @@ tLista generarRanking(tArbol *a, const char *nombreArchPartidas)
         ponerEnOrden(&partidaL,&partida, sizeof(tPartida),cmpId, acumularPuntos);
     }
 
-    sacarListaPrimero(&partidaL, &partida, sizeof(tPartida));
-    jugador.nombre[0] = '\0';
-    jugador.id = partida.idJugador;
+    while(!listaVacia(&partidaL))
+    {
+        sacarListaPrimero(&partidaL, &partida, sizeof(tPartida));
+        jugador.nombre[0] = '\0';
+        jugador.id = partida.idJugador;
 
-    buscarNodoNoClave(a, &jugador, sizeof(tIdxJugador), cmpIdx);
+        buscarNodoArbol(a, &jugador, sizeof(tIdxJugador), cmpIdxId);
 
-    strcpy(rank.nombre, jugador.nombre);
-    rank.puntos = partida.puntuacion;
+        strcpy(rank.nombre, jugador.nombre);
+        rank.puntos = partida.puntuacion;
 
-    ponerEnListaUltimo(&rankL, &rank, sizeof(tRanking));
+        ponerEnListaUltimo(&rankL, &rank, sizeof(tRanking));
+        ordenarLista(&rankL, sizeof(tRanking),cmpPuntos);
 
+    }
     //sacoprimero de lista y lo guardo en partida, con el id busco en el arbol el nombre, recordar que el arbol es tIdxJugador
     //basicamente tIdxJugador.id = partida.idJugador
     //como ya saque el primer de lista tengo cargada toda la partida, es decir id de jugador con su total de puntos y el nombre en el indice
@@ -373,4 +432,12 @@ int cmpId(const void *a, const void *b)
     tPartida *y = (tPartida*)b;
 
     return x->idJugador - y->idJugador;
+}
+
+int cmpPuntos(const void *a, const void *b)
+{
+    tRanking *x = (tRanking*)a;
+    tRanking *y = (tRanking*)b;
+
+    return y->puntos - x->puntos;
 }

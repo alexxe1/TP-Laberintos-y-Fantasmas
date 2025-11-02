@@ -2,7 +2,7 @@
 
 int mostrarMenuPrincipal()
 {
-    int opcion = 0;  // 韓dice actual (0 a 3)
+    int opcion = 0;  // 铆ndice actual (0 a 3)
     int tecla;
 
     while (VERDADERO)
@@ -24,7 +24,7 @@ int mostrarMenuPrincipal()
 
         if (tecla == 0 || tecla == 224) // Tecla especial (flechas)
         {
-            tecla = _getch(); // Obtener c骴igo real
+            tecla = _getch(); // Obtener c贸digo real
 
             if (tecla == ARR && opcion > 0)
                 opcion--;
@@ -33,7 +33,7 @@ int mostrarMenuPrincipal()
         }
         else if (tecla == TECLA_ENTER)
         {
-            return opcion; // Devuelve 0..3 seg鷑 lo elegido
+            return opcion; // Devuelve 0..3 seg煤n lo elegido
         }
     }
 }
@@ -53,7 +53,7 @@ void submenuDerrota(tJugador* jugador, unsigned nivel)
 
 char submenuTransicion (tJugador * jugador, unsigned nivel)
 {
-    unsigned short opcion = FALSO; // 0 = primera opci髇, 1 = segunda opci髇
+    unsigned short opcion = FALSO; // 0 = primera opci贸n, 1 = segunda opci贸n
     int tecla;
 
     while (1)
@@ -77,7 +77,7 @@ char submenuTransicion (tJugador * jugador, unsigned nivel)
 
         if (tecla == 0 || tecla == 224) // Tecla especial (flechas)
         {
-            tecla = _getch(); // Obtener c骴igo real
+            tecla = _getch(); // Obtener c贸digo real
 
             if (tecla == ARR && opcion > FALSO)
                 opcion--;
@@ -85,7 +85,7 @@ char submenuTransicion (tJugador * jugador, unsigned nivel)
                 opcion++;
         }
         else if (tecla == TECLA_ENTER)
-            return opcion; // Devuelve 0 o 1 seg鷑 lo elegido
+            return opcion; // Devuelve 0 o 1 seg煤n lo elegido
     }
 }
 
@@ -171,16 +171,23 @@ char verRankings(SOCKET* socket)
 
     system("cls");
 
+    printf("+----------+----------------------+------------+\n");
     printf("| %-8s | %-20s | %-10s |\n", "POSICION", "NOMBRE", "PUNTOS");
+    printf("+----------+----------------------+------------+\n");
 
     while (sacarPrimeroLista(&listaRankings, &rankingAux, sizeof(tRanking)) == 1)
     {
-        printf("%-8lu | %-20s | %-10lu\n", (long unsigned)posicion, rankingAux.nombre, (long unsigned)rankingAux.puntos);
+        printf("| %-8lu | %-20s | %-10lu |\n",
+               (unsigned long)posicion,
+               rankingAux.nombre,
+               (unsigned long)rankingAux.puntos);
         posicion++;
     }
 
+    printf("+----------+----------------------+------------+\n");
     puts("\nPresiona cualquier tecla para volver...");
     _getch();
+
 
     vaciarLista(&listaRankings);
 

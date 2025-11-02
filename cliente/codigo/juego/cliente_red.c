@@ -134,21 +134,17 @@ char solicitarRankingsServidor(SOCKET* socket, tLista* listaRankings)
 // Devuelve EXITO o ERROR según se pudo o no dar de alta a un jugador en el servidor
 char darAltaJugadorServidor(SOCKET* socket, char* nombreJugador)
 {
-    const char* peticion = "REGISTRAR";
-    int lenNombre = (int)strlen(nombreJugador) + 1; //Incluyo '\0'
+    char peticion[128];
     char rta;
     int bytesRecibidos;
+
+    snprintf(peticion, sizeof(peticion), "REGISTRAR %s", nombreJugador);
 
     if(send(*socket, peticion, strlen(peticion), 0) == SOCKET_ERROR)
         return ERROR;
 
-    if(send(*socket, (char*)&lenNombre, sizeof(int), 0) == SOCKET_ERROR)
-        return ERROR;
-
-    if(send(*socket, nombreJugador, lenNombre, 0) == SOCKET_ERROR)
-        return ERROR;
-
     bytesRecibidos = recv(*socket, &rta, sizeof(char), 0);
+
     if(bytesRecibidos <= 0)
         return ERROR;
 
@@ -158,27 +154,17 @@ char darAltaJugadorServidor(SOCKET* socket, char* nombreJugador)
 // Devuelve EXITO o ERROR según se pudo o no mandar datos de la partida al servidor
 char mandarDatosPartidaServidor(SOCKET* socket, char* nombreJugador, size_t puntajeTotal, size_t cantMovimientos)
 {
-    const char* peticion = "GUARDAR";
-    int lenNombre = (int)strlen(nombreJugador) + 1;
+    char peticion[128];
     char rta;
     int bytesRecibidos;
 
-    if(send(*socket, peticion, sizeof(peticion), 0) == SOCKET_ERROR)
-        return ERROR;
+    sprintf(peticion, "GUARDAR %s %lu %lu", nombreJugador, (unsigned long)puntajeTotal, (unsigned long)cantMovimientos);
 
-    if (send(*socket, (char*)&lenNombre, sizeof(int), 0) == SOCKET_ERROR)
-        return ERROR;
-
-    if (send(*socket, nombreJugador, lenNombre, 0) == SOCKET_ERROR)
-        return ERROR;
-
-    if (send(*socket, (char*)&puntajeTotal, sizeof(size_t), 0) == SOCKET_ERROR)
-        return ERROR;
-
-    if (send(*socket, (char*)&cantMovimientos, sizeof(size_t), 0) == SOCKET_ERROR)
+    if(send(*socket, peticion, strlen(peticion), 0) == SOCKET_ERROR)
         return ERROR;
 
     bytesRecibidos = recv(*socket, &rta, sizeof(char), 0);
+
     if(bytesRecibidos <= 0)
         return ERROR;
 

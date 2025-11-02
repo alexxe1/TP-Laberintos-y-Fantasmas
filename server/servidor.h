@@ -64,5 +64,7 @@ void imprimirIdxJugador(void *a);
 int cmpId(const void *a, const void *b);
 int acumularPuntos(void **dest, unsigned *tamDest, const void *origen, unsigned tamOrig);
 void imprimirPartida(void *a);
+int cmpIdxId(const void *a, const void *b);
+int cmpPuntos(const void *a, const void *b);
 
 #endif // SERVIDOR_H_INCLUDED
