@@ -81,3 +81,12 @@ int ponerAlFinal(tLista* lista, const void* elemento, unsigned int tam)
 
     return 1;
 }
+
+void recorrerLista(tLista* lista, void (*accion)(void* nodo))
+{
+    while (*lista != NULL)
+    {
+        accion((*lista)->info);
+        lista = &(*lista)->sig;
+    }
+}

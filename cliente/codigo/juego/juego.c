@@ -1,6 +1,6 @@
 #include "juego.h"
 
-int empezarJuego()
+int empezarJuego(SOCKET* socket)
 {
     unsigned char juegoTerminado = FALSO;
     char estado;
@@ -85,13 +85,6 @@ int empezarJuego()
     }
     while(!esNombreValido(nombreJug));
 
-    // Acá se debería verificar si hay conexión al servidor
-    // Si no hay conexión, se informa que su puntaje no se va a guardar en los servidores
-    if (hayConexionServidor() == FALSO)
-    {
-        // Mostrar por pantalla la advertencia y esperar a que el usuario toque una tecla para empezar
-    }
-
     // Leemos el laberinto y lo interpretamos para generar todo
     if (!procesarEntidades(&laberinto, &entidades, &configuracion, nombreJug, FALSO))
     {
@@ -133,6 +126,7 @@ int empezarJuego()
 
     // Mostramos y guardamos los movimientos del jugador y cuantos fueron
     cantMovimientos = mostrarMovimientos(&entidades.jugador);
+    puts("\nApreta cualquier tecla para continuar...");
     getch();
 
     // Mostramos el resumen de la partida
@@ -292,6 +286,7 @@ size_t mostrarMovimientos(tJugador* jugador)
     int contador = 0;
 
     printf("\nHISTORIAL DE MOVIMIENTOS REALIZADOS...\n");
+
     while(!colaVacia(&jugador->colaMovimientos))
     {
         sacarDeCola(&jugador->colaMovimientos,&pos, sizeof(tPosicion));

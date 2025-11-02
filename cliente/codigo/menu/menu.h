@@ -13,6 +13,7 @@ void submenuDerrota (tJugador * jugador, unsigned nivel);
 char generarArchivoReglas(const char * pathArch);
 char verReglas(const char * pathArch);
 char submenuTransicion (tJugador * jugador, unsigned nivel);
-char verRankings();
+void mostrarRanking(void* nodo);
+char verRankings(SOCKET* socket);
 
 #endif // MENU_H_INCLUDED
