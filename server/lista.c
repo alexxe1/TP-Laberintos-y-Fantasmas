@@ -1,11 +1,29 @@
 #include "lista.h"
-#include "servidor.h"
+
+#define MIN(a,b) ((a)>(b)?(a):(b))
 
 void crearLista(tLista *pl)
 {
     *pl = NULL;
 }
 
+int listaVacia(tLista *pl)
+{
+    return *pl == NULL;
+}
+
+int contarNodosLista(tLista *pl)
+{
+    int contador = 0;
+
+    while(*pl)
+    {
+        contador++;
+        pl = &(*pl)->sig;
+    }
+
+    return contador;
+}
 int ponerEnListaUltimo(tLista *pl, void *info, unsigned tam)
 {
     tNodo *nuevo = (tNodo*)malloc(sizeof(tNodo));
@@ -33,6 +51,68 @@ int ponerEnListaUltimo(tLista *pl, void *info, unsigned tam)
     *pl = nuevo;
 
     return 0;
+}
+
+int ponerEnListaPrimero(tLista *pl, void *info, unsigned tam)
+{
+    tNodo *nuevo = (tNodo*)malloc(sizeof(tNodo));
+    if(!nuevo)
+    {
+        return SIN_MEM;
+    }
+
+    nuevo->info = malloc(tam);
+    if(!nuevo->info)
+    {
+        free(nuevo);
+        return SIN_MEM;
+    }
+
+    memcpy(nuevo->info, info, tam),
+    nuevo->tamInfo = tam;
+    nuevo->sig = *pl;
+    *pl = nuevo;
+
+    return TODO_OK;
+}
+
+int sacarListaPrimero(tLista *pl, void *info, unsigned tam)
+{
+    tNodo *aux = *pl;
+
+    if(!aux)
+    {
+        return LISTA_VACIA;
+    }
+    *pl = aux->sig;
+
+    memcpy(info,aux->info, MIN(tam, aux->tamInfo));
+
+    free(aux->info);
+    free(aux);
+
+    return TODO_OK;
+}
+
+int sacarListaUltimo(tLista *pl, void *info, unsigned tam)
+{
+
+    if(!*pl)
+    {
+        return LISTA_VACIA;
+    }
+    while((*pl)->sig)
+    {
+        pl = &(*pl)->sig;
+    }
+
+    memcpy(info, (*pl)->info, MIN((*pl)->tamInfo, tam));
+    free((*pl)->info);
+    free(*pl);
+
+    *pl = NULL;
+
+    return TODO_OK;
 }
 
 void ordenarLista(tLista *pl, unsigned tam, Cmp cmp)
