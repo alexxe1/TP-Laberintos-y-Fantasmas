@@ -75,6 +75,7 @@ int procesarEntrada(const char *peticion, char* respuesta, tArbol *a, tCmp cmp, 
     {
         if(nombre[0] != '\0')
         {
+            *respuesta = 1;
             if(!buscarNodoNoClave(a,&jugador,sizeof(tJugador), cmp))
             {
                 //agregamos con "a+b" al final del archivo usuario el nombre con su id generado
@@ -83,14 +84,9 @@ int procesarEntrada(const char *peticion, char* respuesta, tArbol *a, tCmp cmp, 
                 //balancear arbol
                 crearArchIdx(a, NOMBRE_ARCH_USUARIOS, NOMBRE_ARCH_INDICE, sizeof(tJugador),sizeof(tIdxJugador),crearIdx, cmpIdx);
                 cargarDesdeArchOrdenadoArbol(a,sizeof(tIdxJugador), NOMBRE_ARCH_INDICE, cmp);
-                *respuesta = 1;
                 //strcpy(respuesta, "USUARIO REGISTRADO CON EXITO");
             }
-            /*else
-            {
-                strcpy(respuesta, "USUARIO YA EXISTENTE");
 
-            }*/
         }
         else
         {
@@ -152,10 +148,10 @@ void run_server()
     crearCola(&cola);
     //creamos indice y despues generamos el arbol balanceado, si no se pudo generar el indice porque todavia no jugo nadie y no se creo
     //el archivo usuario entonces no generamos el arbol
-    result = crearArchIdx(&arbol, NOMBRE_ARCH_USUARIOS, NOMBRE_ARCH_INDICE, sizeof(tJugador),sizeof(tIdxJugador), crearIdx, cmpIdx);
-    if(result)
+    result = crearArchIdx(&arbol, NOMBRE_ARCH_USUARIOS, NOMBRE_ARCH_INDICE, sizeof(tJugador),sizeof(tIdxJugador), crearIdx, cmpIdxId);
+    if(result == TODO_OK)
     {
-        cargarDesdeArchOrdenadoArbol(&arbol,sizeof(tIdxJugador), NOMBRE_ARCH_INDICE, cmpIdx);
+        cargarDesdeArchOrdenadoArbol(&arbol,sizeof(tIdxJugador), NOMBRE_ARCH_INDICE, cmpIdxId);
     }
 
     if (init_winsock() != 0)
@@ -222,10 +218,8 @@ void run_server()
         }
 
         // Procesar mensajes pendientes en la cola
-        printf("hola");
         while (!colaVacia(&cola))
         {
-            printf("hola");
             // Desencolar la peticion
             sacarDeCola(&cola, peticion, BUFFER_SIZE);
 
@@ -233,7 +227,7 @@ void run_server()
             printf("[PROC] Procesando: %s\n", peticion);
             if(procesarEntrada(peticion, &response, &arbol, cmpId, client_socket) != RANK)
             {
-                send(client_socket, &response, strlen(&response), 0);
+                send(client_socket, &response, sizeof(response), 0);
                 printf("[TX] Enviado: %d\n", response);
             }
 
@@ -277,6 +271,14 @@ int cmpIdx(const void *a, const void *b)
     tJugador *y = (tJugador*)b;
 
     return strcmp(x->nombre, y->nombre);
+}
+
+int cmpIdxId(const void *a, const void *b)
+{
+    tIdxJugador *x = (tIdxJugador*)a;
+    tIdxJugador *y = (tIdxJugador*)b;
+
+    return x->id - y->id;
 }
 
 int agregarAArchivo(const char *nombreArchUsuario, char *nombre)
@@ -387,17 +389,21 @@ tLista generarRanking(tArbol *a, const char *nombreArchPartidas)
         ponerEnOrden(&partidaL,&partida, sizeof(tPartida),cmpId, acumularPuntos);
     }
 
-    sacarListaPrimero(&partidaL, &partida, sizeof(tPartida));
-    jugador.nombre[0] = '\0';
-    jugador.id = partida.idJugador;
+    while(!listaVacia(&partidaL))
+    {
+        sacarListaPrimero(&partidaL, &partida, sizeof(tPartida));
+        jugador.nombre[0] = '\0';
+        jugador.id = partida.idJugador;
 
-    buscarNodoNoClave(a, &jugador, sizeof(tIdxJugador), cmpIdx);
+        buscarNodoArbol(a, &jugador, sizeof(tIdxJugador), cmpIdxId);
 
-    strcpy(rank.nombre, jugador.nombre);
-    rank.puntos = partida.puntuacion;
+        strcpy(rank.nombre, jugador.nombre);
+        rank.puntos = partida.puntuacion;
 
-    ponerEnListaUltimo(&rankL, &rank, sizeof(tRanking));
+        ponerEnListaUltimo(&rankL, &rank, sizeof(tRanking));
+        ordenarLista(&rankL, sizeof(tRanking),cmpPuntos);
 
+    }
     //sacoprimero de lista y lo guardo en partida, con el id busco en el arbol el nombre, recordar que el arbol es tIdxJugador
     //basicamente tIdxJugador.id = partida.idJugador
     //como ya saque el primer de lista tengo cargada toda la partida, es decir id de jugador con su total de puntos y el nombre en el indice
@@ -426,4 +432,12 @@ int cmpId(const void *a, const void *b)
     tPartida *y = (tPartida*)b;
 
     return x->idJugador - y->idJugador;
+}
+
+int cmpPuntos(const void *a, const void *b)
+{
+    tRanking *x = (tRanking*)a;
+    tRanking *y = (tRanking*)b;
+
+    return y->puntos - x->puntos;
 }
