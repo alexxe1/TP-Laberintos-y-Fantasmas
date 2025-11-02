@@ -135,18 +135,52 @@ char solicitarRankingsServidor(SOCKET* socket, tLista* listaRankings)
 char darAltaJugadorServidor(SOCKET* socket, char* nombreJugador)
 {
     const char* peticion = "REGISTRAR";
+    int lenNombre = (int)strlen(nombreJugador) + 1; //Incluyo '\0'
+    char rta;
+    int bytesRecibidos;
 
-    // Hay que mandar nombreJugador
+    if(send(*socket, peticion, strlen(peticion), 0) == SOCKET_ERROR)
+        return ERROR;
 
-    return EXITO;
+    if(send(*socket, (char*)&lenNombre, sizeof(int), 0) == SOCKET_ERROR)
+        return ERROR;
+
+    if(send(*socket, nombreJugador, lenNombre, 0) == SOCKET_ERROR)
+        return ERROR;
+
+    bytesRecibidos = recv(*socket, &rta, sizeof(char), 0);
+    if(bytesRecibidos <= 0)
+        return ERROR;
+
+    return rta;
 }
 
 // Devuelve EXITO o ERROR según se pudo o no mandar datos de la partida al servidor
 char mandarDatosPartidaServidor(SOCKET* socket, char* nombreJugador, size_t puntajeTotal, size_t cantMovimientos)
 {
     const char* peticion = "GUARDAR";
+    int lenNombre = (int)strlen(nombreJugador) + 1;
+    char rta;
+    int bytesRecibidos;
 
-    // Hay que mandar nombreJugador, puntajeTotal y cantMovimientos
+    if(send(*socket, peticion, sizeof(peticion), 0) == SOCKET_ERROR)
+        return ERROR;
 
-    return EXITO;
+    if (send(*socket, (char*)&lenNombre, sizeof(int), 0) == SOCKET_ERROR)
+        return ERROR;
+
+    if (send(*socket, nombreJugador, lenNombre, 0) == SOCKET_ERROR)
+        return ERROR;
+
+    if (send(*socket, (char*)&puntajeTotal, sizeof(size_t), 0) == SOCKET_ERROR)
+        return ERROR;
+
+    if (send(*socket, (char*)&cantMovimientos, sizeof(size_t), 0) == SOCKET_ERROR)
+        return ERROR;
+
+    bytesRecibidos = recv(*socket, &rta, sizeof(char), 0);
+    if(bytesRecibidos <= 0)
+        return ERROR;
+
+    return rta;
 }
