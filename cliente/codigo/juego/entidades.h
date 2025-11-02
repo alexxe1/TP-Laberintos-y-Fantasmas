@@ -4,6 +4,8 @@
 #include "../estructuras/vector.h"
 #include "../estructuras/cola.h"
 
+#define MAX_NOM 16
+
 // Estructura para controlar posiciones
 typedef struct
 {
@@ -14,6 +16,7 @@ typedef struct
 // Estructura correspondiente al jugador
 typedef struct
 {
+    char nombre[MAX_NOM];
     tPosicion posInicial;
     tPosicion posActual;
     tCola colaMovimientos;

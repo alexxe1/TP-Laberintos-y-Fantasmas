@@ -32,14 +32,25 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Linker>
+			<Add library="ws2_32" />
+		</Linker>
 		<Unit filename="codigo/estructuras/cola.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="codigo/estructuras/cola.h" />
+		<Unit filename="codigo/estructuras/lista.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="codigo/estructuras/lista.h" />
 		<Unit filename="codigo/estructuras/vector.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="codigo/estructuras/vector.h" />
+		<Unit filename="codigo/juego/cliente_red.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="codigo/juego/cliente_red.h" />
 		<Unit filename="codigo/juego/configuracion.c">
 			<Option compilerVar="CC" />
 		</Unit>

@@ -26,10 +26,10 @@ typedef struct
     char** casillas;
     size_t filas;
     size_t columnas;
-    int nivel;
+    unsigned nivel;
 } tLaberinto;
 
-int crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion);
+int crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion, unsigned nivel);
 int crearLaberintoArchivo(tLaberinto* laberinto);
 int guardarLaberintoArchivo(tLaberinto* laberinto);
 

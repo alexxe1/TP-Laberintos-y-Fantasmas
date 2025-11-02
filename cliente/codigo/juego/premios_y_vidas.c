@@ -3,6 +3,7 @@
 void mostrarVidasYPuntos(tJugador *jugador)
 {
     puts("+------------------------------+");
+    printf("| JUGADOR: %-10s          |\n", jugador->nombre);
     printf("| VIDAS RESTANTES: %-10d  |\n", (int)jugador->vidas);
     printf("| PUNTAJE TOTAL: %-10d    |\n", (int)jugador->puntajeTotal);
     puts("+------------------------------+");
