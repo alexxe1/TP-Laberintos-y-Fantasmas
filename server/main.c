@@ -24,17 +24,6 @@ void imprimirJugador(void *a)
     printf("---------------------\n");
 }
 
-void imprimirPartida(void *a)
-{
-    tPartida *partida = (tPartida*)a;
-
-    printf("------- Partida -------\n");
-    printf("  ID Partida:     %d\n", partida->idPartida);
-    printf("  ID Jugador:     %d\n", partida->idJugador);
-    printf("  Puntuacion:     %d puntos\n", partida->puntuacion);
-    printf("  Cant. Movs:     %d\n", partida->cantMovs);
-    printf("-----------------------\n");
-}
 
 int main()
 {
@@ -56,13 +45,14 @@ int main()
     mostrarEnOrden(&arbol, (const void*)imprimirIdxJugador);
 
     const char *comandos[] = {
-        "REGISTRAR juan",
-        "REGISTRAR ana",
-        "REGISTRAR juan",
-        "GUARDAR juan 100 25",
-        "GUARDAR ana 80 30",
-        "GUARDAR pedro 120 40",
-        "REGISTRAR alexei",
+       // "REGISTRAR juan",
+       // "REGISTRAR ana",
+        //"REGISTRAR juan",
+       // //"GUARDAR juan 100 25",
+       //"GUARDAR ana 80 30",
+       //"GUARDAR pedro 120 40",
+       // "REGISTRAR alexei",
+        "RANKING",
         NULL
     };
 
@@ -72,9 +62,9 @@ int main()
         printf("Entrada: %-25s → Respuesta: %s\n", comandos[i], respuesta);
     }
 
-    recorrerArchBin(NOMBRE_ARCH_USUARIOS, sizeof(tJugador), imprimirJugador);
-    recorrerArchBin(NOMBRE_ARCH_PARTIDAS, sizeof(tPartida), imprimirPartida);
-    recorrerArchBin(NOMBRE_ARCH_INDICE, sizeof(tIdxJugador),imprimirIdxJugador);
+    //recorrerArchBin(NOMBRE_ARCH_USUARIOS, sizeof(tJugador), imprimirJugador);
+     //recorrerArchBin(NOMBRE_ARCH_PARTIDAS, sizeof(tPartida), imprimirPartida);
+    //recorrerArchBin(NOMBRE_ARCH_INDICE, sizeof(tIdxJugador),imprimirIdxJugador);
 
     return 0;
 }
@@ -107,4 +97,14 @@ unsigned short recorrerArchBin (const char * pathArch, unsigned esize, tAccion a
     return EXITO;
 }
 
+void imprimirPartida(void *a)
+{
+    tPartida *partida = (tPartida*)a;
 
+    printf("------- Partida -------\n");
+    printf("  ID Partida:     %d\n", partida->idPartida);
+    printf("  ID Jugador:     %d\n", partida->idJugador);
+    printf("  Puntuacion:     %d puntos\n", partida->puntuacion);
+    printf("  Cant. Movs:     %d\n", partida->cantMovs);
+    printf("-----------------------\n");
+}

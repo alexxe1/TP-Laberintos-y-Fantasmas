@@ -50,7 +50,11 @@ int crearIdx(tArbol *a, void *reg, int desp, tCmp cmp);
 int cmpIdx(const void *a, const void *b);
 int agregarAArchivo(const char *nombreArchUsuario, char *nombre);
 int guardarPartida(const char *nombreArchPartida, char *nombre, int puntaje, int movs, tArbol *a);
+int generarRanking(const char *nombreArchUsuarios, const char *nombreArchPartidas, char *respuesta);
 
 void imprimirIdxJugador(void *a);
+int cmpId(const void *a, const void *b);
+int acumularPuntos(void **dest, unsigned *tamDest, const void *origen, unsigned tamOrig);
+void imprimirPartida(void *a);
 
 #endif // SERVIDOR_H_INCLUDED

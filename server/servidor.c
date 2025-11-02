@@ -1,5 +1,6 @@
 #include "servidor.h"
 #include "arbol.h"
+#include "lista.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -53,7 +54,7 @@ void procesarEntrada(const char *peticion, char *respuesta, tArbol *a, tCmp cmp)
     {
         //busco en el achivo usuario el nombre, con ese nombre busco el id, despues de que tengo el id voy al archivo de partidas
         // y inserto ordenado mientras acumulo los puntos de partida cuando se repita el id
-        /////generarRanking(NOMBRE_ARCH_USUARIOS, NOMBRE_ARCH_PARTIDAS, respuesta);
+        generarRanking(NOMBRE_ARCH_USUARIOS, NOMBRE_ARCH_PARTIDAS, respuesta);
 
     }
     else if(strcmpi(operacion, "REGISTRAR") == 0)
@@ -289,3 +290,52 @@ int guardarPartida(const char *nombreArchPartida, char *nombre, int puntaje, int
 
 }
 
+int generarRanking(tArbol *a, const char *nombreArchPartidas, char *respuesta)
+{
+    tPartida partida;
+    tLista lista;
+
+    FILE *archPartida = fopen(nombreArchPartidas, "rb");
+    if(!archPartida)
+    {
+        return ERR_ARCH;
+    }
+
+    crearLista(&lista);
+
+    while(fread(&partida, sizeof(tPartida),1, archPartida))
+    {
+        ponerEnOrden(&lista,&partida, sizeof(tPartida),cmpId, acumularPuntos);
+    }
+    printf("\nLISTAAAA");
+    mostrarLista(&lista, (const void*)imprimirPartida);
+
+    //sacoprimero de lista y lo guardo en partida, con el id busco en el arbol el nombre, recordar que el arbol es tIdxJugador
+    //basicamente tIdxJugador.id = partida.idJugador
+    //como ya saque el primer de lista tengo cargada toda la partida, es decir id de jugador con su total de puntos y el nombre en el indice
+    //asigno numero incremental como puesto en ranking y el nombre y puntuacion lo saco de las 2 anterior
+    //buscar forma de copiar todo el ranking en la respuesta por ejemplo 1 juan 33 | 4 alberto 33
+    //en la foto no esta el puesto, asi que pueden poner el id del jugador mejor
+    fclose(archPartida);
+
+    return TODO_OK;
+}
+
+
+int acumularPuntos(void **dest, unsigned *tamDest, const void *origen, unsigned tamOrig)
+{
+    tPartida *p = (tPartida*)*dest;
+    tPartida *dup = (tPartida*)origen;
+
+    p->puntuacion += dup->puntuacion;
+
+    return TODO_OK;
+}
+
+int cmpId(const void *a, const void *b)
+{
+    tPartida *x = (tPartida*)a;
+    tPartida *y = (tPartida*)b;
+
+    return x->idJugador - y->idJugador;
+}
