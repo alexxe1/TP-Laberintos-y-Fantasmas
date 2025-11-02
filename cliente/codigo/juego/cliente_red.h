@@ -22,11 +22,12 @@ typedef struct
 // General
 int iniciarConexion();
 SOCKET conectarseAlServidor(const char* ip, int puerto);
-void cerrarConexion(SOCKET socket);
+void cerrarConexion(SOCKET* socket);
 
 // Juego
 char solicitarRankingsServidor(SOCKET* socket, tLista* listaRankings);
 char intentarConectarServidor(SOCKET* socket, const char* ip, int puerto);
-char mandarDatosPartidaServidor(char* nombreJugador, size_t puntajeTotal, size_t cantMovimientos);
+char darAltaJugadorServidor(SOCKET* socket, char* nombreJugador);
+char mandarDatosPartidaServidor(SOCKET* socket, char* nombreJugador, size_t puntajeTotal, size_t cantMovimientos);
 
 #endif // CLIENTE_RED_H_INCLUDED

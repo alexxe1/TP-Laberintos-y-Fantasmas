@@ -8,6 +8,7 @@ int empezarJuego(SOCKET* socket)
     char nombreJug[MAX_NOM];
     int resultado;
     size_t cantMovimientos;
+    char dioAltaJugador = FALSO;
     tLaberinto laberinto;
     tEntidades entidades;
     tConfiguracion configuracion;
@@ -85,6 +86,18 @@ int empezarJuego(SOCKET* socket)
     }
     while(!esNombreValido(nombreJug));
 
+    // Se intenta dar el alta del jugador en el servidor
+    if (darAltaJugadorServidor(socket, entidades.jugador.nombre) == ERROR)
+    {
+        puts("Ocurrio un error al dar de alta al jugador en el servidor. Tu puntuacion no se guardara.");
+        puts("Apreta cualquier tecla para continuar...");
+        _getch();
+    }
+    else
+    {
+        dioAltaJugador = VERDADERO;
+    }
+
     // Leemos el laberinto y lo interpretamos para generar todo
     if (!procesarEntidades(&laberinto, &entidades, &configuracion, nombreJug, FALSO))
     {
@@ -132,16 +145,24 @@ int empezarJuego(SOCKET* socket)
     // Mostramos el resumen de la partida
     submenuDerrota(&entidades.jugador, laberinto.nivel);
 
-    // Intentamos mandar los datos de la partida al servidor para que los guarde
-    // Si hay un error, se lo mostramos al jugador
-    if (mandarDatosPartidaServidor(entidades.jugador.nombre, entidades.jugador.puntajeTotal, cantMovimientos) == ERROR)
+    // Solo guardamos el puntaje si se dio alta en el servidor
+    if (dioAltaJugador == VERDADERO)
     {
-        // Acá le explicamos que hubo un error al comunicarse con el servidor
-        // Se le podría ofrecer volver a intentar mandar los datos
-    }
-    else
-    {
-        // Acá mostramos un mensaje que diga que se mandaron los datos correctamente
+        system("cls");
+        puts("Enviando tu puntaje al servidor...\n");
+
+        // Intentamos mandar los datos de la partida al servidor para que los guarde
+        if (mandarDatosPartidaServidor(socket, entidades.jugador.nombre, entidades.jugador.puntajeTotal, cantMovimientos) == ERROR)
+        {
+            puts("Ocurrio un error al enviar tu puntaje.");
+            puts("\nApreta cualquier tecla para continuar...");
+        }
+        else
+        {
+            puts("Tu puntaje fue enviado correctamente!");
+            puts("\nApreta cualquier tecla para continuar...");
+        }
+        getch();
     }
 
     destruirLaberinto(&laberinto);

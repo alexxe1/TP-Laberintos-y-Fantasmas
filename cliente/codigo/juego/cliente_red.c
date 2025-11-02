@@ -82,9 +82,9 @@ char intentarConectarServidor(SOCKET* socket, const char* ip, int puerto)
     }
 }
 
-void cerrarConexion(SOCKET socket)
+void cerrarConexion(SOCKET* socket)
 {
-    closesocket(socket);
+    closesocket(*socket);
     WSACleanup();
 }
 
@@ -95,7 +95,7 @@ char solicitarRankingsServidor(SOCKET* socket, tLista* listaRankings)
     int bytesRecibidos;
     int i;
     int recibidos;
-    const char* peticion = "RANKINGS";
+    const char* peticion = "RANKING";
     char* ptr;
     tRanking ranking;
 
@@ -131,9 +131,21 @@ char solicitarRankingsServidor(SOCKET* socket, tLista* listaRankings)
     return EXITO;
 }
 
-// Devuelve EXITO o ERROR según se pudo o no mandar datos de la partida al servidor
-char mandarDatosPartidaServidor(char* nombreJugador, size_t puntajeTotal, size_t cantMovimientos)
+// Devuelve EXITO o ERROR según se pudo o no dar de alta a un jugador en el servidor
+char darAltaJugadorServidor(SOCKET* socket, char* nombreJugador)
 {
+    const char* peticion = "REGISTRAR";
+
+    // Hay que mandar nombreJugador
+
+    return EXITO;
+}
+
+// Devuelve EXITO o ERROR según se pudo o no mandar datos de la partida al servidor
+char mandarDatosPartidaServidor(SOCKET* socket, char* nombreJugador, size_t puntajeTotal, size_t cantMovimientos)
+{
+    const char* peticion = "GUARDAR";
+
     // Hay que mandar nombreJugador, puntajeTotal y cantMovimientos
 
     return EXITO;

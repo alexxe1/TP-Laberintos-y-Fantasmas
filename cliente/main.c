@@ -42,7 +42,7 @@ int main()
         }
     }
 
-    cerrarConexion(socket);
+    cerrarConexion(&socket);
 
     return 0;
 }
