@@ -32,7 +32,6 @@ typedef struct
 
 typedef struct
 {
-    int id;
     char nombre[MAX_NOM];
     size_t puntos;
 }tRanking;
@@ -49,7 +48,7 @@ int init_winsock();
 SOCKET create_server_socket();
 
 // Procesa el mensaje recibido y genera la respuesta
-int procesarEntrada(const char *peticion, char respuesta, tArbol *a, tCmp cmp, SOCKET cliente);
+int procesarEntrada(const char *peticion, char* respuesta, tArbol *a, tCmp cmp, SOCKET cliente);
 // Ejecuta el bucle principal del servidor
 void run_server();
 

@@ -29,7 +29,7 @@ void mostrarRanking(tLista *pl)
     tRanking rank;
     printf("\n--- RANKING ---\n");
     while (sacarListaPrimero(pl, &rank, sizeof(tRanking))) {
-        printf("ID: %d | Nombre: %s | Puntos: %lu\n", rank.id, rank.nombre, (unsigned long)rank.puntos);
+        printf("Nombre: %s | Puntos: %lu\n", rank.nombre, (unsigned long)rank.puntos);
     }
     printf("----------------\n");
 }

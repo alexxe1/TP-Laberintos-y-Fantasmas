@@ -37,7 +37,7 @@ SOCKET create_server_socket()
     return s;
 }
 
-int procesarEntrada(const char *peticion, char respuesta, tArbol *a, tCmp cmp, SOCKET cliente)
+int procesarEntrada(const char *peticion, char* respuesta, tArbol *a, tCmp cmp, SOCKET cliente)
 {
     char operacion[16], nombre[16];
     int puntaje, movs, cantRank;
@@ -82,7 +82,7 @@ int procesarEntrada(const char *peticion, char respuesta, tArbol *a, tCmp cmp, S
                 //balancear arbol
                 crearArchIdx(a, NOMBRE_ARCH_USUARIOS, NOMBRE_ARCH_INDICE, sizeof(tJugador),sizeof(tIdxJugador),crearIdx, cmpIdx);
                 cargarDesdeArchOrdenadoArbol(a,sizeof(tIdxJugador), NOMBRE_ARCH_INDICE, cmp);
-                respuesta = '1';
+                *respuesta = 1;
                 //strcpy(respuesta, "USUARIO REGISTRADO CON EXITO");
             }
             /*else
@@ -94,7 +94,7 @@ int procesarEntrada(const char *peticion, char respuesta, tArbol *a, tCmp cmp, S
         else
         {
             //strcpy(respuesta, "ERROR: falta el nombre del jugador");
-            respuesta = '0';
+            *respuesta = 0;
         }
 
     }
@@ -106,26 +106,26 @@ int procesarEntrada(const char *peticion, char respuesta, tArbol *a, tCmp cmp, S
             if(guardarPartida(NOMBRE_ARCH_PARTIDAS, nombre, puntaje, movs,a) != NO_ENCONTRADO)
             {
                 //strcpy(respuesta, "PARTIDA GUARDADA...");
-                respuesta = '1';
+                *respuesta = 1;
 
             }
             else
             {
                 //strcpy(respuesta, "USUARIO NO REGISTRADO");
-                respuesta = '0';
+                *respuesta = 0;
             }
         }
         else
 
         {
             //strcpy(respuesta, "ERROR: falta el nombre del jugador");
-            respuesta = '0';
+            *respuesta = 0;
         }
     }
     else
     {
         //strcpy(respuesta, "ERROR: operacion invalida");
-        respuesta = '0';
+        *respuesta = 0;
     }
 
     return TODO_OK;
@@ -179,19 +179,20 @@ void run_server()
     printf("Cliente conectado.\n");
 
     char buffer[BUFFER_SIZE];
-    char response;
+    char response = 0;
     int bytes_received;
 
     while ((bytes_received = recv(client_socket, buffer, BUFFER_SIZE - 1, 0)) > 0)
     {
         buffer[bytes_received] = '\0';
         printf("Recibido: %s\n", buffer);
-        if(procesarEntrada(buffer, response, &arbol, cmpIdx, client_socket) != RANK)
+
+        if(procesarEntrada(buffer, &response, &arbol, cmpIdx, client_socket) != RANK)
         {
-            send(client_socket, response, strlen(response), 0);
+            send(client_socket, &response, 1, 0);
         }
 
-        printf("Enviado:  %s\n", response);
+        printf("Enviado:  %c\n", response);
     }
 
     printf("Conexion cerrada.\n");
@@ -335,12 +336,11 @@ tLista generarRanking(tArbol *a, const char *nombreArchPartidas)
 
     sacarListaPrimero(&partidaL, &partida, sizeof(tPartida));
     jugador.nombre[0] = '\0';
-    strcpy(jugador.id, partida.idJugador);
+    jugador.id = partida.idJugador;
 
     buscarNodoNoClave(a, &jugador, sizeof(tIdxJugador), cmpIdx);
 
     strcpy(rank.nombre, jugador.nombre);
-    rank.id = jugador.id;
     rank.puntos = partida.puntuacion;
 
     ponerEnListaUltimo(&rankL, &rank, sizeof(tRanking));
