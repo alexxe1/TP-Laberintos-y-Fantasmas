@@ -35,47 +35,8 @@ void mostrarRanking(tLista *pl)
 }
 
 int main()
-{/*
-    tArbol arbol;
-    char respuesta;
-    int result;
-
-    crearArbol(&arbol);
-    result = crearArchIdx(&arbol, NOMBRE_ARCH_USUARIOS, NOMBRE_ARCH_INDICE,
-                          sizeof(tJugador), sizeof(tIdxJugador), crearIdx, cmpIdx);
-
-    if(result == TODO_OK)
-        cargarDesdeArchOrdenadoArbol(&arbol,sizeof(tIdxJugador), NOMBRE_ARCH_INDICE, cmpIdx);
-
-    printf("\nARBOL:\n");
-    mostrarEnOrden(&arbol, (const void*)imprimirIdxJugador);
-
-    const char *comandos[] = {
-       "REGISTRAR juan",
-       "REGISTRAR ana",
-       "REGISTRAR juan",
-       "GUARDAR juan 100 25",
-       "GUARDAR ana 80 30",
-       "GUARDAR pedro 120 40",
-       "REGISTRAR alexei",
-        NULL
-    };
-
-    for (int i = 0; comandos[i]; i++)
-    {
-        procesarEntrada(comandos[i], respuesta, &arbol, cmpIdx, NULL);
-        printf("Entrada: %-25s → Respuesta: %s\n", comandos[i], respuesta);
-    }
-
-    printf("\nARCHIVOS GENERADOS:\n");
-    recorrerArchBin(NOMBRE_ARCH_USUARIOS, sizeof(tJugador), imprimirJugador);
-    recorrerArchBin(NOMBRE_ARCH_PARTIDAS, sizeof(tPartida), imprimirPartida);
-    recorrerArchBin(NOMBRE_ARCH_INDICE, sizeof(tIdxJugador), imprimirIdxJugador);
-
-    // 🧪 PRUEBA DIRECTA DEL RANKING:
-    printf("\nProbando generarRanking():\n");
-    tLista ranking = generarRanking(&arbol, NOMBRE_ARCH_PARTIDAS);
-    mostrarRanking(&ranking);*/
+{
+    run_server();
 
     return 0;
 }
