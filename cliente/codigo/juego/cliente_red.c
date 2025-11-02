@@ -138,7 +138,6 @@ char darAltaJugadorServidor(SOCKET* socket, char* nombreJugador)
     char rta;
     int bytesRecibidos;
 
-
     snprintf(peticion, sizeof(peticion), "REGISTRAR %s", nombreJugador);
 
     if(send(*socket, peticion, strlen(peticion), 0) == SOCKET_ERROR)

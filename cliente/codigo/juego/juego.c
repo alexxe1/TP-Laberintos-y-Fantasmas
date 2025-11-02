@@ -18,26 +18,31 @@ int empezarJuego(SOCKET* socket)
     if(resultado == ERROR_ARCHIVO)
     {
         puts("ERROR: No se pudo procesar el archivo 'Config.txt' Verifique la sintaxis.\n");
+        _getch();
         return ERROR;
     }
     if(resultado == ERROR_FILAS)
     {
         printf("ERROR: Cantidad de Filas invalida. MAX: %d -- MIN: %d\n", MAX_FILAS, MIN_FILAS);
+        _getch();
         return ERROR;
     }
     if(resultado == ERROR_COLUMNAS)
     {
         printf("ERROR: Cantidad de Columnas invalida. MAX: %d -- MIN: %d\n", MAX_COLUMNAS, MIN_COLUMNAS);
+        _getch();
         return ERROR;
     }
     if(resultado == ERROR_VIDAS_INICIALES)
     {
         printf("ERROR: Cantidad de Vidas iniciales invalida. MAX: %d -- MIN: 1\n", MAX_VIDAS_INICIALES);
+        _getch();
         return ERROR;
     }
     if(resultado == ERROR_FANTASMAS)
     {
         printf("ERROR: Numero de Fantasmas invalido. MAX: %d -- MIN: 0\n", (int)(configuracion.filas * configuracion.columnas / DIV_MAX_FANTASMAS));
+        _getch();
         return ERROR;
     }
     if(resultado == ERROR_PREMIOS)
@@ -48,6 +53,7 @@ int empezarJuego(SOCKET* socket)
     if(resultado == ERROR_VIDAS_EXTRAS)
     {
         printf("ERROR: Numero de Vidas Extra invalido. MAX: %d -- MIN: 0\n", (int)(configuracion.filas * configuracion.columnas / DIV_MAX_VIDAS_EXTRAS));
+        _getch();
         return ERROR;
     }
 
@@ -62,6 +68,7 @@ int empezarJuego(SOCKET* socket)
     if (!crearLaberintoAleatorio(&laberinto, &configuracion, iteracion))
     {
         puts("ERROR: Hubo un error al crear el laberinto aleatorio");
+        _getch();
         return ERROR;
     }
 
@@ -70,6 +77,7 @@ int empezarJuego(SOCKET* socket)
     {
         destruirLaberinto(&laberinto);
         puts("ERROR: No hay memoria para crear los fantasmas");
+        _getch();
         return ERROR;
     }
 
@@ -94,6 +102,7 @@ int empezarJuego(SOCKET* socket)
         destruirLaberinto(&laberinto);
         vaciarVector(&entidades.fantasmas);
         puts("ERROR: No se encontro una entrada en el laberinto");
+        _getch();
         return ERROR;
     }
 

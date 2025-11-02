@@ -171,16 +171,23 @@ char verRankings(SOCKET* socket)
 
     system("cls");
 
-    printf("| %-8s | %-20s | %-10s |\n", "POSICIÓN", "NOMBRE", "PUNTOS");
+    printf("+----------+----------------------+------------+\n");
+    printf("| %-8s | %-20s | %-10s |\n", "POSICION", "NOMBRE", "PUNTOS");
+    printf("+----------+----------------------+------------+\n");
 
     while (sacarPrimeroLista(&listaRankings, &rankingAux, sizeof(tRanking)) == 1)
     {
-        printf("%-8lu | %-20s | %-10lu\n", (long unsigned)posicion, rankingAux.nombre, (long unsigned)rankingAux.puntos);
+        printf("| %-8lu | %-20s | %-10lu |\n",
+               (unsigned long)posicion,
+               rankingAux.nombre,
+               (unsigned long)rankingAux.puntos);
         posicion++;
     }
 
+    printf("+----------+----------------------+------------+\n");
     puts("\nPresiona cualquier tecla para volver...");
     _getch();
+
 
     vaciarLista(&listaRankings);
 
