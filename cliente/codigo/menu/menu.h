@@ -6,7 +6,7 @@
 #include "../juego/controles.h"
 #include "../estructuras/lista.h"
 
-#define PATH_REGLAS "../../reglas.txt"
+#define PATH_REGLAS "reglas.txt"
 
 int mostrarMenuPrincipal();
 void submenuDerrota (tJugador * jugador, unsigned nivel);
