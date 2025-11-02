@@ -171,7 +171,7 @@ char verRankings(SOCKET* socket)
 
     system("cls");
 
-    printf("| %-8s | %-20s | %-10s |\n", "POSICIÓN", "NOMBRE", "PUNTOS");
+    printf("| %-8s | %-20s | %-10s |\n", "POSICION", "NOMBRE", "PUNTOS");
 
     while (sacarPrimeroLista(&listaRankings, &rankingAux, sizeof(tRanking)) == 1)
     {

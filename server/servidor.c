@@ -145,7 +145,7 @@ void run_server()
     {
         cargarDesdeArchOrdenadoArbol(&arbol,sizeof(tIdxJugador), NOMBRE_ARCH_INDICE, cmpIdx);
     }
-    printf("\nARBOLLL");
+
     mostrarEnOrden(&arbol, (const void*)imprimirIdxJugador);
 
     if (init_winsock() != 0)
