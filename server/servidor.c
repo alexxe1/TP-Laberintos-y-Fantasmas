@@ -41,7 +41,7 @@ SOCKET create_server_socket()
 int procesarEntrada(const char *peticion, char* respuesta, tArbol *a, tCmp cmp, SOCKET cliente)
 {
     char operacion[16], nombre[16];
-    int puntaje, movs, cantRank;
+    unsigned long puntaje, movs, cantRank;
     tJugador jugador;
     tRanking rank;
     tLista rankL;
@@ -49,7 +49,7 @@ int procesarEntrada(const char *peticion, char* respuesta, tArbol *a, tCmp cmp, 
     operacion[0] = nombre[0] = '\0';
     puntaje = movs = 0;
 
-    sscanf(peticion, "%15s %15s %d %d", operacion, nombre, &puntaje, &movs);
+    sscanf(peticion, "%15s %15s %lu %lu", operacion, nombre, &puntaje, &movs);
 
     strcpy(jugador.nombre, nombre);
 
