@@ -87,6 +87,16 @@ int empezarJuego(SOCKET* socket)
     while(!esNombreValido(nombreJug));
 
     // Se intenta dar el alta del jugador en el servidor
+
+    // Leemos el laberinto y lo interpretamos para generar todo
+    if (!procesarEntidades(&laberinto, &entidades, &configuracion, nombreJug, FALSO))
+    {
+        destruirLaberinto(&laberinto);
+        vaciarVector(&entidades.fantasmas);
+        puts("ERROR: No se encontro una entrada en el laberinto");
+        return ERROR;
+    }
+
     if (darAltaJugadorServidor(socket, entidades.jugador.nombre) == ERROR)
     {
         puts("Ocurrio un error al dar de alta al jugador en el servidor. Tu puntuacion no se guardara.");
@@ -98,14 +108,6 @@ int empezarJuego(SOCKET* socket)
         dioAltaJugador = VERDADERO;
     }
 
-    // Leemos el laberinto y lo interpretamos para generar todo
-    if (!procesarEntidades(&laberinto, &entidades, &configuracion, nombreJug, FALSO))
-    {
-        destruirLaberinto(&laberinto);
-        vaciarVector(&entidades.fantasmas);
-        puts("ERROR: No se encontro una entrada en el laberinto");
-        return ERROR;
-    }
 
     // Bucle principal
     while (!juegoTerminado)
