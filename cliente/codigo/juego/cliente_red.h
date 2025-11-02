@@ -14,7 +14,6 @@
 
 typedef struct
 {
-    size_t posicion;
     char nombre[MAX_NOM];
     size_t puntos;
 } tRanking;

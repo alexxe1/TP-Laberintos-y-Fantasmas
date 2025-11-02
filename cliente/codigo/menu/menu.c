@@ -146,16 +146,11 @@ char verReglas(const char * pathArch)
     return EXITO;
 }
 
-void mostrarRanking(void* nodo)
-{
-    tRanking* ranking = (tRanking*)nodo;
-
-    printf("%-8lu | %-20s | %-10lu\n", (long unsigned)ranking->posicion, ranking->nombre, (long unsigned)ranking->puntos);
-}
-
 char verRankings(SOCKET* socket)
 {
     tLista listaRankings;
+    tRanking rankingAux;
+    size_t posicion = 1;
 
     system("cls");
     puts("Obteniendo rankings...");
@@ -178,7 +173,11 @@ char verRankings(SOCKET* socket)
 
     printf("| %-8s | %-20s | %-10s |\n", "POSICIÓN", "NOMBRE", "PUNTOS");
 
-    recorrerLista(&listaRankings, mostrarRanking);
+    while (sacarPrimeroLista(&listaRankings, &rankingAux, sizeof(tRanking)) == 1)
+    {
+        printf("%-8lu | %-20s | %-10lu\n", (long unsigned)posicion, rankingAux.nombre, (long unsigned)rankingAux.puntos);
+        posicion++;
+    }
 
     puts("\nPresiona cualquier tecla para volver...");
     _getch();

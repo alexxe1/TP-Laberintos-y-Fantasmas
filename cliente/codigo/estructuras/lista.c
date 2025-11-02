@@ -10,7 +10,7 @@ int listaVacia(const tLista* lista)
     return *lista == NULL;
 }
 
-int listaLlena(const tLista* lista, unsigned int tam)
+int listaLlena(const tLista* lista, size_t tam)
 {
     tNodo* aux = (tNodo*)malloc(sizeof(tNodo));
 
@@ -48,7 +48,7 @@ void vaciarLista(tLista* lista)
     }
 }
 
-int ponerAlFinal(tLista* lista, const void* elemento, unsigned int tam)
+int ponerAlFinal(tLista* lista, const void* elemento, size_t tam)
 {
     tNodo* aux;
 
@@ -82,11 +82,21 @@ int ponerAlFinal(tLista* lista, const void* elemento, unsigned int tam)
     return 1;
 }
 
-void recorrerLista(tLista* lista, void (*accion)(void* nodo))
+int sacarPrimeroLista(tLista* lista, void* elemento, size_t tam)
 {
-    while (*lista != NULL)
+    tNodo* aux = *lista;
+
+    if (aux == NULL)
     {
-        accion((*lista)->info);
-        lista = &(*lista)->sig;
+        return 0;
     }
+
+    *lista = aux->sig;
+
+    memcpy(elemento, aux->info, MIN(tam, aux->tamInfo));
+
+    free(aux->info);
+    free(aux);
+
+    return 1;
 }
