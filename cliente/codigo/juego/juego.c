@@ -239,7 +239,6 @@ char actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char
         }
     }
 
-
     return CONTINUA;
 }
 
