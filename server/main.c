@@ -36,7 +36,6 @@ void mostrarRanking(tLista *pl)
 
 int main()
 {
-
     run_server();
 
     return 0;

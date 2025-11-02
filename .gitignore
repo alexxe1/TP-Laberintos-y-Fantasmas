@@ -11,3 +11,10 @@ obj/
 # Archivos de sistema
 .DS_Store
 Thumbs.db
+
+# Archivos de datos que no queremos subir
+LaberintoGuardado.txt
+reglas.txt
+indice.dat
+partidas.dat
+usuarios.dat

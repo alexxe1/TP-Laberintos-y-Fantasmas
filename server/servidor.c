@@ -197,7 +197,7 @@ void run_server()
         }
         else if (bytes_received == 0)
         {
-            // El cliente ha cerrado la conexión de forma ordenada
+            // El cliente ha cerrado la conexiï¿½n de forma ordenada
             printf("Cliente desconectado (recv == 0). Saliendo del bucle.\n");
             break;
         }
