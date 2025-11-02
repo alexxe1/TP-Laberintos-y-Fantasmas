@@ -21,7 +21,7 @@
 #define CONTINUA 0
 #define DERROTA -1
 
-int empezarJuego();
+int empezarJuego(SOCKET* socket);
 char actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char* juegoTerminado);
 size_t mostrarMovimientos(tJugador* jugador);
 int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguracion* configuracion, const char* nombJug, unsigned iteracion);

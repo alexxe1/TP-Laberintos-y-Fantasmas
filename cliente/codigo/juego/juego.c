@@ -1,6 +1,6 @@
 #include "juego.h"
 
-int empezarJuego()
+int empezarJuego(SOCKET* socket)
 {
     unsigned char juegoTerminado = FALSO;
     char estado;
@@ -8,6 +8,7 @@ int empezarJuego()
     char nombreJug[MAX_NOM];
     int resultado;
     size_t cantMovimientos;
+    char dioAltaJugador = FALSO;
     tLaberinto laberinto;
     tEntidades entidades;
     tConfiguracion configuracion;
@@ -85,11 +86,16 @@ int empezarJuego()
     }
     while(!esNombreValido(nombreJug));
 
-    // Acá se debería verificar si hay conexión al servidor
-    // Si no hay conexión, se informa que su puntaje no se va a guardar en los servidores
-    if (hayConexionServidor() == FALSO)
+    // Se intenta dar el alta del jugador en el servidor
+    if (darAltaJugadorServidor(socket, entidades.jugador.nombre) == ERROR)
     {
-        // Mostrar por pantalla la advertencia y esperar a que el usuario toque una tecla para empezar
+        puts("Ocurrio un error al dar de alta al jugador en el servidor. Tu puntuacion no se guardara.");
+        puts("Apreta cualquier tecla para continuar...");
+        _getch();
+    }
+    else
+    {
+        dioAltaJugador = VERDADERO;
     }
 
     // Leemos el laberinto y lo interpretamos para generar todo
@@ -133,21 +139,30 @@ int empezarJuego()
 
     // Mostramos y guardamos los movimientos del jugador y cuantos fueron
     cantMovimientos = mostrarMovimientos(&entidades.jugador);
+    puts("\nApreta cualquier tecla para continuar...");
     getch();
 
     // Mostramos el resumen de la partida
     submenuDerrota(&entidades.jugador, laberinto.nivel);
 
-    // Intentamos mandar los datos de la partida al servidor para que los guarde
-    // Si hay un error, se lo mostramos al jugador
-    if (mandarDatosPartidaServidor(entidades.jugador.nombre, entidades.jugador.puntajeTotal, cantMovimientos) == ERROR)
+    // Solo guardamos el puntaje si se dio alta en el servidor
+    if (dioAltaJugador == VERDADERO)
     {
-        // Acá le explicamos que hubo un error al comunicarse con el servidor
-        // Se le podría ofrecer volver a intentar mandar los datos
-    }
-    else
-    {
-        // Acá mostramos un mensaje que diga que se mandaron los datos correctamente
+        system("cls");
+        puts("Enviando tu puntaje al servidor...\n");
+
+        // Intentamos mandar los datos de la partida al servidor para que los guarde
+        if (mandarDatosPartidaServidor(socket, entidades.jugador.nombre, entidades.jugador.puntajeTotal, cantMovimientos) == ERROR)
+        {
+            puts("Ocurrio un error al enviar tu puntaje.");
+            puts("\nApreta cualquier tecla para continuar...");
+        }
+        else
+        {
+            puts("Tu puntaje fue enviado correctamente!");
+            puts("\nApreta cualquier tecla para continuar...");
+        }
+        getch();
     }
 
     destruirLaberinto(&laberinto);
@@ -292,6 +307,7 @@ size_t mostrarMovimientos(tJugador* jugador)
     int contador = 0;
 
     printf("\nHISTORIAL DE MOVIMIENTOS REALIZADOS...\n");
+
     while(!colaVacia(&jugador->colaMovimientos))
     {
         sacarDeCola(&jugador->colaMovimientos,&pos, sizeof(tPosicion));

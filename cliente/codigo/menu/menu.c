@@ -40,7 +40,6 @@ int mostrarMenuPrincipal()
 
 void submenuDerrota(tJugador* jugador, unsigned nivel)
 {
-
     system("cls"); // Limpia la pantalla
     puts("+--------------------------------------------------------+");
     printf("| FIN DE LA PARTIDA!                                     |\n");
@@ -48,8 +47,8 @@ void submenuDerrota(tJugador* jugador, unsigned nivel)
     printf("| NIVEL ALCANZADO: %-10u                            |\n", nivel);
     printf("| PUNTAJE FINAL: %-10d                              |\n", (int)jugador->puntajeTotal);
     puts("+--------------------------------------------------------+");
+    puts("\nApreta cualquier tecla para continuar...");
     getch();
-
 }
 
 char submenuTransicion (tJugador * jugador, unsigned nivel)
@@ -87,10 +86,8 @@ char submenuTransicion (tJugador * jugador, unsigned nivel)
         }
         else if (tecla == TECLA_ENTER)
             return opcion; // Devuelve 0 o 1 según lo elegido
-
     }
 }
-
 
 char generarArchivoReglas(const char * pathArch)
 {
@@ -124,7 +121,6 @@ char generarArchivoReglas(const char * pathArch)
     return EXITO;
 }
 
-
 char verReglas(const char * pathArch)
 {
     FILE * pf;
@@ -150,22 +146,42 @@ char verReglas(const char * pathArch)
     return EXITO;
 }
 
-// Esta función debería solicitar los rankings a cliente_red.c y mostrarlos.
-// Si el servidor no devuelve los rankings o los rankings están vacíos, hay que aclararle al jugador también.
-char verRankings()
+void mostrarRanking(void* nodo)
+{
+    tRanking* ranking = (tRanking*)nodo;
+
+    printf("%-8lu | %-20s | %-10lu\n", (long unsigned)ranking->posicion, ranking->nombre, (long unsigned)ranking->puntos);
+}
+
+char verRankings(SOCKET* socket)
 {
     tLista listaRankings;
 
+    system("cls");
+    puts("Obteniendo rankings...");
+
+    if (*socket == INVALID_SOCKET && intentarConectarServidor(socket, IP_SERVER, PUERTO) == ERROR)
+        return ERROR;
+
     crearLista(&listaRankings);
 
-    if (solicitarRankingsServidor(&listaRankings) == ERROR)
+    if (solicitarRankingsServidor(socket, &listaRankings) == ERROR)
     {
-        // Le decimos al usuario que falló la conexión al servidor
+        system("cls");
+        puts("Ocurrio un error al obtener los rankings. Presiona cualquier tecla para continuar...");
         vaciarLista(&listaRankings);
+        _getch();
         return ERROR;
     }
 
-    // Acá hay que procesar la lista y mostrarla (recorrerla)
+    system("cls");
+
+    printf("| %-8s | %-20s | %-10s |\n", "POSICIÓN", "NOMBRE", "PUNTOS");
+
+    recorrerLista(&listaRankings, mostrarRanking);
+
+    puts("\nPresiona cualquier tecla para volver...");
+    _getch();
 
     vaciarLista(&listaRankings);
 
