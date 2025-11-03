@@ -13,8 +13,8 @@ obj/
 Thumbs.db
 
 # Archivos de datos que no queremos subir
-LaberintoGuardado.txt
-reglas.txt
-indice.dat
-partidas.dat
-usuarios.dat
+cliente/LaberintoGuardado.txt
+cliente/reglas.txt
+server/indice.dat
+server/partidas.dat
+server/usuarios.dat
