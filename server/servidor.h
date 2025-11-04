@@ -7,7 +7,7 @@
 
 #define PORT 12345
 #define BUFFER_SIZE 1024
-#define MAX_NOM 16
+#define MAX_NOM 17
 #define RANK 5
 
 #define NOMBRE_ARCH_USUARIOS "usuarios.dat"

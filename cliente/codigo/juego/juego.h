@@ -18,7 +18,8 @@
 #include <conio.h> // Para detectar input (temporal)
 
 #define VICTORIA 1
-#define CONTINUA 0
+#define SIN_MOVIMIENTO 0
+#define CONTINUA 2
 #define DERROTA -1
 
 int empezarJuego(SOCKET* socket);
@@ -30,5 +31,6 @@ char chequeoSalida(tJugador* jugador, tLaberinto* laberinto);
 void imprimirPosicion(const void* p);
 char continuarJugando (tLaberinto * laberinto, tConfiguracion * configuracion, tEntidades * entidades, unsigned nivel);
 char procesarMovimientos(tEntidades* entidades, tLaberinto* laberinto, unsigned char* juegoTerminado);
+void destruirColasYVectores(tEntidades* entidades);
 
 #endif // JUEGO_H_INCLUDED

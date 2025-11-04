@@ -4,8 +4,9 @@ int empezarJuego(SOCKET* socket)
 {
     unsigned char juegoTerminado = FALSO;
     char estado;
-    unsigned iteracion = VERDADERO;
+    unsigned iteracion = 1;
     char nombreJug[MAX_NOM];
+    char esNomValido;
     int resultado;
     size_t cantMovimientos;
     char dioAltaJugador = FALSO;
@@ -84,17 +85,22 @@ int empezarJuego(SOCKET* socket)
     do
     {
         system("cls");
-        puts("INGRESE EL NOMBRE DE JUGADOR: ");
+        puts("Ingrese el nombre del jugador: ");
         ingresarNombre(nombreJug, MAX_NOM);
-        if (!esNombreValido(nombreJug))
+
+        esNomValido = esNombreValido(nombreJug);
+
+        if (!esNomValido)
         {
-            puts("NOMBRE INVALIDO! USE LETRAS, NUMEROS o ESPACIOS");
+            puts("\nNombre de usuario invalido.");
+            puts("-> Solo se permiten letras, numeros y guiones bajos.");
+            puts("-> El nombre debe empezar con una letra y no se permiten espacios.");
+            puts("-> El nombre debe tener minimo 3 caracteres.");
+            puts("-> El nombre solo va a tomar hasta 16 caracteres.\n");
             system("pause");
         }
     }
-    while(!esNombreValido(nombreJug));
-
-    // Se intenta dar el alta del jugador en el servidor
+    while(!esNomValido);
 
     // Leemos el laberinto y lo interpretamos para generar todo
     if (!procesarEntidades(&laberinto, &entidades, &configuracion, nombreJug, FALSO))
@@ -106,6 +112,7 @@ int empezarJuego(SOCKET* socket)
         return ERROR;
     }
 
+    // Se intenta dar el alta del jugador en el servidor
     if (darAltaJugadorServidor(socket, entidades.jugador.nombre) == ERROR)
     {
         puts("Ocurrio un error al dar de alta al jugador en el servidor. Tu puntuacion no se guardara.");
@@ -117,14 +124,18 @@ int empezarJuego(SOCKET* socket)
         dioAltaJugador = VERDADERO;
     }
 
+    // Dibujado inicial
+    dibujarJuego(&laberinto, &entidades);
 
     // Bucle principal
     while (!juegoTerminado)
     {
-        system("cls");
-
         estado = actualizarJuego(&laberinto, &entidades, &juegoTerminado);
-        dibujarJuego(&laberinto, &entidades);
+
+        if (estado == CONTINUA)
+        {
+            dibujarJuego(&laberinto, &entidades);
+        }
 
         if (estado == VICTORIA)
         {
@@ -142,10 +153,16 @@ int empezarJuego(SOCKET* socket)
                 iteracion++;
 
                 if(!continuarJugando(&laberinto, &configuracion, &entidades, iteracion))
+                {
+                    destruirColasYVectores(&entidades);
                     return ERROR;
+                }
+
+                dibujarJuego(&laberinto, &entidades);
             }
         }
-        Sleep(300);
+
+        Sleep(100);
     }
 
     // Mostramos y guardamos los movimientos del jugador y cuantos fueron
@@ -177,7 +194,7 @@ int empezarJuego(SOCKET* socket)
     }
 
     destruirLaberinto(&laberinto);
-    vaciarVector(&entidades.fantasmas);
+    destruirColasYVectores(&entidades);
 
     return EXITO;
 }
@@ -187,19 +204,16 @@ char actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char
     char teclaApretada;
     char direccionJugador = NO_DIRECCION;
     tMov movimiento;
-    tCola cola;
-
-    crearCola(&cola);
 
     if (!_kbhit()) // Si no se apretó nada, no perdemos tiempo en calcular nada
-        return CONTINUA;
+        return SIN_MOVIMIENTO;
 
     teclaApretada = _getch();
 
     if (teclaApretada == SALIR_DEL_JUEGO) // Si se va a cerrar el juego, tampoco deberíamos calcular nada más
     {
         *juegoTerminado = VERDADERO;
-        return CONTINUA;
+        return SIN_MOVIMIENTO;
     }
 
     // Determinamos la dirección del jugador
@@ -212,13 +226,17 @@ char actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char
     else if (TECLA_DERECHA(teclaApretada))
         direccionJugador = DERECHA;
 
+    // Si apretó una tecla no contemplada, no se mueve
+    if (direccionJugador == NO_DIRECCION)
+        return SIN_MOVIMIENTO;
+
     movimiento.tipo = JUGADOR;
     movimiento.id = 0;
     movimiento.mov = direccionJugador;
 
     ponerEncola(&entidades->colaMov, &movimiento, sizeof(tMov));
 
-    //Le mando la cola ya cargada con el movimiento del jugador ya que aca es donde se sabe para que lado se mueve
+    // Le mando la cola ya cargada con el movimiento del jugador ya que aca es donde se sabe para que lado se mueve
     procesarMovimientos(entidades, laberinto, juegoTerminado);
 
     if (jugadorEnSalida(&entidades->jugador, laberinto))
@@ -272,7 +290,9 @@ char procesarMovimientos(tEntidades* entidades, tLaberinto* laberinto, unsigned 
             {
                 return CONTINUA;
             }
+
             ponerEncola(&entidades->jugador.colaMovimientos,&entidades->jugador.posActual,sizeof(tPosicion));
+
             if (chequeoFantasma(&entidades->fantasmas, &entidades->jugador))
             {
                 volverYDescontar(&entidades->jugador);
@@ -384,6 +404,8 @@ void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades)
     tFantasma* fantasmaEncontrado;
     int indiceFantasmaEncontrado = -1;
 
+    system("cls");
+
     for (i = 0; i < filasLaberinto; i++)
     {
         for (j = 0; j < columnasLaberinto; j++)
@@ -436,6 +458,7 @@ char continuarJugando (tLaberinto * laberinto, tConfiguracion * configuracion, t
         puts("ERROR: No hay memoria para crear los fantasmas");
         return ERROR;
     }
+
     if (!procesarEntidades(laberinto, entidades, configuracion, NULL, nivel))
     {
         destruirLaberinto(laberinto);
@@ -447,3 +470,15 @@ char continuarJugando (tLaberinto * laberinto, tConfiguracion * configuracion, t
     return EXITO;
 }
 
+void destruirColasYVectores(tEntidades* entidades)
+{
+    destruirJugador(&entidades->jugador);
+
+    for (size_t i = 0; i < obtenerLongitudVector(&entidades->fantasmas); i++)
+    {
+        destruirFantasma((tFantasma*)obtenerElementoVector(&entidades->fantasmas, i));
+    }
+
+    vaciarVector(&entidades->fantasmas);
+    vaciarCola(&entidades->colaMov);
+}

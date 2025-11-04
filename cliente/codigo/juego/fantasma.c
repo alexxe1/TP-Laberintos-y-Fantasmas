@@ -14,6 +14,11 @@ void crearFantasma(tFantasma* fantasma, size_t fila, size_t columna)
     crearCola(&fantasma->colaMovimientos);
 }
 
+void destruirFantasma(tFantasma* fantasma)
+{
+    vaciarCola(&fantasma->colaMovimientos);
+}
+
 int buscarFantasmaEnPosicion(tVector* vecFantasmas, size_t fila, size_t columna)
 {
     size_t i;

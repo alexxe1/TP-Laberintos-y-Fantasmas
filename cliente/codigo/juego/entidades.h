@@ -4,7 +4,7 @@
 #include "../estructuras/vector.h"
 #include "../estructuras/cola.h"
 
-#define MAX_NOM 16
+#define MAX_NOM 17
 
 // Estructura para controlar posiciones
 typedef struct

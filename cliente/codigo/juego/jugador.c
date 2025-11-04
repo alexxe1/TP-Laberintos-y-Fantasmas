@@ -24,6 +24,10 @@ void acomodarJugador (tJugador* jugador, size_t fila, size_t columna)
     jugador->posActual.columna = columna;
 }
 
+void destruirJugador(tJugador* jugador)
+{
+    vaciarCola(&jugador->colaMovimientos);
+}
 
 void dibujarJugador(tJugador* jugador, size_t fila, size_t columna)
 {
@@ -84,26 +88,39 @@ tPosicion obtenerPosJugador(tJugador* jugador)
 
 void ingresarNombre (char * cadena, unsigned longitud)
 {
-    fflush(stdin);
-    fgets(cadena, longitud, stdin);
-    while (*cadena != '\n')
-        cadena++;
+    size_t len;
 
-    *cadena = '\0';
+    fflush(stdin);
+
+    if (fgets(cadena, longitud, stdin))
+    {
+        len = strlen(cadena);
+        if (len > 0 && cadena[len - 1] == '\n')
+            cadena[len - 1] = '\0';
+    }
 }
 
 char esNombreValido (const char * nombre)
 {
+    int longitud = 0;
+
     if (!nombre || *nombre == '\0')
         return ERROR;
 
+    if (!esLetra(*nombre))
+        return ERROR; // debe empezar con letra
+
     while (*nombre)
     {
-        if (!esLetra(*nombre) && !esNumero(*nombre) && !esEspacio(*nombre))
+        if (!esLetra(*nombre) && !esNumero(*nombre) && *nombre != '_')
             return ERROR;
 
         nombre++;
+        longitud++;
     }
+
+    if (longitud < 3)
+        return ERROR;
 
     return EXITO;
 }

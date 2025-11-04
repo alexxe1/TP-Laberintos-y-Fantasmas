@@ -10,6 +10,7 @@
 
 void crearJugador(tJugador* jugador, const char* nombre, tConfiguracion* configuracion, size_t fila, size_t columna);
 void acomodarJugador (tJugador* jugador, size_t fila, size_t columna);
+void destruirJugador(tJugador* jugador);
 void dibujarJugador(tJugador* jugador, size_t fila, size_t columna);
 char moverJugador(tJugador* jugador, char direccion, const tLaberinto* laberinto);
 tPosicion obtenerPosJugador(tJugador* jugador);

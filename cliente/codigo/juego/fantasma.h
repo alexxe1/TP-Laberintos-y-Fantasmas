@@ -11,6 +11,7 @@
 #define MAX_DIST 100
 
 void crearFantasma(tFantasma* fantasma, size_t filaInicial, size_t columnaInicial);
+void destruirFantasma(tFantasma* fantasma);
 int buscarFantasmaEnPosicion(tVector* vecFantasmas, size_t fila, size_t columna);
 void dibujarFantasma(tFantasma* fantasma, size_t fila, size_t columna);
 char calcularMovimientoFantasma(tFantasma* fantasma, const tLaberinto* laberinto, const tJugador* jugador);

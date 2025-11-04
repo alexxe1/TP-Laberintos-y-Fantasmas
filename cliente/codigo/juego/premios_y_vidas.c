@@ -2,11 +2,11 @@
 
 void mostrarVidasYPuntos(tJugador *jugador)
 {
-    puts("+------------------------------+");
-    printf("| JUGADOR: %-10s          |\n", jugador->nombre);
-    printf("| VIDAS RESTANTES: %-10d  |\n", (int)jugador->vidas);
-    printf("| PUNTAJE TOTAL: %-10d    |\n", (int)jugador->puntajeTotal);
-    puts("+------------------------------+");
+    puts("+-------------------------------------+");
+    printf("| %-17s: %-16s |\n", "JUGADOR", jugador->nombre);
+    printf("| %-17s: %-16d |\n", "VIDAS RESTANTES", (int)jugador->vidas);
+    printf("| %-17s: %-16d |\n", "PUNTAJE TOTAL", (int)jugador->puntajeTotal);
+    puts("+-------------------------------------+");
 }
 
 char chequeoPremio(tJugador* jugador, tLaberinto* laberinto)
