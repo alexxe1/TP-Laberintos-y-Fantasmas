@@ -249,8 +249,8 @@ int crearIdx(tArbol *a, void *reg, int desp, tCmp cmp)
 
 int cmpIdx(const void *a, const void *b)
 {
-    tJugador *x = (tJugador*)a;
-    tJugador *y = (tJugador*)b;
+    tIdxJugador *x = (tIdxJugador*)a;
+    tIdxJugador *y = (tIdxJugador*)b;
 
     return strcmp(x->nombre, y->nombre);
 }
