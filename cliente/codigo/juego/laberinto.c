@@ -2,15 +2,16 @@
 
 int crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion, unsigned nivel)
 {
-    size_t i,j, fantasmaX, fantasmaY, premioX, premioY, VidaX, vidaY;
+    size_t i, j, fantasmaX, fantasmaY, premioX, premioY, VidaX, vidaY;
     size_t filas = configuracion->filas;
     size_t columnas = configuracion->columnas;
     size_t cant;
 
-    size_t entradaFila = 0;                                     //Primera Fila
-    size_t entradaColumna = 1 + rand() % (columnas - 2);        //Cualquier Columna menos primera o ultima
+    size_t entradaFila = 0; //Primera Fila
+    size_t entradaColumna = 1 + rand() % (columnas - 2); //Cualquier Columna menos primera o ultima
 
     ///Creo matriz laberinto
+
     laberinto->casillas = malloc(filas * sizeof(char*));
     if(!laberinto->casillas)
         return ERROR;
@@ -26,6 +27,7 @@ int crearLaberintoAleatorio(tLaberinto* laberinto, tConfiguracion* configuracion
             return ERROR;
         }
     }
+
     laberinto->filas = filas;
     laberinto->columnas = columnas;
 

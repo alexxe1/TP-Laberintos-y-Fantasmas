@@ -51,9 +51,9 @@ void submenuDerrota(tJugador* jugador, unsigned nivel)
     getch();
 }
 
-char submenuTransicion (tJugador * jugador, unsigned nivel)
+char submenuTransicion(tJugador* jugador, unsigned nivel)
 {
-    unsigned short opcion = FALSO; // 0 = primera opción, 1 = segunda opción
+    unsigned short volverMenu = FALSO; // 0 = primera opción, 1 = segunda opción
     int tecla;
 
     while (1)
@@ -70,8 +70,8 @@ char submenuTransicion (tJugador * jugador, unsigned nivel)
         puts("| Continuar o Volver al menu principal?                  |");
         printf("| Usa las flechas para moverte y Enter para elegir       |\n");
         puts("|                                                        |");
-        printf("| %s SIGUIENTE NIVEL                                      |\n", opcion == FALSO ? ">" : " ");
-        printf("| %s VOLVER AL MENU PRINCIPAL                             |\n", opcion == VERDADERO ? ">" : " ");
+        printf("| %s SIGUIENTE NIVEL                                      |\n", volverMenu == FALSO ? ">" : " ");
+        printf("| %s VOLVER AL MENU PRINCIPAL                             |\n", volverMenu == VERDADERO ? ">" : " ");
         puts("+--------------------------------------------------------+");
         tecla = _getch();
 
@@ -79,71 +79,42 @@ char submenuTransicion (tJugador * jugador, unsigned nivel)
         {
             tecla = _getch(); // Obtener código real
 
-            if (tecla == ARR && opcion > FALSO)
-                opcion--;
-            else if (tecla == ABA && opcion < VERDADERO)
-                opcion++;
+            if (tecla == ARR && volverMenu > FALSO)
+                volverMenu--;
+            else if (tecla == ABA && volverMenu < VERDADERO)
+                volverMenu++;
         }
         else if (tecla == TECLA_ENTER)
-            return opcion; // Devuelve 0 o 1 según lo elegido
+            return volverMenu; // Devuelve 0 o 1 según lo elegido
     }
 }
 
-char generarArchivoReglas(const char * pathArch)
+void verReglas()
 {
-    FILE *archivo = fopen(pathArch, "wt");
+    system("cls");
 
-    if (!archivo)
-        return ERROR;
-
-    fprintf(archivo,
-            "REGLAS DEL JUEGO - LABERINTOS Y FANTASMAS\n"
-            "------------------------------------------\n\n"
-            "Objetivo:\n"
-            "Recorre el laberinto desde la entrada (E) hasta la salida (S) evitando a los fantasmas (F).\n\n"
-            "Controles:\n"
-            "- Usa las teclas de direccion (W, A, S, D) para moverte por el laberinto.\n\n"
-            "Reglas basicas:\n"
-            "1. Comienzas con un numero limitado de vidas.\n"
-            "2. Si un fantasma te alcanza, pierdes una vida y regresas a la entrada. El fantasma desaparece del laberinto.\n"
-            "3. Puedes recolectar premios (P) que otorgan puntos.\n"
-            "4. Puedes recolectar vidas extra (V) para aumentar tus vidas disponibles.\n"
-            "5. Si tus vidas llegan a 0, la partida termina.\n\n"
-            "Condiciones de victoria:\n"
-            "- Llega hasta la salida (S) sin quedarte sin vidas.\n\n"
-            "Puntuacion:\n"
-            "- Cada premio (P) recolectado suma un punto al marcador.\n"
-            "- Se registran el nombre del jugador, la puntuacion final y la cantidad de movimientos.\n\n"
-            "Buena suerte atravesando el laberinto!\n"
-           );
-
-    fclose(archivo);
-    return EXITO;
-}
-
-char verReglas(const char * pathArch)
-{
-    FILE * pf;
-    int car;
-
-    pf = fopen (pathArch, "rt");
-    if (!pf)
-    {
-        printf("Error");
-        return ERROR;
-    }
-
-
-    while ( (car = fgetc(pf)) != EOF)
-        putchar(car);
-
-    fclose(pf);
-
+    puts("------------------------------------------\n"
+         "REGLAS DEL JUEGO - LABERINTOS Y FANTASMAS\n"
+         "------------------------------------------\n\n"
+         "Objetivo:\n"
+         "- Recorre el laberinto desde la entrada (E) hasta la salida (S) evitando a los fantasmas (F).\n\n"
+         "Controles:\n"
+         "- Usa las teclas de direccion (W, A, S, D) o las flechas para moverte por el laberinto.\n\n"
+         "Reglas basicas:\n"
+         "1. Comienzas con un numero limitado de vidas.\n"
+         "2. Si un fantasma te alcanza, pierdes una vida y regresas a la entrada. El fantasma desaparece del laberinto.\n"
+         "3. Puedes recolectar premios (P) que otorgan puntos.\n"
+         "4. Puedes recolectar vidas extra (V) para aumentar tus vidas disponibles.\n"
+         "5. Si tus vidas llegan a 0, la partida termina.\n\n"
+         "Condiciones de victoria:\n"
+         "- Llega hasta la salida (S) sin quedarte sin vidas.\n\n"
+         "Puntuacion:\n"
+         "- Cada premio (P) recolectado suma un punto al marcador.\n"
+         "- Se registran el nombre del jugador, la puntuacion final y la cantidad de movimientos.\n\n"
+         "Buena suerte atravesando el laberinto!\n");
 
     system("pause");
     system("cls");
-
-    return EXITO;
 }
 
 char verRankings(SOCKET* socket)
@@ -187,7 +158,6 @@ char verRankings(SOCKET* socket)
     printf("+----------+----------------------+------------+\n");
     puts("\nPresiona cualquier tecla para volver...");
     _getch();
-
 
     vaciarLista(&listaRankings);
 

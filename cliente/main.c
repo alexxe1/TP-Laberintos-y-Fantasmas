@@ -12,13 +12,10 @@ int main()
         return ERROR;
     }
 
-    printf("Intentado conectar al servidor...");
+    puts("Intentado conectar al servidor...\n");
 
     // Si devolvió ERROR es porque el usuario no se pudo conectar al servidor
     intentarConectarServidor(&socket, IP_SERVER, PUERTO);
-
-    if(!generarArchivoReglas(PATH_REGLAS))
-        finProceso = VERDADERO;
 
     while (!finProceso)
     {
@@ -33,14 +30,15 @@ int main()
             verRankings(&socket);
             break;
         case 2:
-            puts("");
-            verReglas(PATH_REGLAS);
+            verReglas();
             break;
         case 3:
             finProceso = VERDADERO;
             break;
         }
     }
+
+    puts("\nGracias por jugar! - Hecho por God of C - 2025");
 
     cerrarConexion(&socket);
 

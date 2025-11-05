@@ -86,7 +86,7 @@ tPosicion obtenerPosJugador(tJugador* jugador)
     return pos;
 }
 
-void ingresarNombre (char * cadena, unsigned longitud)
+void ingresarNombre(char * cadena, unsigned longitud)
 {
     size_t len;
 
@@ -95,6 +95,7 @@ void ingresarNombre (char * cadena, unsigned longitud)
     if (fgets(cadena, longitud, stdin))
     {
         len = strlen(cadena);
+
         if (len > 0 && cadena[len - 1] == '\n')
             cadena[len - 1] = '\0';
     }
@@ -125,21 +126,20 @@ char esNombreValido (const char * nombre)
     return EXITO;
 }
 
-char esLetra (int car)
+char esLetra (int caracter)
 {
-    return ( (car >= 'A' && car <= 'Z') || (car >= 'a' && car <= 'z') ? EXITO : ERROR);
+    return ((caracter >= 'A' && caracter <= 'Z') || (caracter >= 'a' && caracter <= 'z') ? EXITO : ERROR);
 }
 
-char esNumero (int car)
+char esNumero (int caracter)
 {
-    return ( (car) >= '0' && car <= '9' ? EXITO : ERROR);
+    return ((caracter) >= '0' && caracter <= '9' ? EXITO : ERROR);
 }
 
-char esEspacio (int car)
+char esEspacio (int caracter)
 {
-    return (car == ' ' ? EXITO : ERROR);
+    return (caracter == ' ' ? EXITO : ERROR);
 }
-
 
 void volverYDescontar(tJugador* jugador)
 {
@@ -153,13 +153,9 @@ char jugadorSinVidas(tJugador* jugador)
     return (jugador->vidas <= 0 ? VERDADERO : FALSO);
 }
 
-
 char jugadorEnSalida(tJugador* jugador, tLaberinto* laberinto)
 {
     char casilla = obtenerCasillaLaberinto(laberinto, jugador->posActual. fila, jugador->posActual.columna) ;
 
     return casilla == SALIDA ? VERDADERO : FALSO;
-
 }
-
-

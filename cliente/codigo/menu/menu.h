@@ -6,14 +6,12 @@
 #include "../juego/controles.h"
 #include "../estructuras/lista.h"
 
-#define PATH_REGLAS "reglas.txt"
-
 int mostrarMenuPrincipal();
+
 void submenuDerrota (tJugador * jugador, unsigned nivel);
-char generarArchivoReglas(const char * pathArch);
-char verReglas(const char * pathArch);
 char submenuTransicion (tJugador * jugador, unsigned nivel);
-void mostrarRanking(void* nodo);
+
+void verReglas();
 char verRankings(SOCKET* socket);
 
 #endif // MENU_H_INCLUDED

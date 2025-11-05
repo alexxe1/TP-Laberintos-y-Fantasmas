@@ -22,15 +22,28 @@
 #define CONTINUA 2
 #define DERROTA -1
 
+// Inicialización y manejo de estados
 int empezarJuego(SOCKET* socket);
+int inicializarConfiguracion(tConfiguracion* configuracion);
+int inicializarJuegoBase(tLaberinto* laberinto, tEntidades* entidades, tConfiguracion* configuracion, size_t iteracion);
+void pedirNombreJugador(char* nombre);
+int conectarJugadorServidor(SOCKET* socket, tEntidades* entidades);
+void manejarVictoria(tLaberinto* laberinto, tEntidades* entidades, tConfiguracion* configuracion, size_t* iteracion, unsigned char* juegoTerminado);
+void manejarFinDeJuego(SOCKET* socket, tLaberinto* laberinto, tEntidades* entidades, char dioAltaJugador);
+
+// Bucles principales
 char actualizarJuego(tLaberinto* laberinto, tEntidades* entidades, unsigned char* juegoTerminado);
-size_t mostrarMovimientos(tJugador* jugador);
-int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguracion* configuracion, const char* nombJug, unsigned iteracion);
 void dibujarJuego(tLaberinto* laberinto, tEntidades* entidades);
-char chequeoSalida(tJugador* jugador, tLaberinto* laberinto);
-void imprimirPosicion(const void* p);
-char continuarJugando (tLaberinto * laberinto, tConfiguracion * configuracion, tEntidades * entidades, unsigned nivel);
+
+// Procesamiento de datos
+int procesarEntidades(tLaberinto* laberinto, tEntidades* entidades, tConfiguracion* configuracion, const char* nombJug, unsigned iteracion);
 char procesarMovimientos(tEntidades* entidades, tLaberinto* laberinto, unsigned char* juegoTerminado);
+size_t mostrarMovimientos(tJugador* jugador);
+
+// Comprobaciones
+char chequeoSalida(tJugador* jugador, tLaberinto* laberinto);
+char continuarJugando(tLaberinto* laberinto, tConfiguracion* configuracion, tEntidades* entidades, unsigned nivel);
+
 void destruirColasYVectores(tEntidades* entidades);
 
 #endif // JUEGO_H_INCLUDED
