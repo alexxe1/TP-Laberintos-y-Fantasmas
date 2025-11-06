@@ -38,7 +38,7 @@ SOCKET create_server_socket()
     return s;
 }
 
-int procesarEntrada(const char *peticion, char* respuesta, tArbol *a, tCmp cmp, SOCKET cliente)
+int procesarEntrada(const char *peticion, char* respuesta, tArbol *a, SOCKET cliente)
 {
     char operacion[16], nombre[16];
     unsigned long puntaje, movs, cantRank;
@@ -76,15 +76,15 @@ int procesarEntrada(const char *peticion, char* respuesta, tArbol *a, tCmp cmp, 
         if(nombre[0] != '\0')
         {
             *respuesta = 1;
-            if(!buscarNodoNoClave(a,&jugador,sizeof(tJugador), cmp))
+            if(!buscarNodoNoClave(a,&jugador,sizeof(tIdxJugador), cmpIdxNombre))
             {
                 //agregamos con "a+b" al final del archivo usuario el nombre con su id generado
                 agregarAArchivo(NOMBRE_ARCH_USUARIOS, nombre);
                 //creamos indice
                 //balancear arbol
                 vaciarArbol(a);
-                crearArchIdx(a, NOMBRE_ARCH_USUARIOS, NOMBRE_ARCH_INDICE, sizeof(tJugador),sizeof(tIdxJugador),crearIdx, cmpIdx);
-                cargarDesdeArchOrdenadoArbol(a,sizeof(tIdxJugador), NOMBRE_ARCH_INDICE, cmp);
+                crearArchIdx(a, NOMBRE_ARCH_USUARIOS, NOMBRE_ARCH_INDICE, sizeof(tJugador),sizeof(tIdxJugador),crearIdx, cmpIdxId);
+                cargarDesdeArchOrdenadoArbol(a,sizeof(tIdxJugador), NOMBRE_ARCH_INDICE, cmpIdxId);
                 //strcpy(respuesta, "USUARIO REGISTRADO CON EXITO");
             }
 
@@ -210,7 +210,7 @@ void run_server()
                 sacarDeCola(&cola, peticion, BUFFER_SIZE);
                 printf("[PROC] Procesando: %s\n", peticion);
 
-                if (procesarEntrada(peticion, &response, &arbol, cmpId, client_socket) != RANK)
+                if (procesarEntrada(peticion, &response, &arbol, client_socket) != RANK)
                 {
                     send(client_socket, &response, sizeof(response), 0);
                     printf("[TX] Enviado: %d\n", response);
@@ -248,7 +248,7 @@ int crearIdx(tArbol *a, void *reg, int desp, tCmp cmp)
     return TODO_OK;
 }
 
-int cmpIdx(const void *a, const void *b)
+int cmpIdxNombre(const void *a, const void *b)
 {
     tIdxJugador *x = (tIdxJugador*)a;
     tIdxJugador *y = (tIdxJugador*)b;
@@ -312,7 +312,7 @@ int guardarPartida(const char *nombreArchPartida, char *nombre, int puntaje, int
 
     strcpy(indice.nombre, nombre);
 
-    if(!buscarNodoNoClave(a, &indice, sizeof(tIdxJugador), cmpIdx))
+    if(!buscarNodoNoClave(a, &indice, sizeof(tIdxJugador), cmpIdxNombre))
     {
         fclose(arch);
 

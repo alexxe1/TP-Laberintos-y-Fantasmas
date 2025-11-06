@@ -48,14 +48,14 @@ int init_winsock();
 SOCKET create_server_socket();
 
 // Procesa el mensaje recibido y genera la respuesta
-int procesarEntrada(const char *peticion, char* respuesta, tArbol *a, tCmp cmp, SOCKET cliente);
+int procesarEntrada(const char *peticion, char* respuesta, tArbol *a, SOCKET cliente);
 // Ejecuta el bucle principal del servidor
 void run_server();
 
 
 int agregarAArchivo(const char *nombreArchUsuario, char *nombre);
 int crearIdx(tArbol *a, void *reg, int desp, tCmp cmp);
-int cmpIdx(const void *a, const void *b);
+int cmpIdxNombre(const void *a, const void *b);
 int agregarAArchivo(const char *nombreArchUsuario, char *nombre);
 int guardarPartida(const char *nombreArchPartida, char *nombre, int puntaje, int movs, tArbol *a);
 tLista generarRanking(tArbol *a, const char *nombreArchPartidas);
