@@ -82,6 +82,7 @@ int procesarEntrada(const char *peticion, char* respuesta, tArbol *a, tCmp cmp, 
                 agregarAArchivo(NOMBRE_ARCH_USUARIOS, nombre);
                 //creamos indice
                 //balancear arbol
+                vaciarArbol(a);
                 crearArchIdx(a, NOMBRE_ARCH_USUARIOS, NOMBRE_ARCH_INDICE, sizeof(tJugador),sizeof(tIdxJugador),crearIdx, cmpIdx);
                 cargarDesdeArchOrdenadoArbol(a,sizeof(tIdxJugador), NOMBRE_ARCH_INDICE, cmp);
                 //strcpy(respuesta, "USUARIO REGISTRADO CON EXITO");
